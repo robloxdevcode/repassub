@@ -20,7 +20,8 @@ export function MarketingThemeProvider({ children }: { children: React.ReactNode
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "dark" || stored === "light") {
-      setThemeState(stored);
+      const t = setTimeout(() => setThemeState(stored), 0);
+      return () => clearTimeout(t);
     }
   }, []);
 

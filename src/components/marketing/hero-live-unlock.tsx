@@ -31,8 +31,8 @@ export function HeroLiveUnlock({ className }: { className?: string }) {
     }
 
     if (step >= total) {
-      setUnlocked(true);
-      return;
+      const t = setTimeout(() => setUnlocked(true), 0);
+      return () => clearTimeout(t);
     }
 
     const t = setTimeout(() => setStep((s) => s + 1), 1200);
