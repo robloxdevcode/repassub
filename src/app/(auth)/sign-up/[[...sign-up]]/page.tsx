@@ -13,7 +13,9 @@ export default function SignUpPage() {
             <LinklockLogo size={48} />
           </div>
           <h1 className="font-body text-2xl font-bold">Create your account</h1>
-          <p className="font-body text-sm text-retro-text-dim mt-2">Free forever · No card required</p>
+          <p className="font-body text-sm text-retro-text-dim mt-2">
+            Free forever · No card required · Bot-protected sign-up
+          </p>
         </div>
         <SignUp
           appearance={clerkAuthAppearance}

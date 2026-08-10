@@ -40,6 +40,7 @@ A retro-styled creator unlock platform built with Next.js, Clerk, Supabase (Post
    - **Phone:** disabled (required phone causes sign-up 422 errors)
    - **Paths:** sign-in `/sign-in`, sign-up `/sign-up`
    - **Redirect URLs:** `http://localhost:3000/dashboard` and `http://localhost:3000/*`
+   - **Bot protection:** [Clerk Dashboard → Protect → Rules](https://dashboard.clerk.com/~/protect/rules) → enable **Bot sign-up protection** (Smart CAPTCHA / Turnstile on suspicious sign-ups). The `<SignUp />` component shows the challenge automatically — no code changes needed. Or run `powershell scripts/enable-clerk-bot-protection.ps1` after `npx clerk@latest login`.
 
 3. **Supabase** — create a project at [supabase.com](https://supabase.com):
    - **Project Settings → Database → Connection string → URI**

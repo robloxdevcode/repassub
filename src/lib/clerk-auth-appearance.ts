@@ -18,5 +18,7 @@ export const clerkAuthAppearance = {
     footerActionLink: "text-retro-blue font-semibold",
     identityPreviewText: "font-body text-sm",
     formFieldSuccessText: "font-body text-sm text-green-700",
+    captcha: "my-4 flex justify-center",
+    captchaWidget: "mx-auto",
   },
 } as const;
