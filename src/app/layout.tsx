@@ -36,8 +36,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       }}
     >
       <html lang="en" className={`${pressStart.variable} ${spaceGrotesk.variable} h-full`}>
-        <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
+        <head>
           <AdSenseScript />
+        </head>
+        <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
           <PostHogProvider>
             <CurrencyProvider>
               <RetroToastProvider>{children}</RetroToastProvider>
