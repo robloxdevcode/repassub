@@ -2628,3 +2628,89 @@ body {
     transform: none !important;
   }
 }
+
+/* ── Simple landing page ── */
+.landing-simple-hero {
+  position: relative;
+  background: linear-gradient(180deg, var(--retro-bg) 0%, var(--retro-surface) 100%);
+}
+
+.landing-color-stripe {
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--retro-accent) 0,
+    var(--retro-accent) 24px,
+    var(--retro-yellow) 24px,
+    var(--retro-yellow) 48px,
+    var(--retro-blue) 48px,
+    var(--retro-blue) 72px
+  );
+  border-bottom: 3px solid var(--retro-ink);
+}
+
+.landing-hero-title {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.landing-section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.landing-tag-neutral {
+  background: var(--retro-surface-2);
+  color: var(--retro-ink);
+}
+
+.landing-demo-panel {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.landing-demo-panel .landing-demo-frame {
+  border: 3px solid var(--retro-ink);
+  box-shadow: 8px 8px 0 var(--retro-ink);
+  background: var(--retro-surface);
+  padding: 0.75rem;
+}
+
+.landing-step-red {
+  background: var(--retro-accent);
+  color: #fff;
+}
+
+.landing-step-blue {
+  background: var(--retro-blue);
+  color: #fff;
+}
+
+.landing-step-yellow {
+  background: var(--retro-yellow);
+  color: var(--retro-ink);
+}
+
+.landing-step-card {
+  transition: transform 0.15s ease;
+}
+
+.landing-faq-item[open] {
+  border-color: var(--retro-blue);
+}
+
+.landing-cta {
+  position: relative;
+}
+
+@media (hover: hover) {
+  .landing-step-card:hover {
+    transform: translate(-2px, -2px);
+  }
+}

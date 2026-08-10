@@ -1,16 +1,6 @@
 import { HeroSection } from "@/components/marketing/hero-section";
-import {
-  StepsSection,
-  PlatformsSection,
-  WinsSection,
-  TestimonialsSection,
-  FaqSection,
-  CtaSection,
-} from "@/components/marketing/home-sections";
+import { StepsSection, FaqSection, CtaSection } from "@/components/marketing/home-sections";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
-import { LiveFeed } from "@/components/marketing/live-feed";
-import { StatBar } from "@/components/marketing/stat-bar";
-import { getPlatformStats, getRecentUnlockFeed } from "@/lib/analytics";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
@@ -29,19 +19,12 @@ export const metadata = buildPageMetadata({
   ],
 });
 
-export default async function HomePage() {
-  const [stats, feed] = await Promise.all([getPlatformStats(), getRecentUnlockFeed()]);
-
+export default function HomePage() {
   return (
     <>
       <HomeStructuredData />
       <HeroSection />
-      <LiveFeed items={feed} />
-      <StatBar unlocksToday={stats.unlocksToday} creators={stats.creators} />
       <StepsSection />
-      <PlatformsSection />
-      <WinsSection />
-      <TestimonialsSection />
       <FaqSection />
       <CtaSection />
     </>

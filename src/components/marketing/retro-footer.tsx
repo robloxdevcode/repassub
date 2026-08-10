@@ -5,7 +5,7 @@ export function RetroFooter() {
   return (
     <footer className="bg-ink text-retro-text-on-dark border-t-[3px] border-retro-ink">
       <div className="mx-auto max-w-6xl px-4 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <LinklockLogo size={32} showWordmark wordmarkClassName="text-retro-yellow" />
+        <LinklockLogo size={40} showWordmark wordmarkClassName="text-retro-yellow" />
         <div className="flex flex-wrap gap-x-4 gap-y-2 font-body text-sm text-white/70">
           <Link href="/pricing" className="hover:text-white">Pricing</Link>
           <Link href="/#faq" className="hover:text-white">FAQ</Link>

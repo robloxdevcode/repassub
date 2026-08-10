@@ -20,7 +20,7 @@ export function RetroNav() {
     <header className="sticky top-0 z-50 bg-retro-surface border-b-[3px] border-retro-ink overflow-x-clip">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-4 min-w-0">
         <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
-          <LinklockLogo size={32} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink truncate" />
+          <LinklockLogo size={48} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink truncate" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
