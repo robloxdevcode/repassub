@@ -6,7 +6,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
   return (
     <MarketingThemeProvider>
       <RetroNav />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 overflow-x-clip">{children}</main>
       <RetroFooter />
     </MarketingThemeProvider>
   );

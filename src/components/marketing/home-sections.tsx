@@ -133,7 +133,7 @@ export function StepsSection() {
           {STEPS.map((step, i) => (
             <Reveal key={step.n} delay={i * 80}>
               <article
-                className={`step-card ${step.color} brutal-border brutal-shadow p-6 md:p-7 h-full hover-lift ${i === 1 ? "md:-translate-y-2" : ""}`}
+                className={`step-card ${step.color} brutal-border brutal-shadow p-5 sm:p-6 md:p-7 h-full hover-lift ${i === 1 ? "lg:-translate-y-2" : ""}`}
               >
                 <div className="flex items-center justify-between mb-5">
                   <span className="font-display text-[10px] opacity-80">{step.n}</span>
@@ -208,9 +208,7 @@ export function WinsSection() {
         <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
           {WINS.map((win, i) => (
             <Reveal key={win.title} delay={i * 60}>
-              <article
-                className={`${win.bg} brutal-border brutal-shadow p-6 md:p-7 hover-lift flex gap-4 ${i % 2 === 1 ? "sm:translate-x-2" : ""}`}
-              >
+              <article className={`${win.bg} brutal-border brutal-shadow p-5 sm:p-6 md:p-7 hover-lift flex gap-4 min-w-0`}>
                 <div className="home-step-icon shrink-0">
                   <win.icon size={20} />
                 </div>
@@ -242,7 +240,7 @@ export function TestimonialsSection() {
           {TESTIMONIALS.map((t, i) => (
             <Reveal key={t.who} delay={i * 80}>
               <blockquote
-                className={`bg-retro-surface text-retro-ink brutal-border brutal-shadow p-6 md:p-7 hover-lift ${i === 1 ? "md:-rotate-1" : i === 2 ? "md:rotate-1" : ""}`}
+                className={`bg-retro-surface text-retro-ink brutal-border brutal-shadow p-5 sm:p-6 md:p-7 hover-lift min-w-0 ${i === 1 ? "lg:-rotate-1" : i === 2 ? "lg:rotate-1" : ""}`}
               >
                 <p className="font-body text-base leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
                 <footer className="mt-5 font-display text-[7px] text-retro-accent tracking-widest">{t.who.toUpperCase()}</footer>

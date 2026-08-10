@@ -54,7 +54,7 @@ export function HeroLiveUnlock({
 
       <div
         className={cn(
-          "relative w-full brutal-border brutal-shadow bg-retro-surface overflow-hidden",
+          "relative w-full mx-auto brutal-border brutal-shadow bg-retro-surface overflow-hidden",
           cardMax,
           unlocked && "animate-unlock-pop"
         )}

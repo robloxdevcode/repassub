@@ -17,10 +17,10 @@ export function RetroNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 bg-retro-surface border-b-[3px] border-retro-ink">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
-        <Link href="/" className="flex items-center gap-3 group">
-          <LinklockLogo size={40} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink" />
+    <header className="sticky top-0 z-50 bg-retro-surface border-b-[3px] border-retro-ink overflow-x-clip">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-4 min-w-0">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+          <LinklockLogo size={32} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink truncate" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
@@ -40,7 +40,7 @@ export function RetroNav() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <CurrencyToggle />
           <ThemeToggle />
           <MarketingNavActions />
