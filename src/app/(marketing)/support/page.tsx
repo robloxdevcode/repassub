@@ -1,7 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Support & FAQ" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "Support & FAQ",
+  description: "Get help with Linklock unlock links, billing, Pro plans, and creator setup.",
+  path: "/support",
+});
 
 const faqs = [
   {

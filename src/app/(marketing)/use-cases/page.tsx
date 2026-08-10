@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { RetroButton, RetroCard } from "@/components/retro";
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Use Cases" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "Use Cases",
+  description: "Subscribe-to-download for music producers, Roblox devs, YouTubers, and Discord communities.",
+  path: "/use-cases",
+});
 
 const cases = [
   { title: "Music & Audio", desc: "Share sample packs, stems, and presets." },

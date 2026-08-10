@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { RetroButton, RetroCard } from "@/components/retro";
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Features" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "Features",
+  description:
+    "Unlock pages, action gating, analytics, audience export, and custom branding — everything creators need to gate downloads and grow.",
+  path: "/features",
+});
 
 const features = [
   { title: "Create unlocks", desc: "Files, URLs, embeds, or text blocks.", color: "yellow" as const },

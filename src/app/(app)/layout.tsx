@@ -3,6 +3,11 @@ import { DatabaseSetupRequired } from "@/components/dashboard/database-setup-req
 import { isDatabaseConfigError, hasDatabaseUrl } from "@/lib/env";
 import { syncClerkUser, getCurrentUser } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   if (!hasDatabaseUrl()) {

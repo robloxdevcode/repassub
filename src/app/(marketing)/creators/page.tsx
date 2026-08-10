@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { RetroButton } from "@/components/retro";
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "For Creators" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "For Creators",
+  description:
+    "Linklock helps YouTube, Roblox, and preset creators gate downloads behind subscribe, follow, and join actions.",
+  path: "/creators",
+});
 
 export default function CreatorsPage() {
   return (

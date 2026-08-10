@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { RetroToastProvider } from "@/components/retro";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { CurrencyProvider } from "@/components/providers/currency-provider";
+import { buildRootMetadata } from "@/lib/seo";
 import "./globals.css";
 
 const pressStart = Press_Start_2P({
@@ -17,18 +18,7 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Linklock — Unlock Links for Creators",
-    template: "%s | Linklock",
-  },
-  description:
-    "Create unlock links that grow your audience. Gate content behind subscribe, follow, and join actions.",
-  icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
-  },
-};
+export const metadata: Metadata = buildRootMetadata();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

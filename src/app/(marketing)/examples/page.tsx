@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { RetroButton, RetroCard } from "@/components/retro";
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Examples" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "Examples",
+  description: "See how creators use Linklock unlock links for preset packs, Discord joins, and subscribe-to-download flows.",
+  path: "/examples",
+});
 
 const examples = [
   { title: "FREE PRESET PACK", desc: "Music producer shares sample pack after YouTube subscribe.", actions: ["Subscribe"] },

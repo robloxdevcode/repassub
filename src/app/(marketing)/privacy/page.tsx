@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Privacy Policy" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "Privacy Policy",
+  description: "How Linklock collects, uses, and protects your data.",
+  path: "/privacy",
+});
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

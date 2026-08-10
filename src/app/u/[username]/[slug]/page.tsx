@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getPublicCampaign } from "@/lib/actions/unlock";
 import { PublicUnlockClient } from "@/components/unlock/public-unlock-client";
 import { planShowsAds, isProPlan } from "@/lib/stripe";
+import { absoluteUrl, buildPageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
 interface Props {
@@ -11,10 +12,24 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { username, slug } = await params;
   const campaign = await getPublicCampaign(username, slug);
-  if (!campaign) return { title: "Unlock Not Found" };
+  if (!campaign) return { title: "Unlock Not Found", robots: { index: false, follow: false } };
+
+  const description =
+    campaign.description || `Complete the steps to unlock ${campaign.title} by ${username} on Linklock.`;
+
   return {
-    title: campaign.title,
-    description: campaign.description || `Unlock content by ${username}`,
+    ...buildPageMetadata({
+      title: campaign.title,
+      description,
+      path: `/u/${username}/${slug}`,
+      noIndex: true,
+    }),
+    openGraph: {
+      title: campaign.title,
+      description,
+      url: absoluteUrl(`/u/${username}/${slug}`),
+      type: "website",
+    },
   };
 }
 

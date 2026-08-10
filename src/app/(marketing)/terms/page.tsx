@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Terms of Service" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "Terms of Service",
+  description: "Terms of service for Linklock — the subscribe-to-download platform for creators.",
+  path: "/terms",
+});
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

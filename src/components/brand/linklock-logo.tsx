@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
+export const LOGO_WIDTH = 194;
+export const LOGO_HEIGHT = 133;
+export const LOGO_ASPECT = LOGO_WIDTH / LOGO_HEIGHT;
+
 type LinklockLogoProps = {
+  /** Logo height in pixels; width scales from the asset aspect ratio. */
   size?: number;
   className?: string;
   showWordmark?: boolean;
@@ -14,14 +19,17 @@ export function LinklockLogo({
   showWordmark = false,
   wordmarkClassName,
 }: LinklockLogoProps) {
+  const height = size;
+  const width = Math.round(size * LOGO_ASPECT);
+
   return (
     <span className={cn("inline-flex items-center gap-3", className)}>
       <Image
         src="/logo.png"
         alt="Linklock"
-        width={size}
-        height={size}
-        className="shrink-0 rounded-sm border-2 border-retro-ink brutal-shadow-sm object-cover"
+        width={width}
+        height={height}
+        className="shrink-0 object-contain"
         priority
       />
       {showWordmark ? (

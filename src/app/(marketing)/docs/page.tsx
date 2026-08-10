@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Documentation" };
+export const metadata: Metadata = buildPageMetadata({
+  title: "Documentation",
+  description: "Linklock docs — create unlock links, add steps, customize pages, and track conversions.",
+  path: "/docs",
+});
 
 export default function DocsPage() {
   return (
