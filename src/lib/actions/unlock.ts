@@ -5,13 +5,15 @@ import { trackEvent } from "@/lib/analytics";
 import type { AnalyticsEventType } from "@prisma/client";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
+import { getUnlockUrl } from "@/lib/utils";
+import { sendUnlockNotificationEmail, isEmailConfigured } from "@/lib/email";
 
 export async function getOrCreateVisitorId() {
   const cookieStore = await cookies();
-  let visitorId = cookieStore.get("repassub_visitor")?.value;
+  let visitorId = cookieStore.get("linklock_visitor")?.value;
   if (!visitorId) {
     visitorId = uuidv4();
-    cookieStore.set("repassub_visitor", visitorId, {
+    cookieStore.set("linklock_visitor", visitorId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -30,7 +32,14 @@ export async function getPublicCampaign(username: string, slug: string) {
     include: {
       content: true,
       actions: { orderBy: { sortOrder: "asc" } },
-      user: { select: { username: true, displayName: true, avatarUrl: true } },
+      user: {
+        select: {
+          username: true,
+          displayName: true,
+          avatarUrl: true,
+          subscriptions: { select: { plan: true }, where: { status: "ACTIVE" }, take: 1 },
+        },
+      },
     },
   });
 
@@ -39,19 +48,28 @@ export async function getPublicCampaign(username: string, slug: string) {
 
 export async function getUnlockSession(campaignId: string) {
   const visitorId = await getOrCreateVisitorId();
-  let session = await db.unlockSession.findFirst({
+  const existing = await db.unlockSession.findFirst({
     where: { campaignId, visitorId },
     orderBy: { createdAt: "desc" },
   });
 
-  if (!session) {
-    session = await db.unlockSession.create({
-      data: { campaignId, visitorId, status: "STARTED" },
+  if (!existing) {
+    const session = await db.unlockSession.create({
+      data: { campaignId, visitorId, status: "STARTED", completedActions: [] },
     });
     await trackEvent({ campaignId, type: "START" });
+    return session;
   }
 
-  return session;
+  // Every revisit or refresh starts fresh — do all steps again
+  return db.unlockSession.update({
+    where: { id: existing.id },
+    data: {
+      status: "STARTED",
+      completedActions: [],
+      unlockedAt: null,
+    },
+  });
 }
 
 export async function completeAction(campaignId: string, actionId: string) {
@@ -114,6 +132,14 @@ export async function unlockContent(campaignId: string) {
     where: { id: campaignId },
     include: { content: true, user: true },
   });
+
+  if (campaign?.user.notifyUnlockEmail && campaign.user.email && isEmailConfigured()) {
+    sendUnlockNotificationEmail({
+      to: campaign.user.email,
+      campaignTitle: campaign.title,
+      unlockUrl: getUnlockUrl(campaign.user.username, campaign.slug),
+    }).catch((err) => console.error("[email] unlock notification failed", err));
+  }
 
   return { session: updated, content: campaign?.content };
 }

@@ -2,12 +2,14 @@
 
 import { requireUser, requireAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getUserAnalytics, getAnalyticsBreakdown } from "@/lib/analytics";
+import { getUserAnalytics, getAnalyticsBreakdown, campaignViewCountSelect } from "@/lib/analytics";
+import { getUnlockQuota } from "@/lib/actions/campaigns";
+import { getActionLimit, getUserPlan, hasAdvancedAnalytics } from "@/lib/stripe";
 
 export async function getDashboardStats() {
   const user = await requireUser();
 
-  const [analytics, campaignCount, audienceCount, payments] = await Promise.all([
+  const [analytics, campaignCount, audienceCount, payments, unlockQuota] = await Promise.all([
     getUserAnalytics(user.id),
     db.campaign.count({ where: { userId: user.id, status: "PUBLISHED" } }),
     db.audienceMember.count({ where: { userId: user.id } }),
@@ -15,6 +17,7 @@ export async function getDashboardStats() {
       where: { userId: user.id, status: "SUCCEEDED" },
       _sum: { amount: true },
     }),
+    getUnlockQuota(),
   ]);
 
   const recentEvents = await db.analyticsEvent.findMany({
@@ -24,23 +27,45 @@ export async function getDashboardStats() {
     take: 10,
   });
 
+  const recentCampaigns = await db.campaign.findMany({
+    where: { userId: user.id },
+    include: {
+      actions: true,
+      _count: { select: campaignViewCountSelect },
+    },
+    orderBy: { updatedAt: "desc" },
+    take: 5,
+  });
+
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+
   return {
     analytics,
     campaignCount,
     audienceCount,
     revenue: payments._sum.amount || 0,
     recentEvents,
+    recentCampaigns,
+    plan,
+    actionLimit: getActionLimit(plan),
+    unlockQuota,
     user,
   };
 }
 
 export async function getAnalyticsData() {
   const user = await requireUser();
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
   const [analytics, breakdown] = await Promise.all([
     getUserAnalytics(user.id),
-    getAnalyticsBreakdown(user.id),
+    hasAdvancedAnalytics(plan) ? getAnalyticsBreakdown(user.id) : Promise.resolve(null),
   ]);
-  return { analytics, breakdown };
+  return {
+    analytics,
+    breakdown,
+    plan,
+    hasAdvancedAnalytics: hasAdvancedAnalytics(plan),
+  };
 }
 
 export async function getAudienceData() {

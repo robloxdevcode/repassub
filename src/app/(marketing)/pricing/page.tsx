@@ -5,36 +5,38 @@ import Link from "next/link";
 import { RetroButton, RetroCard } from "@/components/retro";
 import { createCheckoutSession } from "@/lib/actions/payments";
 import { useToast } from "@/components/retro";
-import { formatPlanPrice, PLAN_PRICES } from "@/lib/stripe";
+import { useCurrency } from "@/components/providers/currency-provider";
+import { PLAN_FEATURES } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 
-const plans = [
-  {
-    name: "Free",
-    plan: null as null,
-    price: { monthly: 0, yearly: 0 },
-    features: ["Unlimited unlock links", "Basic analytics", "No banner ads on pages", "No credit card"],
-    color: "white" as const,
-  },
-  {
-    name: "Pro",
-    plan: "PRO" as const,
-    price: PLAN_PRICES.PRO,
-    features: ["Everything in Free", "Advanced analytics", "Custom themes & logo", "Priority support"],
-    color: "yellow" as const,
-    popular: true,
-  },
-];
-
 export default function PricingPage() {
-  const [yearly, setYearly] = useState(false);
+  const [yearly, setYearly] = useState(true);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { prices, formatPrice, yearlyCompareAtCents, discountPercent, currency } = useCurrency();
+
+  const plans = [
+    {
+      name: "Free",
+      plan: null as null,
+      price: { monthly: 0, yearly: 0 },
+      features: [...PLAN_FEATURES.FREE],
+      color: "white" as const,
+    },
+    {
+      name: "Pro",
+      plan: "PRO" as const,
+      price: prices,
+      features: [...PLAN_FEATURES.PRO],
+      color: "yellow" as const,
+      popular: true,
+    },
+  ];
 
   async function handleUpgrade() {
     setLoading(true);
     try {
-      const { url } = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly");
+      const { url } = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
       if (url) window.location.href = url;
     } catch {
       toast("Stripe not configured.", "error");
@@ -50,7 +52,7 @@ export default function PricingPage() {
           <p className="font-display text-[8px] text-retro-yellow mb-4">PRICING</p>
           <h1 className="section-title font-body text-white">
             Free to start.<br />
-            Pro for {formatPlanPrice(PLAN_PRICES.PRO.monthly)}/mo.
+            Pro from {formatPrice(prices.yearly)}/yr — {discountPercent}% off.
           </h1>
         </div>
       </section>
@@ -73,7 +75,7 @@ export default function PricingPage() {
               yearly ? "bg-retro-yellow text-retro-ink" : "bg-white text-retro-ink hover:bg-retro-surface-2"
             )}
           >
-            YEARLY -50%
+            YEARLY -{discountPercent}%
           </button>
         </div>
 
@@ -84,12 +86,23 @@ export default function PricingPage() {
               <h3 className="font-body text-2xl font-bold">{p.name}</h3>
               <p className="font-display text-2xl mt-4">
                 {p.price.monthly === 0
-                  ? formatPlanPrice(0)
-                  : formatPlanPrice(yearly ? p.price.yearly : p.price.monthly)}
+                  ? formatPrice(0)
+                  : formatPrice(yearly ? p.price.yearly : p.price.monthly)}
                 {p.price.monthly > 0 && (
                   <span className="font-body text-sm font-normal opacity-70"> /{yearly ? "yr" : "mo"}</span>
                 )}
               </p>
+              {p.plan && yearly && (
+                <p className="mt-2 font-body text-sm text-retro-text-dim">
+                  <span className="line-through opacity-60">{formatPrice(yearlyCompareAtCents)}/yr</span>
+                  <span className="ml-2 font-semibold text-retro-accent">{discountPercent}% off</span>
+                </p>
+              )}
+              {p.plan && yearly && (
+                <p className="mt-1 font-body text-xs text-retro-text-muted">
+                  Works out to {formatPrice(Math.round(p.price.yearly / 12))}/mo billed yearly
+                </p>
+              )}
               <ul className="mt-8 space-y-3 flex-1 font-body text-sm">
                 {p.features.map((f) => (
                   <li key={f} className="flex gap-2">

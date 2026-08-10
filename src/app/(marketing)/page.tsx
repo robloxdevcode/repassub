@@ -1,23 +1,36 @@
+import { HeroSection } from "@/components/marketing/hero-section";
 import {
-  HeroSection,
-  WhyRepassubSection,
   StepsSection,
-  SocialProof,
+  PlatformsSection,
+  WinsSection,
+  TestimonialsSection,
+  FaqSection,
   CtaSection,
 } from "@/components/marketing/home-sections";
+import { LiveFeed } from "@/components/marketing/live-feed";
+import { StatBar } from "@/components/marketing/stat-bar";
+import { getPlatformStats, getRecentUnlockFeed } from "@/lib/analytics";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Unlock Links for Creators",
+  title: "Free subscribe-to-download links",
+  description:
+    "Make them follow, then unlock. Free unlock links for creators — gate downloads behind YouTube, Discord, and more.",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [stats, feed] = await Promise.all([getPlatformStats(), getRecentUnlockFeed()]);
+
   return (
     <>
       <HeroSection />
-      <WhyRepassubSection />
+      <LiveFeed items={feed} />
+      <StatBar unlocksToday={stats.unlocksToday} creators={stats.creators} />
       <StepsSection />
-      <SocialProof />
+      <PlatformsSection />
+      <WinsSection />
+      <TestimonialsSection />
+      <FaqSection />
       <CtaSection />
     </>
   );

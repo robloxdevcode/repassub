@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-const STORAGE_KEY = "repassub-marketing-theme";
+const STORAGE_KEY = "linklock-marketing-theme";
 
 type Theme = "light" | "dark";
 

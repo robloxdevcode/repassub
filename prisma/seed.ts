@@ -12,7 +12,7 @@ async function main() {
       clerkId: "demo_clerk_id",
       username: "demo",
       displayName: "Demo Player",
-      email: "demo@repassub.com",
+      email: "demo@linklock.com",
       role: "ADMIN",
       subscriptions: {
         create: { plan: "PRO", status: "ACTIVE" },

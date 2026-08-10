@@ -36,7 +36,7 @@ export function HomeHero() {
         </h1>
 
         <p className="mt-8 font-body text-base text-retro-text-dim max-w-md leading-relaxed animate-fade-up" style={{ animationDelay: "0.65s" }}>
-          One link. They subscribe, follow, or join — then they get your file, code, or URL.
+          One link. They subscribe, follow, or join — then they get your download link, code, or text.
         </p>
 
         <div className="mt-10 flex flex-wrap gap-4 animate-fade-up" style={{ animationDelay: "0.8s" }}>

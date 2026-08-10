@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { createCampaignSchema, contentSchema, actionSchema } from "@/lib/validations";
-import { PLAN_LIMITS } from "@/lib/stripe";
+import { createCampaignSchema, contentSchema, actionSchema, updateProfileSchema } from "@/lib/validations";
+import { getUserPlan, isProPlan, getActionLimit, PLAN_LIMITS, getUnlockQuotaWindowStart, getUnlockQuotaResetAt } from "@/lib/stripe";
 import { slugify } from "@/lib/utils";
+import { campaignViewCountSelect } from "@/lib/analytics";
 import type { ActionType, ContentType, VerificationMode, Prisma } from "@prisma/client";
 
 export async function createCampaign(data: {
@@ -18,13 +19,18 @@ export async function createCampaign(data: {
 }) {
   const user = await requireUser();
 
-  const plan = user.subscriptions?.[0]?.plan || "FREE";
-  const limit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS]?.unlocks ?? Infinity;
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  const limit = PLAN_LIMITS[plan].unlocks;
 
   if (limit !== Infinity) {
-    const count = await db.campaign.count({ where: { userId: user.id } });
+    const windowStart = getUnlockQuotaWindowStart();
+    const count = await db.campaign.count({
+      where: { userId: user.id, createdAt: { gte: windowStart } },
+    });
     if (count >= limit) {
-      throw new Error(`Free plan limited to ${limit} unlocks. Upgrade to Pro.`);
+      throw new Error(
+        `Free plan: ${limit} links per week. Delete an old link or upgrade to Pro for unlimited.`
+      );
     }
   }
 
@@ -98,6 +104,16 @@ export async function updateCampaignActions(
   });
   if (!campaign) throw new Error("Campaign not found");
 
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  const actionLimit = getActionLimit(plan);
+  if (actions.length > actionLimit) {
+    throw new Error(
+      plan === "FREE"
+        ? `Free plan allows ${actionLimit} steps per unlock. Upgrade to Pro for up to 4 steps.`
+        : `Pro plan allows up to ${actionLimit} steps per unlock.`
+    );
+  }
+
   actions.forEach((a) => actionSchema.parse(a));
 
   await db.action.deleteMany({ where: { campaignId } });
@@ -124,6 +140,7 @@ export async function updateCampaignCustomization(
     buttonText?: string;
     theme?: string;
     logoUrl?: string | null;
+    slug?: string;
   }
 ) {
   const user = await requireUser();
@@ -132,13 +149,37 @@ export async function updateCampaignCustomization(
   });
   if (!campaign) throw new Error("Campaign not found");
 
-  await db.campaign.update({
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  const pro = isProPlan(plan);
+
+  let slug = data.slug;
+  if (slug !== undefined && !pro) {
+    slug = undefined;
+  }
+  if (slug !== undefined) {
+    slug = slugify(slug);
+    if (!slug) throw new Error("Link URL cannot be empty");
+    const taken = await db.campaign.findFirst({
+      where: { userId: user.id, slug, NOT: { id: campaignId } },
+    });
+    if (taken) throw new Error("That link URL is already used on one of your unlocks");
+  }
+
+  const updated = await db.campaign.update({
     where: { id: campaignId },
-    data,
+    data: {
+      ...(data.title !== undefined ? { title: data.title } : {}),
+      ...(data.description !== undefined ? { description: data.description } : {}),
+      ...(data.buttonText !== undefined ? { buttonText: data.buttonText } : {}),
+      ...(pro && data.theme !== undefined ? { theme: data.theme } : {}),
+      ...(pro && data.logoUrl !== undefined ? { logoUrl: data.logoUrl } : {}),
+      ...(slug !== undefined ? { slug } : {}),
+    },
   });
 
   revalidatePath(`/create`);
-  return { success: true };
+  revalidatePath(`/u/${user.username}/${updated.slug}`);
+  return updated;
 }
 
 export async function publishCampaign(campaignId: string) {
@@ -170,14 +211,49 @@ export async function deleteCampaign(campaignId: string) {
 
   await db.campaign.delete({ where: { id: campaignId } });
   revalidatePath("/unlocks");
+  revalidatePath("/dashboard");
+  revalidatePath("/create");
   return { success: true };
+}
+
+export async function getUnlockQuota() {
+  const user = await requireUser();
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  const limit = PLAN_LIMITS[plan].unlocks;
+
+  if (limit === Infinity) {
+    return { plan, limit, used: 0, remaining: Infinity as number, resetsAt: null as Date | null };
+  }
+
+  const windowStart = getUnlockQuotaWindowStart();
+  const used = await db.campaign.count({
+    where: { userId: user.id, createdAt: { gte: windowStart } },
+  });
+
+  const oldest = await db.campaign.findFirst({
+    where: { userId: user.id, createdAt: { gte: windowStart } },
+    orderBy: { createdAt: "asc" },
+    select: { createdAt: true },
+  });
+
+  return {
+    plan,
+    limit,
+    used,
+    remaining: Math.max(0, limit - used),
+    resetsAt: oldest ? getUnlockQuotaResetAt(oldest.createdAt) : null,
+  };
 }
 
 export async function getUserCampaigns() {
   const user = await requireUser();
   return db.campaign.findMany({
     where: { userId: user.id },
-    include: { content: true, actions: true, _count: { select: { analyticsEvents: true } } },
+    include: {
+      content: true,
+      actions: true,
+      _count: { select: campaignViewCountSelect },
+    },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -194,19 +270,22 @@ export async function updateProfile(data: {
   displayName?: string;
   bio?: string;
   username?: string;
+  avatarUrl?: string | null;
 }) {
   const user = await requireUser();
+  const parsed = updateProfileSchema.parse(data);
 
-  if (data.username && data.username !== user.username) {
-    const existing = await db.user.findUnique({ where: { username: data.username } });
+  if (parsed.username && parsed.username !== user.username) {
+    const existing = await db.user.findUnique({ where: { username: parsed.username } });
     if (existing) throw new Error("Username taken");
   }
 
   const updated = await db.user.update({
     where: { id: user.id },
-    data,
+    data: parsed,
   });
 
   revalidatePath("/profile");
+  revalidatePath("/dashboard");
   return updated;
 }

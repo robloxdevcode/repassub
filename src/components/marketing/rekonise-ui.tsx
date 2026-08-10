@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Lock, Play, MessageCircle, Music2, UserPlus } from "lucide-react";
-import { PAYMENT_BRANDS, PaymentBrandChip } from "@/components/marketing/payment-logos";
-
 interface UnlockPreviewProps {
   title: string;
   actions: Array<{ label: string; platform: "youtube" | "discord" | "spotify" | "generic" }>;
@@ -99,16 +97,6 @@ export function PlatformStrip({ className }: { className?: string }) {
           </span>
         ))}
       </div>
-    </div>
-  );
-}
-
-export function PaymentMethods({ className }: { className?: string }) {
-  return (
-    <div className={cn("flex flex-wrap justify-center gap-3", className)}>
-      {PAYMENT_BRANDS.map((brand) => (
-        <PaymentBrandChip key={brand.id} brand={brand} />
-      ))}
     </div>
   );
 }

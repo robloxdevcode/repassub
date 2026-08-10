@@ -42,6 +42,7 @@ export const trackEventSchema = z.object({
 export const updateProfileSchema = z.object({
   displayName: z.string().min(1).max(50).optional(),
   bio: z.string().max(300).optional(),
+  avatarUrl: z.string().url().optional().nullable(),
   username: z
     .string()
     .min(3)

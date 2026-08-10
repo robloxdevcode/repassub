@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { formatNumber } from "@/lib/utils";
+import { Lock, Users, Zap } from "lucide-react";
 
 function useCountUp(target: number, start: boolean, duration = 1200) {
   const [value, setValue] = useState(0);
@@ -19,7 +21,13 @@ function useCountUp(target: number, start: boolean, duration = 1200) {
   return value;
 }
 
-export function StatBar() {
+export function StatBar({
+  unlocksToday,
+  creators,
+}: {
+  unlocksToday: number;
+  creators: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -30,33 +38,54 @@ export function StatBar() {
       ([entry]) => {
         if (entry.isIntersecting) setVisible(true);
       },
-      { threshold: 0.4 }
+      { threshold: 0.3 }
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  const unlocks = useCountUp(10000, visible);
-  const creators = useCountUp(500, visible);
+  const unlockCount = useCountUp(unlocksToday, visible);
+  const creatorCount = useCountUp(creators, visible);
+
+  const items = [
+    {
+      icon: Lock,
+      value: formatNumber(unlockCount),
+      label: "Unlocks today",
+      tone: "home-stat-red",
+    },
+    {
+      icon: Users,
+      value: formatNumber(creatorCount),
+      label: "Creators on Linklock",
+      tone: "home-stat-blue",
+    },
+    {
+      icon: Zap,
+      value: "5 FREE",
+      label: "Links every week",
+      tone: "home-stat-yellow",
+    },
+  ];
 
   return (
-    <div className="stripe-bar" ref={ref}>
-      <div className="mx-auto max-w-6xl px-4 py-4 grid grid-cols-3 divide-x-2 divide-black">
-        <div className="text-center px-2">
-          <p className="font-display text-[10px] md:text-xs tabular-nums">
-            {unlocks.toLocaleString()}+
-          </p>
-          <p className="font-body text-xs mt-1 opacity-70">Unlocks/day</p>
-        </div>
-        <div className="text-center px-2">
-          <p className="font-display text-[10px] md:text-xs tabular-nums">{creators}+</p>
-          <p className="font-body text-xs mt-1 opacity-70">Creators</p>
-        </div>
-        <div className="text-center px-2 animate-pulse-soft">
-          <p className="font-display text-[10px] md:text-xs">FREE</p>
-          <p className="font-body text-xs mt-1 opacity-70">To start</p>
+    <section className="home-stats-bar border-b-[3px] border-retro-ink" ref={ref}>
+      <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
+        <p className="font-display text-[8px] text-center text-white/70 mb-5 tracking-widest">
+          LIVE PLATFORM STATS
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {items.map(({ icon: Icon, value, label, tone }) => (
+            <div key={label} className={`home-stat-card ${tone}`}>
+              <div className="home-stat-icon">
+                <Icon size={18} />
+              </div>
+              <p className="font-display text-lg md:text-xl tabular-nums mt-3">{value}</p>
+              <p className="font-body text-xs mt-1 opacity-80 font-medium">{label}</p>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

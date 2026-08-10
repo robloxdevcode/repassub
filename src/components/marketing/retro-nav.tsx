@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RetroButton } from "@/components/retro";
 import { ThemeToggle } from "@/components/marketing/theme-toggle";
+import { CurrencyToggle } from "@/components/marketing/currency-toggle";
+import { MarketingNavActions } from "@/components/marketing/marketing-nav-actions";
+import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 export function RetroNav() {
@@ -18,10 +20,7 @@ export function RetroNav() {
     <header className="sticky top-0 z-50 bg-retro-surface border-b-[3px] border-retro-ink">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:py-4">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center bg-retro-accent border-2 border-retro-ink brutal-shadow-sm group-hover:bg-retro-yellow transition-colors">
-            <span className="font-display text-[10px] text-white group-hover:text-retro-ink">R</span>
-          </div>
-          <span className="font-display text-[10px] hidden sm:block">REPASSUB</span>
+          <LinklockLogo size={40} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
@@ -42,13 +41,9 @@ export function RetroNav() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <CurrencyToggle />
           <ThemeToggle />
-          <Link href="/sign-in" className="font-body text-sm font-semibold px-3 py-2 hidden sm:block hover:underline">
-            Log in
-          </Link>
-          <Link href="/sign-up">
-            <RetroButton size="sm" variant="primary">Start free</RetroButton>
-          </Link>
+          <MarketingNavActions />
         </div>
       </div>
     </header>
@@ -57,19 +52,19 @@ export function RetroNav() {
 
 export function TrustMarquee() {
   const items = [
-    "500+ CREATORS",
-    "NO CARD NEEDED",
     "FREE TO START",
-    "UNLIMITED FREE LINKS",
-    "SETUP IN 2 MINUTES",
+    "NO CARD",
+    "2 MIN SETUP",
+    "YOUTUBE · DISCORD · DRIVE",
+    "5 LINKS / WEEK",
   ];
   const row = [...items, ...items];
 
   return (
-    <div className="bg-ink border-b-[3px] border-retro-ink py-3 marquee-wrap">
+    <div className="bg-pop-red text-white border-b-[3px] border-retro-ink py-2.5 marquee-wrap relative overflow-hidden">
       <div className="marquee-track">
         {row.map((t, i) => (
-          <span key={i} className="font-display text-[8px] text-retro-yellow whitespace-nowrap">
+          <span key={i} className="font-display text-[7px] md:text-[8px] tracking-[0.12em] whitespace-nowrap">
             ★ {t} ★
           </span>
         ))}

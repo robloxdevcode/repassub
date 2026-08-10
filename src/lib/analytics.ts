@@ -1,5 +1,12 @@
 import { AnalyticsEventType, Prisma } from "@prisma/client";
 import { db } from "./db";
+import { hasDatabaseUrl } from "./env";
+
+export const campaignViewCountSelect = {
+  analyticsEvents: {
+    where: { type: "VIEW" as AnalyticsEventType },
+  },
+} satisfies Prisma.CampaignCountOutputTypeSelect;
 
 export type TrackEventInput = {
   campaignId: string;
@@ -112,4 +119,68 @@ export async function getAnalyticsBreakdown(userId: string) {
   ]);
 
   return { bySource, byDevice, byCountry, campaigns };
+}
+
+function startOfUtcDay(date = new Date()) {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}
+
+export type PlatformStats = {
+  creators: number;
+  unlocksToday: number;
+  publishedLinks: number;
+};
+
+export async function getPlatformStats(): Promise<PlatformStats> {
+  if (!hasDatabaseUrl()) {
+    return { creators: 0, unlocksToday: 0, publishedLinks: 0 };
+  }
+
+  try {
+    const dayStart = startOfUtcDay();
+    const [creators, unlocksToday, publishedLinks] = await Promise.all([
+      db.user.count(),
+      db.analyticsEvent.count({
+        where: { type: "UNLOCK", createdAt: { gte: dayStart } },
+      }),
+      db.campaign.count({ where: { status: "PUBLISHED" } }),
+    ]);
+
+    return { creators, unlocksToday, publishedLinks };
+  } catch {
+    return { creators: 0, unlocksToday: 0, publishedLinks: 0 };
+  }
+}
+
+export async function getRecentUnlockFeed(limit = 8): Promise<string[]> {
+  if (!hasDatabaseUrl()) {
+    return ["Create your first unlock link on Linklock"];
+  }
+
+  try {
+    const events = await db.analyticsEvent.findMany({
+      where: { type: "UNLOCK" },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      include: {
+        campaign: {
+          select: {
+            title: true,
+            user: { select: { username: true } },
+          },
+        },
+      },
+    });
+
+    if (events.length === 0) {
+      return ["Linklock is live — be the first creator to publish an unlock link"];
+    }
+
+    return events.map(
+      (event) =>
+        `@${event.campaign.user.username} — "${event.campaign.title}" was unlocked`
+    );
+  } catch {
+    return ["Linklock unlock links — subscribe, follow, then get the content"];
+  }
 }

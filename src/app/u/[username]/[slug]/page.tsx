@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getPublicCampaign } from "@/lib/actions/unlock";
 import { PublicUnlockClient } from "@/components/unlock/public-unlock-client";
+import { planShowsAds, isProPlan } from "@/lib/stripe";
 import type { Metadata } from "next";
 
 interface Props {
@@ -22,5 +23,13 @@ export default async function PublicUnlockPage({ params }: Props) {
   const campaign = await getPublicCampaign(username, slug);
   if (!campaign) notFound();
 
-  return <PublicUnlockClient campaign={campaign} />;
+  const plan = campaign.user.subscriptions?.[0]?.plan;
+
+  return (
+    <PublicUnlockClient
+      campaign={campaign}
+      showAds={planShowsAds(plan)}
+      isPro={isProPlan(plan)}
+    />
+  );
 }

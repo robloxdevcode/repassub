@@ -10,7 +10,7 @@ export default function DocsPage() {
       <div className="retro-panel p-8 prose prose-invert max-w-none">
         <h2 className="font-display text-lg tracking-wider text-retro-glow">Getting Started</h2>
         <p className="text-retro-text-dim mt-2">
-          Welcome to Repassub! This guide will help you create your first unlock campaign.
+          Welcome to Linklock! This guide will help you create your first unlock campaign.
         </p>
         <ol className="mt-4 flex flex-col gap-3 text-sm text-retro-text-dim list-decimal list-inside">
           <li><Link href="/sign-up" className="text-retro-glow hover:underline">Create an account</Link></li>

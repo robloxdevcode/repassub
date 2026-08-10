@@ -14,10 +14,15 @@ const isPublicRoute = createRouteMatcher([
   "/use-cases(.*)",
   "/docs(.*)",
   "/blog(.*)",
+  "/terms(.*)",
+  "/privacy(.*)",
+  "/support(.*)",
   "/u/(.*)",
   "/api/webhooks(.*)",
   "/api/events(.*)",
 ]);
+
+const isAuthRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 
 const isAppRoute = createRouteMatcher([
   "/dashboard(.*)",
@@ -27,7 +32,7 @@ const isAppRoute = createRouteMatcher([
   "/audience(.*)",
   "/settings(.*)",
   "/profile(.*)",
-  "/payments(.*)",
+  "/billing(.*)",
 ]);
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
@@ -40,8 +45,13 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
+  const { userId } = await auth();
+
+  if (isAuthRoute(req) && userId) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
   if (isAdminRoute(req)) {
-    const { userId } = await auth();
     if (!userId) {
       return NextResponse.redirect(new URL("/sign-in", req.url));
     }
@@ -60,7 +70,7 @@ export default clerkMiddleware(async (auth, req) => {
       pathname.startsWith("/audience") ||
       pathname.startsWith("/settings") ||
       pathname.startsWith("/profile") ||
-      pathname.startsWith("/payments")
+      pathname.startsWith("/billing")
     ) {
       await auth.protect();
     }

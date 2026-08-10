@@ -1,16 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useState, useCallback } from "react";
 import {
-  getPublicCampaign,
   getUnlockSession,
   completeAction,
   unlockContent,
   trackCampaignView,
 } from "@/lib/actions/unlock";
-import { RetroButton, UnlockAnimation, RetroBackground } from "@/components/retro";
-import { Check, Lock, Play, MessageCircle, Music2, UserPlus, ExternalLink } from "lucide-react";
+import { RetroButton, UnlockAnimation } from "@/components/retro";
+import { UnlockPageBackdrop } from "./unlock-page-backdrop";
+import { UnlockPageAd } from "./unlock-page-ad";
+import { LinklockLogo } from "@/components/brand/linklock-logo";
+import { unlockThemeClass } from "@/lib/unlock-themes";
 import { cn } from "@/lib/utils";
+import { Check, Lock, Play, MessageCircle, Music2, UserPlus, ExternalLink, Loader2, ArrowUpRight } from "lucide-react";
+
+const VERIFY_SECONDS = 14;
 
 type ActionItem = {
   id: string;
@@ -33,6 +39,7 @@ type CampaignWithRelations = {
   title: string;
   description: string | null;
   buttonText: string;
+  theme: string;
   logoUrl: string | null;
   content: ContentItem | null;
   actions: ActionItem[];
@@ -61,42 +68,63 @@ const platformIcons = {
   generic: UserPlus,
 };
 
-export function PublicUnlockClient({ campaign }: { campaign: CampaignWithRelations }) {
+export function PublicUnlockClient({
+  campaign,
+  showAds = false,
+  isPro = false,
+}: {
+  campaign: CampaignWithRelations;
+  showAds?: boolean;
+  isPro?: boolean;
+}) {
   const [session, setSession] = useState<{ completedActions: string[]; status: string } | null>(null);
   const [unlocked, setUnlocked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [content, setContent] = useState<ContentItem | null>(null);
-  const [loading, setLoading] = useState<string | null>(null);
+  const [verifyingId, setVerifyingId] = useState<string | null>(null);
 
   useEffect(() => {
     trackCampaignView(campaign.id);
-    getUnlockSession(campaign.id).then((s) => {
-      setSession({ completedActions: (s.completedActions as string[]) || [], status: s.status });
-      if (s.status === "UNLOCKED") {
-        setUnlocked(true);
-        setContent(campaign.content);
-      }
+    getUnlockSession(campaign.id).then(() => {
+      setSession({ completedActions: [], status: "STARTED" });
+      setUnlocked(false);
+      setContent(null);
     });
-  }, [campaign.id, campaign.content]);
+  }, [campaign.id]);
 
   const completed = session?.completedActions || [];
   const total = campaign.actions.length;
   const progress = completed.length;
   const allComplete = total > 0 && campaign.actions.every((a) => completed.includes(a.id));
 
-  async function handleCompleteAction(actionId: string, action: ActionItem) {
-    setLoading(actionId);
-    try {
-      const config = action.config as Record<string, string>;
-      if (action.type === "VISIT" && config?.url) window.open(config.url, "_blank");
-      const result = await completeAction(campaign.id, actionId);
-      setSession({
-        completedActions: (result.session.completedActions as string[]) || [],
-        status: result.session.status,
-      });
-    } finally {
-      setLoading(null);
-    }
+  const finishVerification = useCallback(
+    async (actionId: string) => {
+      try {
+        const result = await completeAction(campaign.id, actionId);
+        setSession({
+          completedActions: (result.session.completedActions as string[]) || [],
+          status: result.session.status,
+        });
+      } finally {
+        setVerifyingId(null);
+      }
+    },
+    [campaign.id]
+  );
+
+  useEffect(() => {
+    if (!verifyingId) return;
+    const timer = setTimeout(() => finishVerification(verifyingId), VERIFY_SECONDS * 1000);
+    return () => clearTimeout(timer);
+  }, [verifyingId, finishVerification]);
+
+  function startAction(action: ActionItem) {
+    if (verifyingId || completed.includes(action.id)) return;
+
+    const config = action.config as Record<string, string>;
+    if (config?.url) window.open(config.url, "_blank", "noopener,noreferrer");
+
+    setVerifyingId(action.id);
   }
 
   async function onAnimationComplete() {
@@ -112,38 +140,72 @@ export function PublicUnlockClient({ campaign }: { campaign: CampaignWithRelatio
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4">
-      <RetroBackground />
+    <div className="relative min-h-screen flex flex-col">
+      <header className="sticky top-0 z-20 border-b-[3px] border-retro-ink bg-retro-surface">
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
+          <Link href="/" className="shrink-0">
+            <LinklockLogo size={32} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink" />
+          </Link>
+          <Link href="/">
+            <RetroButton size="sm" variant="primary">
+              Create your link!
+            </RetroButton>
+          </Link>
+        </div>
+      </header>
+
+      <div className="relative flex flex-1 items-center justify-center p-4">
+      <UnlockPageBackdrop />
       {showAnimation && <UnlockAnimation onComplete={onAnimationComplete} />}
 
-      <div className="relative z-10 w-full max-w-md unlock-preview-card animate-pulse-glow">
+      <div className={cn("relative z-10 w-full max-w-md unlock-preview-card animate-pulse-glow", unlockThemeClass(campaign.theme))}>
         {!unlocked ? (
           <>
             {campaign.logoUrl ? (
-              <img src={campaign.logoUrl} alt="" className="h-12 w-12 rounded-xl mb-4 object-cover" />
+              <img src={campaign.logoUrl} alt="" className="h-12 w-12 rounded-xl mb-4 object-cover brutal-border" />
+            ) : isPro && campaign.user.avatarUrl ? (
+              <img src={campaign.user.avatarUrl} alt="" className="h-12 w-12 rounded-xl mb-4 object-cover brutal-border" />
+            ) : !isPro ? (
+              <LinklockLogo size={48} className="mb-4" />
             ) : (
-              <div className="h-12 w-12 rounded-xl bg-retro-accent flex items-center justify-center mb-4">
-                <span className="text-black font-bold">R</span>
+              <div className="h-12 w-12 rounded-xl mb-4 brutal-border bg-retro-yellow flex items-center justify-center font-display text-lg">
+                {(campaign.user.displayName || campaign.user.username).slice(0, 1).toUpperCase()}
               </div>
             )}
 
             <h1 className="font-display text-xl font-bold text-retro-text">{campaign.title}</h1>
             {campaign.description && (
-              <p className="text-sm text-retro-text-dim mt-1 mb-4">{campaign.description}</p>
+              <p className="text-sm text-retro-text-dim mt-1 mb-3">{campaign.description}</p>
             )}
-            <p className="text-sm text-retro-text-dim mb-4">Complete the actions to unlock</p>
+            <p className="text-sm text-retro-text-dim mb-4">
+              Tap each step. Finish it. It turns green.
+            </p>
 
             <div className="flex flex-col gap-2 mb-4">
               {campaign.actions.map((action) => {
                 const isComplete = completed.includes(action.id);
+                const isVerifying = verifyingId === action.id;
                 const platform = actionPlatform(action.type, action.label);
                 const Icon = platformIcons[platform];
-
+                const config = action.config as Record<string, string>;
                 if (isComplete) {
                   return (
-                    <div key={action.id} className="platform-btn platform-generic opacity-60">
-                      <Check size={16} className="text-retro-accent" />
-                      <span className="line-through">{action.label}</span>
+                    <div key={action.id} className="platform-btn platform-btn--done">
+                      <Check size={16} strokeWidth={3} />
+                      <span>{action.label}</span>
+                      <span className="ml-auto font-display text-[8px]">DONE</span>
+                    </div>
+                  );
+                }
+
+                if (isVerifying) {
+                  return (
+                    <div key={action.id} className="platform-btn platform-btn--verifying !flex-col !items-start gap-1 pb-3">
+                      <div className="flex items-center gap-2 w-full">
+                        <Loader2 size={16} className="animate-spin shrink-0" />
+                        <span className="font-semibold">Checking…</span>
+                      </div>
+                      <span className="text-xs opacity-80 pl-6">Finish the step in the other tab</span>
                     </div>
                   );
                 }
@@ -151,13 +213,20 @@ export function PublicUnlockClient({ campaign }: { campaign: CampaignWithRelatio
                 return (
                   <button
                     key={action.id}
-                    disabled={loading === action.id}
-                    onClick={() => handleCompleteAction(action.id, action)}
-                    className={cn("platform-btn", platformStyles[platform], "cursor-pointer disabled:opacity-50")}
+                    type="button"
+                    disabled={!!verifyingId}
+                    onClick={() => startAction(action)}
+                    className={cn(
+                      "platform-btn relative overflow-hidden",
+                      platformStyles[platform],
+                      "cursor-pointer disabled:opacity-50"
+                    )}
                   >
                     <Icon size={16} />
-                    {action.type === "VISIT" ? (
-                      <span className="flex items-center gap-1">{action.label} <ExternalLink size={12} /></span>
+                    {config?.url ? (
+                      <span className="flex items-center gap-1 text-left">
+                        {action.label} <ExternalLink size={12} className="shrink-0" />
+                      </span>
                     ) : (
                       action.label
                     )}
@@ -167,11 +236,17 @@ export function PublicUnlockClient({ campaign }: { campaign: CampaignWithRelatio
             </div>
 
             <div className="flex items-center justify-between text-xs text-retro-text-dim mb-2">
-              <span>Unlock progress</span>
+              <span>Progress</span>
               <span>{progress}/{total} done</span>
             </div>
             <div className="retro-progress mb-4">
-              <div className="retro-progress-fill" style={{ width: total ? `${(progress / total) * 100}%` : "0%" }} />
+              <div
+                className={cn(
+                  "retro-progress-fill transition-all duration-500",
+                  allComplete && "bg-retro-success"
+                )}
+                style={{ width: total ? `${(progress / total) * 100}%` : "0%" }}
+              />
             </div>
 
             <RetroButton
@@ -180,45 +255,52 @@ export function PublicUnlockClient({ campaign }: { campaign: CampaignWithRelatio
               onClick={() => allComplete && setShowAnimation(true)}
               variant={allComplete ? "primary" : "secondary"}
             >
-              <Lock size={14} />
-              {campaign.buttonText}
+              {allComplete ? (
+                <>
+                  {campaign.buttonText || "Open"}
+                  <ArrowUpRight size={16} />
+                </>
+              ) : (
+                <>
+                  <Lock size={14} />
+                  {`Complete ${total - progress} more step${total - progress !== 1 ? "s" : ""}`}
+                </>
+              )}
             </RetroButton>
-
-            {campaign.actions.some((a) => a.verificationMode === "MANUAL") && (
-              <p className="text-xs text-retro-text-muted text-center mt-3">
-                Manual confirmation required for some actions
-              </p>
-            )}
           </>
         ) : (
           <div className="text-center py-4">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-retro-accent/20 mb-4">
-              <Check size={32} className="text-retro-accent" />
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-retro-success border-2 border-retro-ink mb-4">
+              <Check size={32} className="text-retro-ink" strokeWidth={3} />
             </div>
-            <h2 className="font-display text-xl font-bold text-retro-accent mb-2">Unlocked!</h2>
-            <p className="text-sm text-retro-text-dim mb-6">Your content is ready</p>
+            <h2 className="font-body text-xl font-bold mb-2">Download ready</h2>
+            <p className="text-sm text-retro-text-dim mb-6">Thanks for completing the steps.</p>
 
             {content?.type === "URL" && content.externalUrl && (
               <a href={content.externalUrl} target="_blank" rel="noopener noreferrer">
-                <RetroButton size="lg">Open link →</RetroButton>
+                <RetroButton size="lg">Open</RetroButton>
               </a>
             )}
             {content?.type === "FILE" && content.fileUrl && (
               <a href={content.fileUrl} download={content.fileName || true}>
-                <RetroButton size="lg">Download file →</RetroButton>
+                <RetroButton size="lg">Open</RetroButton>
               </a>
             )}
             {content?.type === "TEXT" && content.textBody && (
-              <div className="mt-4 text-left retro-panel p-4 text-sm whitespace-pre-wrap text-retro-text-dim">
+              <div className="mt-4 text-left brutal-border bg-retro-surface-2 p-4 text-sm whitespace-pre-wrap">
                 {content.textBody}
               </div>
             )}
           </div>
         )}
 
+        {showAds && !isPro && <UnlockPageAd />}
+
         <p className="mt-6 text-center text-xs text-retro-text-muted">
-          by {campaign.user.displayName || campaign.user.username} · Repassub
+          {campaign.user.displayName || campaign.user.username}
+          {!isPro && " · Linklock"}
         </p>
+      </div>
       </div>
     </div>
   );

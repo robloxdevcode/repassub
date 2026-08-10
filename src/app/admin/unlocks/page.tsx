@@ -1,11 +1,15 @@
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { campaignViewCountSelect } from "@/lib/analytics";
 
 export default async function AdminUnlocksPage() {
   await requireAdmin();
 
   const campaigns = await db.campaign.findMany({
-    include: { user: { select: { username: true } }, _count: { select: { analyticsEvents: true } } },
+    include: {
+      user: { select: { username: true } },
+      _count: { select: campaignViewCountSelect },
+    },
     orderBy: { createdAt: "desc" },
     take: 50,
   });
@@ -17,7 +21,7 @@ export default async function AdminUnlocksPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b-2 border-retro-border-dim">
-              {["TITLE", "CREATOR", "STATUS", "EVENTS", "CREATED"].map((col) => (
+              {["TITLE", "CREATOR", "STATUS", "VIEWS", "CREATED"].map((col) => (
                 <th key={col} className="px-4 py-3 text-left font-display text-xs tracking-widest text-retro-text-dim">
                   {col}
                 </th>

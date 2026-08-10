@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Blog" };
 
 const posts = [
-  { slug: "introducing-repassub", title: "Introducing Repassub", date: "2026-01-15", excerpt: "The retro creator unlock platform is here." },
+  { slug: "introducing-linklock", title: "Introducing Linklock", date: "2026-01-15", excerpt: "The retro creator unlock platform is here." },
   { slug: "unlock-best-practices", title: "Unlock Best Practices", date: "2026-02-01", excerpt: "Tips for maximizing your unlock conversion rates." },
   { slug: "action-gating-guide", title: "Action Gating Guide", date: "2026-02-20", excerpt: "How to choose the right actions for your audience." },
 ];

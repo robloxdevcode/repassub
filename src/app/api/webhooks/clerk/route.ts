@@ -46,9 +46,12 @@ export async function POST(req: Request) {
     const existing = await db.user.findUnique({ where: { clerkId: id } });
 
     if (existing) {
+      const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+      const role = adminEmail && email?.trim().toLowerCase() === adminEmail ? "ADMIN" : "USER";
+
       await db.user.update({
         where: { clerkId: id },
-        data: { email, displayName, avatarUrl: image_url },
+        data: { email, displayName, avatarUrl: image_url, role },
       });
     } else {
       let suffix = 0;
@@ -58,8 +61,8 @@ export async function POST(req: Request) {
         checkUsername = `${finalUsername}${suffix}`;
       }
 
-      const adminEmail = process.env.ADMIN_EMAIL;
-      const role = email === adminEmail ? "ADMIN" : "USER";
+      const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+      const role = adminEmail && email?.trim().toLowerCase() === adminEmail ? "ADMIN" : "USER";
 
       await db.user.create({
         data: {

@@ -1,187 +1,148 @@
+"use client";
+
 import Link from "next/link";
-import { Check, X } from "lucide-react";
+import {
+  Check,
+  Link2,
+  MessageCircle,
+  MousePointerClick,
+  Music2,
+  Play,
+  Share2,
+  Sparkles,
+  Timer,
+  Wallet,
+} from "lucide-react";
+import { Reveal } from "@/components/marketing/reveal";
+import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { RetroButton } from "@/components/retro";
-import { HeroLiveUnlock } from "@/components/marketing/hero-live-unlock";
-import { PRO_PRICE_MONTHLY_LABEL } from "@/lib/stripe";
+import { useCurrency } from "@/components/providers/currency-provider";
 
-export function HeroSection() {
-  return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-6xl px-4 pt-6 pb-16 md:pt-8 md:pb-20">
-        <div className="inline-block font-display text-[8px] bg-retro-yellow border-2 border-retro-ink px-3 py-1 brutal-shadow-sm mb-6">
-          BUILT FOR CREATORS — NOT CORPORATE TEAMS
-        </div>
+export { HeroSection } from "@/components/marketing/hero-section";
 
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 lg:gap-10">
-          <div className="flex-1 min-w-0 max-w-xl">
-            <h1 className="hero-title font-body text-retro-text">
-              Make them{" "}
-              <span className="text-retro-accent underline decoration-4 decoration-retro-yellow underline-offset-4">
-                follow
-              </span>
-              .<br />
-              Then unlock.
-            </h1>
-
-            <p className="mt-4 text-base md:text-lg text-retro-text-dim font-body leading-relaxed">
-              The unlock link tool that&apos;s free to start, takes two minutes to set up, and actually turns views into subscribers — not just clicks.
-            </p>
-
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/sign-up">
-                <RetroButton size="lg" variant="primary">Start free — no card</RetroButton>
-              </Link>
-              <Link href="/how-it-works">
-                <RetroButton size="lg" variant="secondary">How it works</RetroButton>
-              </Link>
-            </div>
-
-            <p className="mt-5 font-body text-sm text-retro-text-dim">
-              Join 500+ creators who switched from bloated unlock tools.
-            </p>
-          </div>
-
-          <HeroLiveUnlock className="shrink-0 mx-auto sm:mx-0 sm:ml-auto lg:-mt-1" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const COMPARISON: {
-  label: string;
-  repassub: string;
-  others: string;
-  edge: "repassub" | "others" | "tie";
-}[] = [
+const STEPS = [
   {
-    label: "Free links",
-    repassub: "Unlimited, no card",
-    others: "Unlimited, free forever",
-    edge: "tie",
+    n: "01",
+    title: "Paste your link",
+    desc: "Drive, Dropbox, or any URL you already host.",
+    color: "bg-pop-red text-white",
+    icon: Link2,
   },
   {
-    label: "Pro price",
-    repassub: PRO_PRICE_MONTHLY_LABEL,
-    others: "€9.99/mo",
-    edge: "repassub",
+    n: "02",
+    title: "Pick the steps",
+    desc: "Subscribe, follow, join Discord — 2 free, 4 on Pro.",
+    color: "bg-pop-blue text-white",
+    icon: MousePointerClick,
   },
   {
-    label: "Support",
-    repassub: "24/7 — we've got you",
-    others: "No 24/7 support",
-    edge: "repassub",
+    n: "03",
+    title: "Share once",
+    desc: "Bio, video description, Discord — one link everywhere.",
+    color: "bg-pop-yellow text-retro-ink",
+    icon: Share2,
   },
 ];
 
-function ComparisonIcon({ edge, side }: { edge: "repassub" | "others" | "tie"; side: "repassub" | "others" }) {
-  if (edge === "tie") {
-    return (
-      <span className="shrink-0 flex h-5 w-5 items-center justify-center bg-retro-blue border-2 border-retro-ink text-white">
-        <Check size={12} strokeWidth={3} />
-      </span>
-    );
-  }
+const PLATFORMS = [
+  {
+    name: "YouTube",
+    hook: "Sub + like + bell",
+    desc: "Turn viewers into subscribers before they grab your preset.",
+    icon: Play,
+    card: "home-platform-red",
+    btn: "platform-youtube",
+  },
+  {
+    name: "Discord",
+    hook: "Join your server",
+    desc: "Gate downloads behind a join — grow your community fast.",
+    icon: MessageCircle,
+    card: "home-platform-blue",
+    btn: "platform-discord",
+  },
+  {
+    name: "Spotify",
+    hook: "Follow + save",
+    desc: "Pack drops for fans who actually follow your artist page.",
+    icon: Music2,
+    card: "home-platform-yellow",
+    btn: "platform-spotify",
+  },
+];
 
-  const wins = edge === side;
+const WINS = [
+  {
+    title: "No ad circus",
+    desc: "Clean unlock pages. Pro kills ads completely.",
+    icon: Sparkles,
+    bg: "bg-pop-red text-white",
+  },
+  {
+    title: "Cheaper Pro",
+    desc: "Yearly plan beats Rekonise on price — by a lot.",
+    icon: Wallet,
+    bg: "bg-pop-yellow text-retro-ink",
+  },
+  {
+    title: "~2 min setup",
+    desc: "Paste link, pick steps, share. Not a 20-click maze.",
+    icon: Timer,
+    bg: "bg-pop-blue text-white",
+  },
+  {
+    title: "Creator-first",
+    desc: "Built for subscribe-to-download — not generic short links.",
+    icon: Check,
+    bg: "bg-retro-surface brutal-border",
+  },
+];
 
-  return (
-    <span
-      className={
-        wins
-          ? "shrink-0 flex h-5 w-5 items-center justify-center bg-retro-success border-2 border-retro-ink text-retro-ink"
-          : "shrink-0 flex h-5 w-5 items-center justify-center bg-retro-surface-3 border-2 border-retro-ink/30 text-retro-text-muted"
-      }
-    >
-      {wins ? <Check size={12} strokeWidth={3} /> : <X size={12} strokeWidth={3} />}
-    </span>
-  );
-}
-
-export function WhyRepassubSection() {
-  return (
-    <section className="py-14 md:py-16 bg-retro-surface-2 border-y-[3px] border-retro-ink">
-      <div className="mx-auto max-w-4xl px-4">
-        <div className="mb-8 md:mb-10">
-          <div className="inline-block font-display text-[8px] bg-retro-yellow border-2 border-retro-ink px-3 py-1 brutal-shadow-sm mb-4">
-            VS OTHERS
-          </div>
-          <h2 className="section-title font-body text-retro-text">
-            Cheaper Pro. Same free links.
-          </h2>
-          <p className="mt-4 font-body text-base text-retro-text-dim leading-relaxed max-w-2xl">
-            Unlimited free on both. Repassub Pro is {PRO_PRICE_MONTHLY_LABEL} with 24/7 support — others charge €9.99/mo without it.
-          </p>
-        </div>
-
-        <div className="brutal-border brutal-shadow bg-retro-surface overflow-hidden">
-          <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,1.1fr)] border-b-[3px] border-retro-ink">
-            <div className="p-4 font-body text-sm font-bold text-retro-text-dim" />
-            <div className="p-4 bg-pop-red text-white border-x-[3px] border-retro-ink">
-              <p className="font-display text-[8px]">REPASSUB</p>
-            </div>
-            <div className="p-4 bg-retro-surface-2">
-              <p className="font-display text-[8px] text-retro-text-muted">OTHERS</p>
-            </div>
-          </div>
-
-          <div className="divide-y-[2px] divide-retro-ink">
-            {COMPARISON.map((row) => (
-              <div
-                key={row.label}
-                className="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,1.1fr)] md:divide-x-[2px] md:divide-retro-ink"
-              >
-                <div className="px-4 py-3 md:p-4 bg-retro-surface-3 md:bg-transparent font-body text-sm font-bold text-retro-text md:flex md:items-center">
-                  {row.label}
-                </div>
-
-                <div className="flex gap-2.5 items-center px-4 py-3 md:p-4 bg-retro-surface-3/80 md:border-x-[2px] md:border-retro-ink">
-                  <ComparisonIcon edge={row.edge} side="repassub" />
-                  <p className="font-body text-sm font-semibold text-retro-text leading-snug">{row.repassub}</p>
-                </div>
-
-                <div className="flex gap-2.5 items-center px-4 py-3 md:p-4 bg-retro-surface-2 border-t-[2px] md:border-t-0 border-retro-ink">
-                  <ComparisonIcon edge={row.edge} side="others" />
-                  <p className="font-body text-sm text-retro-text-dim leading-snug">{row.others}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <p className="mt-6">
-          <Link href="/pricing" className="font-body text-sm font-semibold text-retro-blue hover:underline">
-            Full pricing →
-          </Link>
-        </p>
-      </div>
-    </section>
-  );
-}
+const TESTIMONIALS = [
+  {
+    quote: "Switched from Rekonise — way less ad spam and my subs actually went up.",
+    who: "Preset creator",
+  },
+  {
+    quote: "Took me ninety seconds to publish my first pack link. Not joking.",
+    who: "Roblox dev",
+  },
+  {
+    quote: "The live unlock preview sold me. Fans know exactly what to tap.",
+    who: "YouTube editor",
+  },
+];
 
 export function StepsSection() {
-  const steps = [
-    { n: "01", title: "Upload or paste", desc: "Your file, link, code, or text.", color: "bg-pop-red" },
-    { n: "02", title: "Pick actions", desc: "Subscribe, follow, join — your rules.", color: "bg-pop-blue" },
-    { n: "03", title: "Share & grow", desc: "One link. Real audience growth.", color: "bg-pop-yellow" },
-  ];
-
   return (
-    <section className="section-y bg-retro-surface-2 border-y-[3px] border-retro-ink">
-      <div className="mx-auto max-w-6xl px-4">
-        <h2 className="section-title font-body mb-12 md:mb-16">
-          Three steps. <span className="text-retro-blue">That&apos;s it.</span>
-        </h2>
-        <div className="grid md:grid-cols-3 gap-5">
-          {steps.map((s) => (
-            <div
-              key={s.n}
-              className={`${s.color} brutal-border brutal-shadow p-6 md:p-8 hover-lift ${s.color === "bg-pop-yellow" ? "text-retro-ink" : ""}`}
-            >
-              <p className="font-display text-[10px] opacity-80 mb-4">{s.n}</p>
-              <h3 className="font-body text-xl font-bold mb-2">{s.title}</h3>
-              <p className="font-body text-sm opacity-90">{s.desc}</p>
-            </div>
+    <section className="section-y bg-retro-bg border-b-[3px] border-retro-ink relative overflow-hidden">
+      <span className="hp-deco hp-deco-square hp-deco-steps" aria-hidden />
+
+      <div className="mx-auto max-w-6xl px-4 relative">
+        <Reveal>
+          <div className="mb-10 md:mb-12 max-w-xl">
+            <p className="font-display text-[8px] text-retro-accent tracking-[0.2em] mb-3">HOW IT WORKS</p>
+            <h2 className="section-title font-body">
+              Three steps.
+              <span className="text-retro-accent"> Two minutes.</span>
+            </h2>
+          </div>
+        </Reveal>
+
+        <div className="grid md:grid-cols-3 gap-5 md:gap-6">
+          {STEPS.map((step, i) => (
+            <Reveal key={step.n} delay={i * 80}>
+              <article
+                className={`step-card ${step.color} brutal-border brutal-shadow p-6 md:p-7 h-full hover-lift ${i === 1 ? "md:-translate-y-2" : ""}`}
+              >
+                <div className="flex items-center justify-between mb-5">
+                  <span className="font-display text-[10px] opacity-80">{step.n}</span>
+                  <step.icon size={22} strokeWidth={2.5} />
+                </div>
+                <h3 className="font-body text-xl font-bold mb-2">{step.title}</h3>
+                <p className="font-body text-sm opacity-90 leading-relaxed">{step.desc}</p>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -189,28 +150,158 @@ export function StepsSection() {
   );
 }
 
-export function SocialProof() {
-  const quotes = [
-    { q: "Switched from another unlock tool — Repassub just works.", who: "Alex", stat: "360K unlocks" },
-    { q: "Most of our Discord came from these links.", who: "Ronix", stat: "530K members" },
-    { q: "Setup took five minutes. No BS.", who: "Velo", stat: "1M subs" },
+export function PlatformsSection() {
+  return (
+    <section className="section-y home-platforms border-b-[3px] border-retro-ink">
+      <div className="mx-auto max-w-6xl px-4">
+        <Reveal>
+          <div className="mb-10 md:mb-12 max-w-2xl">
+            <p className="font-display text-[8px] text-retro-accent tracking-[0.2em] mb-3">PLATFORMS</p>
+            <h2 className="section-title font-body">Steps that look like the real app</h2>
+            <p className="mt-4 font-body text-retro-text-dim leading-relaxed">
+              Platform-colored buttons your fans already recognize — not generic gray boxes.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid md:grid-cols-3 gap-5">
+          {PLATFORMS.map((p, i) => (
+            <Reveal key={p.name} delay={i * 70}>
+              <article className={`home-platform-card ${p.card} hover-lift`}>
+                <div className="home-platform-icon mb-5">
+                  <p.icon size={20} />
+                </div>
+                <p className="font-display text-[8px] text-retro-accent mb-2">{p.hook.toUpperCase()}</p>
+                <h3 className="font-body text-xl font-bold mb-2">{p.name}</h3>
+                <p className="font-body text-sm text-retro-text-dim leading-relaxed mb-6">{p.desc}</p>
+                <div className={`platform-btn ${p.btn} !py-2 !px-3 !text-xs pointer-events-none`}>
+                  <p.icon size={14} />
+                  <span>Example step</span>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function WinsSection() {
+  const { labels, discountPercent } = useCurrency();
+
+  return (
+    <section className="section-y bg-retro-surface-2 border-b-[3px] border-retro-ink">
+      <div className="mx-auto max-w-6xl px-4">
+        <Reveal>
+          <div className="mb-10 md:mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div className="max-w-xl">
+              <p className="font-display text-[8px] text-retro-accent tracking-[0.2em] mb-3">WHY LINKLOCK</p>
+              <h2 className="section-title font-body">Better than the old tools</h2>
+            </div>
+            <p className="font-body text-sm font-bold text-retro-blue md:text-right">
+              Pro from {labels.yearly} · {discountPercent}% off
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
+          {WINS.map((win, i) => (
+            <Reveal key={win.title} delay={i * 60}>
+              <article
+                className={`${win.bg} brutal-border brutal-shadow p-6 md:p-7 hover-lift flex gap-4 ${i % 2 === 1 ? "sm:translate-x-2" : ""}`}
+              >
+                <div className="home-step-icon shrink-0">
+                  <win.icon size={20} />
+                </div>
+                <div>
+                  <h3 className="font-body text-lg font-bold mb-1">{win.title}</h3>
+                  <p className="font-body text-sm opacity-90 leading-relaxed">{win.desc}</p>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function TestimonialsSection() {
+  return (
+    <section className="section-y bg-pop-blue text-white border-b-[3px] border-retro-ink relative overflow-hidden">
+      <div className="marketing-grain pointer-events-none opacity-30" aria-hidden />
+
+      <div className="mx-auto max-w-6xl px-4 relative">
+        <Reveal>
+          <p className="font-display text-[8px] text-retro-yellow tracking-[0.2em] mb-3">CREATORS</p>
+          <h2 className="section-title font-body text-white mb-10 max-w-lg">People actually switch to this</h2>
+        </Reveal>
+
+        <div className="grid md:grid-cols-3 gap-5">
+          {TESTIMONIALS.map((t, i) => (
+            <Reveal key={t.who} delay={i * 80}>
+              <blockquote
+                className={`bg-retro-surface text-retro-ink brutal-border brutal-shadow p-6 md:p-7 hover-lift ${i === 1 ? "md:-rotate-1" : i === 2 ? "md:rotate-1" : ""}`}
+              >
+                <p className="font-body text-base leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
+                <footer className="mt-5 font-display text-[7px] text-retro-accent tracking-widest">{t.who.toUpperCase()}</footer>
+              </blockquote>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function FaqSection() {
+  const { labels, discountPercent } = useCurrency();
+
+  const faqs = [
+    {
+      q: "Is Linklock free?",
+      a: "Yes. 5 unlock links per week, 2 steps each, basic stats. No credit card to sign up.",
+    },
+    {
+      q: "What can I give away?",
+      a: "Any link — Drive, Dropbox, your site — or text after unlock. We don't host files; you keep your existing links.",
+    },
+    {
+      q: "How many steps can I add?",
+      a: "Free: 2 per link. Pro: 4. YouTube, Discord, Spotify, and more.",
+    },
+    {
+      q: "Do fans need an account?",
+      a: "No. They open your link, finish your steps, and get the content.",
+    },
+    {
+      q: "What does Pro include?",
+      a: `No ads, unlimited links, custom branding, and stats. ${labels.yearly} (${discountPercent}% off) or ${labels.monthly}.`,
+    },
   ];
 
   return (
-    <section className="bg-pop-blue border-y-[3px] border-retro-ink section-y text-white">
-      <div className="mx-auto max-w-6xl px-4">
-        <h2 className="section-title font-body mb-12 text-white">
-          Creators who made the switch.
-        </h2>
-        <div className="grid md:grid-cols-3 gap-5">
-          {quotes.map((item) => (
-            <div key={item.who} className="bg-retro-surface text-retro-text brutal-border brutal-shadow p-6 hover-lift">
-              <p className="font-body text-base leading-relaxed mb-6">&ldquo;{item.q}&rdquo;</p>
-              <div className="flex justify-between items-end border-t-2 border-retro-ink pt-4">
-                <span className="font-body font-bold">{item.who}</span>
-                <span className="font-display text-[8px] text-retro-accent">{item.stat}</span>
-              </div>
-            </div>
+    <section id="faq" className="section-y bg-retro-bg border-b-[3px] border-retro-ink scroll-mt-20">
+      <div className="mx-auto max-w-3xl px-4">
+        <Reveal>
+          <p className="font-display text-[8px] text-retro-accent tracking-[0.2em] mb-3">FAQ</p>
+          <h2 className="section-title font-body mb-10">Quick answers</h2>
+        </Reveal>
+
+        <div className="flex flex-col gap-3">
+          {faqs.map((item, i) => (
+            <Reveal key={item.q} delay={i * 40}>
+              <details className="brutal-border brutal-shadow bg-retro-surface p-4 md:p-5 group hover-lift">
+                <summary className="font-body font-bold text-sm md:text-base cursor-pointer list-none flex items-center justify-between gap-4">
+                  {item.q}
+                  <span className="font-display text-retro-accent group-open:rotate-45 transition-transform">+</span>
+                </summary>
+                <p className="font-body text-sm text-retro-text-dim leading-relaxed mt-3 pt-3 border-t-2 border-retro-ink/10">
+                  {item.a}
+                </p>
+              </details>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -220,17 +311,31 @@ export function SocialProof() {
 
 export function CtaSection() {
   return (
-    <section className="section-y bg-retro-yellow border-b-[3px] border-retro-ink">
-      <div className="mx-auto max-w-6xl px-4 text-center">
-        <h2 className="section-title font-body text-retro-ink mb-4">
-          Stop overpaying for unlock links.
-        </h2>
-        <p className="font-body text-lg text-retro-ink/70 max-w-md mx-auto mb-10">
-          Repassub is free to start. No card. No enterprise sales call. Just create and share.
-        </p>
-        <Link href="/sign-up">
-          <RetroButton size="lg" variant="primary">Get started — it&apos;s free</RetroButton>
-        </Link>
+    <section className="relative section-y bg-pop-yellow border-b-[3px] border-retro-ink overflow-hidden">
+      <span className="hp-deco hp-deco-star hp-deco-cta" aria-hidden />
+
+      <div className="mx-auto max-w-3xl px-4 text-center relative">
+        <Reveal>
+          <h2 className="section-title font-body text-retro-ink mb-4">
+            Your audience is waiting.
+            <span className="block text-retro-accent text-2xl md:text-3xl mt-2">Ship the link.</span>
+          </h2>
+          <p className="font-body text-retro-ink/75 mb-8 max-w-md mx-auto text-base">
+            First unlock link in about two minutes. Free every week.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <MarketingAuthLink href="/sign-up">
+              <RetroButton size="lg" variant="primary" className="min-w-[200px]">
+                Create your link
+              </RetroButton>
+            </MarketingAuthLink>
+            <Link href="/pricing">
+              <RetroButton size="lg" variant="secondary" className="min-w-[200px]">
+                View pricing
+              </RetroButton>
+            </Link>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
