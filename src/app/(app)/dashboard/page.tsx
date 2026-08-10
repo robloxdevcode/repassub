@@ -4,13 +4,15 @@ import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { AppCard } from "@/components/dashboard/app-page-header";
 import { DashboardRefresh } from "@/components/dashboard/dashboard-refresh";
 import { RetroButton } from "@/components/retro";
-import { formatNumber, getUnlockUrl } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
+import { getRequestSiteUrl } from "@/lib/site-url";
 import { formatUnlockQuotaReset } from "@/lib/stripe";
 import { ProPriceText } from "@/components/marketing/pro-price-text";
 import { Eye, Lock, Plus, Link2, Pencil, CreditCard, Sparkles } from "lucide-react";
 
 export default async function DashboardPage() {
   const stats = await getDashboardStats();
+  const siteUrl = await getRequestSiteUrl();
   const hasUnlocks = stats.campaignCount > 0 || stats.recentCampaigns.length > 0;
   const firstName = stats.user.displayName?.split(" ")[0];
   const quotaPercent =
@@ -154,7 +156,7 @@ export default async function DashboardPage() {
               {stats.recentCampaigns.map((campaign) => {
                 const url =
                   campaign.status === "PUBLISHED"
-                    ? getUnlockUrl(stats.user.username, campaign.slug)
+                    ? `${siteUrl}/u/${stats.user.username}/${campaign.slug}`
                     : null;
 
                 return (

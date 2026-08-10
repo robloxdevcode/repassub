@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { createCampaignSchema, contentSchema, actionSchema, updateProfileSchema } from "@/lib/validations";
 import { getUserPlan, isProPlan, getActionLimit, PLAN_LIMITS, getUnlockQuotaWindowStart, getUnlockQuotaResetAt } from "@/lib/stripe";
 import { slugify } from "@/lib/utils";
+import { getUnlockUrlForRequest } from "@/lib/site-url";
 import { campaignViewCountSelect } from "@/lib/analytics";
 import type { ActionType, ContentType, VerificationMode, Prisma } from "@prisma/client";
 
@@ -199,7 +200,9 @@ export async function publishCampaign(campaignId: string) {
 
   revalidatePath("/unlocks");
   revalidatePath(`/u/${user.username}/${campaign.slug}`);
-  return updated;
+
+  const unlockUrl = await getUnlockUrlForRequest(user.username, campaign.slug);
+  return { ...updated, unlockUrl };
 }
 
 export async function deleteCampaign(campaignId: string) {

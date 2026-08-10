@@ -14,7 +14,6 @@ import {
   publishCampaign,
   getCampaign,
 } from "@/lib/actions/campaigns";
-import { getUnlockUrl } from "@/lib/utils";
 import { formatUnlockQuotaReset } from "@/lib/stripe";
 import { UNLOCK_PLATFORMS, getPlatform, guessPlatform } from "@/lib/unlock-platforms";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
@@ -59,6 +58,7 @@ function CreateUnlockWizard() {
   const [username, setUsername] = useState("");
   const [slug, setSlug] = useState("");
   const [published, setPublished] = useState(false);
+  const [publishedUrl, setPublishedUrl] = useState("");
   const [actionLimit, setActionLimit] = useState(2);
   const [plan, setPlan] = useState("FREE");
   const [linkQuota, setLinkQuota] = useState<{ used: number; limit: number; remaining: number; resetsAt: Date | null } | null>(null);
@@ -248,7 +248,8 @@ function CreateUnlockWizard() {
           : {}),
       });
       setSlug(updated.slug);
-      await publishCampaign(id);
+      const result = await publishCampaign(id);
+      setPublishedUrl(result.unlockUrl);
       setPublished(true);
       toast("Your link is live!", "success");
     } catch (e) {
@@ -275,7 +276,7 @@ function CreateUnlockWizard() {
   }
 
   if (published) {
-    const url = getUnlockUrl(username || "player", slug);
+    const url = publishedUrl;
     return (
       <div className="mx-auto max-w-lg text-center">
         <AppCard className="p-8" accent="green">

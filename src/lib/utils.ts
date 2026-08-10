@@ -25,8 +25,3 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, "")
     .slice(0, 60);
 }
-
-export function getUnlockUrl(username: string, slug: string): string {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  return `${base}/u/${username}/${slug}`;
-}

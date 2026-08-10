@@ -5,14 +5,18 @@ import { DeleteUnlockButton } from "@/components/dashboard/delete-unlock-button"
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
-import { getUnlockUrl } from "@/lib/utils";
+import { getRequestSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth";
 import { formatUnlockQuotaReset } from "@/lib/stripe";
 import { Pencil } from "lucide-react";
 
 export default async function UnlocksPage() {
   const user = await requireUser();
-  const [campaigns, quota] = await Promise.all([getUserCampaigns(), getUnlockQuota()]);
+  const [campaigns, quota, siteUrl] = await Promise.all([
+    getUserCampaigns(),
+    getUnlockQuota(),
+    getRequestSiteUrl(),
+  ]);
   const atLimit = quota.limit !== Infinity && quota.remaining <= 0;
 
   return (
@@ -47,7 +51,7 @@ export default async function UnlocksPage() {
         <div className="flex flex-col gap-3">
           {campaigns.map((campaign) => {
             const url =
-              campaign.status === "PUBLISHED" ? getUnlockUrl(user.username, campaign.slug) : null;
+              campaign.status === "PUBLISHED" ? `${siteUrl}/u/${user.username}/${campaign.slug}` : null;
 
             return (
               <AppCard key={campaign.id} className="p-4">

@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/analytics";
 import type { AnalyticsEventType } from "@prisma/client";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
-import { getUnlockUrl } from "@/lib/utils";
+import { getUnlockUrlForRequest } from "@/lib/site-url";
 import { sendUnlockNotificationEmail, isEmailConfigured } from "@/lib/email";
 
 export async function getOrCreateVisitorId() {
@@ -137,7 +137,7 @@ export async function unlockContent(campaignId: string) {
     sendUnlockNotificationEmail({
       to: campaign.user.email,
       campaignTitle: campaign.title,
-      unlockUrl: getUnlockUrl(campaign.user.username, campaign.slug),
+      unlockUrl: await getUnlockUrlForRequest(campaign.user.username, campaign.slug),
     }).catch((err) => console.error("[email] unlock notification failed", err));
   }
 
