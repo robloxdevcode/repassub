@@ -92,7 +92,7 @@ export function buildPageMetadata({
       siteName: SITE_NAME,
       title: `${title} | ${SITE_NAME}`,
       description,
-      images: [{ url: "/logo.png", width: 194, height: 133, alt: `${SITE_NAME} logo` }],
+      images: [{ url: "/logo.png", width: 1024, height: 682, alt: `${SITE_NAME} logo` }],
     },
     twitter: {
       card: "summary",
@@ -128,7 +128,7 @@ export function buildRootMetadata(): Metadata {
       siteName: SITE_NAME,
       title: "Linklock — Free Subscribe-to-Download Links for Creators",
       description: DEFAULT_DESCRIPTION,
-      images: [{ url: "/logo.png", width: 194, height: 133, alt: `${SITE_NAME} logo` }],
+      images: [{ url: "/logo.png", width: 1024, height: 682, alt: `${SITE_NAME} logo` }],
     },
     twitter: {
       card: "summary_large_image",
@@ -137,11 +137,8 @@ export function buildRootMetadata(): Metadata {
       images: ["/logo.png"],
     },
     icons: {
-      icon: [
-        { url: "/favicon.ico", sizes: "any" },
-        { url: "/logo.png", type: "image/png", sizes: "194x133" },
-      ],
-      apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "194x133" }],
+      icon: [{ url: "/favicon.ico", sizes: "any" }],
+      apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
       shortcut: ["/favicon.ico"],
     },
   };

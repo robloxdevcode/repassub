@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-export const LOGO_WIDTH = 194;
-export const LOGO_HEIGHT = 133;
+export const LOGO_WIDTH = 1024;
+export const LOGO_HEIGHT = 682;
 export const LOGO_ASPECT = LOGO_WIDTH / LOGO_HEIGHT;
 
 type LinklockLogoProps = {
