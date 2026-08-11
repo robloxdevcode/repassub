@@ -154,11 +154,18 @@ export function PublicUnlockClient({
         </div>
       </header>
 
-      <div className="relative flex flex-1 items-center justify-center p-4">
+      <div className="relative flex flex-1 items-stretch justify-center gap-4 px-3 py-4 sm:px-4 lg:gap-6">
       <UnlockPageBackdrop />
       {showAnimation && <UnlockAnimation onComplete={onAnimationComplete} />}
 
-      <div className={cn("relative z-10 w-full max-w-md unlock-preview-card animate-pulse-glow", unlockThemeClass(campaign.theme))}>
+      {showAds && (
+        <aside className="relative z-10 hidden lg:flex w-[160px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
+          <UnlockPageAd side="left" />
+        </aside>
+      )}
+
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center min-w-0 max-w-md mx-auto">
+      <div className={cn("w-full unlock-preview-card animate-pulse-glow", unlockThemeClass(campaign.theme))}>
         {!unlocked ? (
           <>
             {campaign.logoUrl ? (
@@ -294,13 +301,24 @@ export function PublicUnlockClient({
           </div>
         )}
 
-        {showAds && !isPro && <UnlockPageAd />}
-
         <p className="mt-6 text-center text-xs text-retro-text-muted">
           {campaign.user.displayName || campaign.user.username}
           {!isPro && " · Linklock"}
         </p>
       </div>
+
+      {showAds && (
+        <div className="mt-4 w-full lg:hidden">
+          <UnlockPageAd side="bottom" />
+        </div>
+      )}
+      </div>
+
+      {showAds && (
+        <aside className="relative z-10 hidden lg:flex w-[160px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
+          <UnlockPageAd side="right" />
+        </aside>
+      )}
       </div>
     </div>
   );

@@ -1,9 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { RetroButton } from "@/components/retro";
-import { ADSENSE_CLIENT, ADSENSE_UNLOCK_SLOT, isUnlockAdConfigured } from "@/lib/adsense";
+import {
+  ADSENSE_CLIENT,
+  getUnlockAdSlot,
+  isUnlockAdConfigured,
+  type UnlockAdSide,
+} from "@/lib/adsense";
+import { cn } from "@/lib/utils";
 
 declare global {
   interface Window {
@@ -11,55 +15,44 @@ declare global {
   }
 }
 
-function AdSenseUnit() {
+function AdSenseUnit({ side }: { side: UnlockAdSide }) {
   const pushed = useRef(false);
+  const slot = getUnlockAdSlot(side);
+  const isSide = side === "left" || side === "right";
 
   useEffect(() => {
-    if (!isUnlockAdConfigured() || pushed.current) return;
+    if (!slot || pushed.current) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       pushed.current = true;
     } catch {
       // AdSense script may still be loading
     }
-  }, []);
+  }, [slot]);
 
   return (
-    <div className="mt-5 brutal-border bg-retro-surface-2 p-3 text-center overflow-hidden min-h-[100px]">
-      <p className="font-display text-[7px] text-retro-text-muted mb-2">AD</p>
+    <div
+      className={cn(
+        "overflow-hidden",
+        isSide ? "w-[160px] min-h-[600px]" : "w-full min-h-[100px]"
+      )}
+    >
       <ins
         className="adsbygoogle block"
-        style={{ display: "block" }}
+        style={isSide ? { display: "inline-block", width: 160, height: 600 } : { display: "block" }}
         data-ad-client={ADSENSE_CLIENT}
-        data-ad-slot={ADSENSE_UNLOCK_SLOT}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
+        data-ad-slot={slot}
+        data-ad-format={isSide ? undefined : "auto"}
+        data-full-width-responsive={isSide ? undefined : "true"}
       />
     </div>
   );
 }
 
-function AdPlaceholder() {
-  return (
-    <div className="mt-5 brutal-border bg-retro-surface-2 p-3 text-center" data-ad-slot="unlock-page">
-      <p className="font-display text-[7px] text-retro-text-muted mb-2">AD</p>
-      <p className="font-body text-xs font-bold">Sponsored</p>
-      <p className="text-[10px] text-retro-text-dim mt-1 mb-3 leading-relaxed">
-        Free unlock pages include ads. Creators can upgrade to Pro to remove them.
-      </p>
-      <Link href="/pricing">
-        <RetroButton variant="secondary" size="sm">
-          Go ad-free with Pro
-        </RetroButton>
-      </Link>
-    </div>
-  );
-}
-
-export function UnlockPageAd() {
-  if (isUnlockAdConfigured()) {
-    return <AdSenseUnit />;
+export function UnlockPageAd({ side = "bottom" }: { side?: UnlockAdSide }) {
+  if (!isUnlockAdConfigured(side)) {
+    return null;
   }
 
-  return <AdPlaceholder />;
+  return <AdSenseUnit side={side} />;
 }
