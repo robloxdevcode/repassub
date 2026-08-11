@@ -159,7 +159,7 @@ export function PublicUnlockClient({
       {showAnimation && <UnlockAnimation onComplete={onAnimationComplete} />}
 
       {showAds && (
-        <aside className="relative z-10 hidden lg:flex w-[160px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
+        <aside className="relative z-10 hidden md:flex w-[300px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
           <UnlockPageAd side="left" />
         </aside>
       )}
@@ -308,14 +308,14 @@ export function PublicUnlockClient({
       </div>
 
       {showAds && (
-        <div className="mt-4 w-full lg:hidden">
+        <div className="mt-4 w-full md:hidden">
           <UnlockPageAd side="bottom" />
         </div>
       )}
       </div>
 
       {showAds && (
-        <aside className="relative z-10 hidden lg:flex w-[160px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
+        <aside className="relative z-10 hidden md:flex w-[300px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
           <UnlockPageAd side="right" />
         </aside>
       )}

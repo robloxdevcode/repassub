@@ -15,6 +15,10 @@ declare global {
   }
 }
 
+function pushAdUnit() {
+  (window.adsbygoogle = window.adsbygoogle || []).push({});
+}
+
 function AdSenseUnit({ side }: { side: UnlockAdSide }) {
   const pushed = useRef(false);
   const slot = getUnlockAdSlot(side);
@@ -22,28 +26,40 @@ function AdSenseUnit({ side }: { side: UnlockAdSide }) {
 
   useEffect(() => {
     if (!slot || pushed.current) return;
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-      pushed.current = true;
-    } catch {
-      // AdSense script may still be loading
-    }
+
+    const tryPush = () => {
+      try {
+        pushAdUnit();
+        pushed.current = true;
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    if (tryPush()) return;
+
+    const interval = window.setInterval(() => {
+      if (tryPush()) window.clearInterval(interval);
+    }, 250);
+
+    return () => window.clearInterval(interval);
   }, [slot]);
 
   return (
     <div
       className={cn(
         "overflow-hidden",
-        isSide ? "w-[160px] min-h-[600px]" : "w-full min-h-[100px]"
+        isSide ? "w-[300px] min-h-[250px]" : "w-full min-h-[100px]"
       )}
     >
       <ins
         className="adsbygoogle block"
-        style={isSide ? { display: "inline-block", width: 160, height: 600 } : { display: "block" }}
+        style={{ display: "block" }}
         data-ad-client={ADSENSE_CLIENT}
         data-ad-slot={slot}
-        data-ad-format={isSide ? undefined : "auto"}
-        data-full-width-responsive={isSide ? undefined : "true"}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
       />
     </div>
   );
