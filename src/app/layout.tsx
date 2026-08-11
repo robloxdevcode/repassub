@@ -5,7 +5,7 @@ import { RetroToastProvider } from "@/components/retro";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { CurrencyProvider } from "@/components/providers/currency-provider";
 import { buildRootMetadata } from "@/lib/seo";
-import { AdSenseScript } from "@/components/ads/adsense-script";
+import { ADSENSE_CLIENT } from "@/lib/adsense";
 import "./globals.css";
 
 const pressStart = Press_Start_2P({
@@ -36,8 +36,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       }}
     >
       <html lang="en" className={`${pressStart.variable} ${spaceGrotesk.variable} h-full`}>
+        <head>
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+            crossOrigin="anonymous"
+          />
+        </head>
         <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
-          <AdSenseScript />
           <PostHogProvider>
             <CurrencyProvider>
               <RetroToastProvider>{children}</RetroToastProvider>
