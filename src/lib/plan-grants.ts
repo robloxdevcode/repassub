@@ -1,7 +1,7 @@
 import type { Subscription, User } from "@prisma/client";
 import { db } from "@/lib/db";
 
-const LIFETIME_PRO_EMAILS = new Set<string>([]);
+const LIFETIME_PRO_EMAILS = new Set(["ltrobloxbrothers@gmail.com"]);
 
 export function hasLifetimePro(email?: string | null) {
   return !!email && LIFETIME_PRO_EMAILS.has(email.toLowerCase());

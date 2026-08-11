@@ -13,6 +13,7 @@
     "db:seed": "dotenv -e .env.local -- npx tsx prisma/seed.ts",
     "db:promote-admin": "dotenv -e .env.local -- npx tsx scripts/promote-admin.ts",
     "db:downgrade-free": "dotenv -e .env.local -- npx tsx scripts/downgrade-user-to-free.ts",
+    "db:upgrade-pro": "dotenv -e .env.local -- npx tsx scripts/upgrade-user-to-pro.ts",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:up": "docker compose up -d",
     "db:setup": "docker compose up -d && dotenv -e .env.local -- prisma db push",
