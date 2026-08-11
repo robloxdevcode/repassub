@@ -11,8 +11,8 @@ export const DEFAULT_KEYWORDS = [
   "social unlock",
   "content gating",
   "creator unlock page",
-  "youtube subscribe download",
-  "discord join download",
+  "70+ platforms supported",
+  "multi platform unlock",
   "free unlock links",
   "link in bio tool",
   "preset pack download",
@@ -32,7 +32,7 @@ const OG_IMAGE = {
 };
 
 const DEFAULT_DESCRIPTION =
-  "Make them follow, then unlock. Free subscribe-to-download links for creators — gate files behind YouTube, Discord, Spotify, and more.";
+  "Make them follow, then unlock. Free subscribe-to-download links for creators — gate files behind 70+ platforms.";
 
 export const HOME_FAQS = [
   {
@@ -41,11 +41,11 @@ export const HOME_FAQS = [
   },
   {
     q: "What can I give away?",
-    a: "Any link — Drive, Dropbox, your site — or text after unlock. We don't host files; you keep your existing links.",
+    a: "Any link you host — or text after unlock. We don't host files; you keep your existing links.",
   },
   {
     q: "How many steps can I add?",
-    a: "Free: 2 per link. Pro: 4. YouTube, Discord, Spotify, and more.",
+    a: "Free: 2 per link. Pro: 4. Over 70+ platforms supported.",
   },
   {
     q: "Do fans need an account?",
@@ -64,7 +64,7 @@ export const SUPPORT_FAQS = [
   },
   {
     q: "What can I give away?",
-    a: "Any download link (Drive, Dropbox, etc.) or text/code shown after unlock.",
+    a: "Any download link you host or text/code shown after unlock.",
   },
   {
     q: "Do fans need an account?",

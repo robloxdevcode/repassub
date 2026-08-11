@@ -24,7 +24,7 @@ import { Link as LinkIcon, FileText, Check, Plus, Trash2 } from "lucide-react";
 import type { ContentType } from "@prisma/client";
 
 const CONTENT_TYPES = [
-  { type: "URL" as ContentType, label: "Link", hint: "Drive, Dropbox, any download URL", icon: LinkIcon },
+  { type: "URL" as ContentType, label: "Link", hint: "Any download URL you host", icon: LinkIcon },
   { type: "TEXT" as ContentType, label: "Text / code", hint: "Show a key or message after unlock", icon: FileText },
 ];
 
@@ -373,7 +373,7 @@ function CreateUnlockWizard() {
           {contentType === "URL" && (
             <RetroInput
               label="Download link"
-              placeholder="https://drive.google.com/file/..."
+              placeholder="https://your-file-link.com/..."
               value={externalUrl}
               onChange={(e) => setExternalUrl(e.target.value)}
             />
@@ -433,14 +433,14 @@ function CreateUnlockWizard() {
                   </div>
                   <RetroInput
                     label="Paste link"
-                    placeholder="https://youtube.com/@you or discord.gg/..."
+                    placeholder="https://platform.com/your-page"
                     value={action.url}
                     onChange={(e) => updateActionUrl(action.id, e.target.value)}
                   />
                   <div className="mt-3">
                     <RetroInput
                       label="Button name (what fans tap)"
-                      placeholder="Subscribe on YouTube"
+                      placeholder="Follow / Subscribe / Join"
                       value={action.label}
                       onChange={(e) => updateActionLabel(action.id, e.target.value)}
                     />

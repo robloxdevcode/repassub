@@ -5,14 +5,14 @@ import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Examples",
-  description: "See how creators use Linklock unlock links for preset packs, Discord joins, and subscribe-to-download flows.",
+  description: "See how creators use Linklock unlock links for preset packs, community joins, and subscribe-to-download flows.",
   path: "/examples",
 });
 
 const examples = [
-  { title: "FREE PRESET PACK", desc: "Music producer shares sample pack after YouTube subscribe.", actions: ["Subscribe"] },
+  { title: "FREE PRESET PACK", desc: "Music producer shares sample pack after a follow step.", actions: ["Subscribe"] },
   { title: "EXCLUSIVE GUIDE", desc: "Creator shares PDF guide after email signup.", actions: ["Email"] },
-  { title: "DISCORD ACCESS", desc: "Community owner gates invite link behind join action.", actions: ["Join Community"] },
+  { title: "COMMUNITY ACCESS", desc: "Community owner gates invite link behind a join action.", actions: ["Join Community"] },
   { title: "AFFILIATE LINK", desc: "Marketer shares deal after page visit confirmation.", actions: ["Visit Page"] },
 ];
 

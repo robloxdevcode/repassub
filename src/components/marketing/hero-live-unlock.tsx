@@ -5,7 +5,7 @@ import { Bell, Check, Lock, Play, ThumbsUp, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ACTIONS = [
-  { label: "Subscribe on YouTube", Icon: Play },
+  { label: "Follow creator", Icon: Play },
   { label: "Like the video", Icon: ThumbsUp },
   { label: "Turn on notifications", Icon: Bell },
 ];

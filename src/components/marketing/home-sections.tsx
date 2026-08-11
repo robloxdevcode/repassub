@@ -10,19 +10,19 @@ const STEPS = [
   {
     n: "01",
     title: "Paste your link",
-    desc: "Drive, Dropbox, or any URL you already host.",
+    desc: "Any file link or URL you already host.",
     tone: "landing-step-red",
   },
   {
     n: "02",
     title: "Pick the steps",
-    desc: "Subscribe, follow, join Discord — 2 free, 4 on Pro.",
+    desc: "Subscribe, follow, join — 70+ platforms, 2 free steps, 4 on Pro.",
     tone: "landing-step-blue",
   },
   {
     n: "03",
     title: "Share once",
-    desc: "Bio, video description, Discord — one link everywhere.",
+    desc: "Bio, posts, communities — one link everywhere.",
     tone: "landing-step-yellow",
   },
 ];

@@ -63,7 +63,7 @@ export default async function DashboardPage() {
           <h2 className="font-body text-xl font-bold mb-3">No links yet</h2>
           <ol className="text-sm text-retro-text-dim text-left max-w-xs mx-auto space-y-2 mb-6">
             <li><strong className="text-retro-ink">1.</strong> Paste what fans download</li>
-            <li><strong className="text-retro-ink">2.</strong> Add steps (paste YouTube, Discord links)</li>
+            <li><strong className="text-retro-ink">2.</strong> Add steps (paste any platform link)</li>
             <li><strong className="text-retro-ink">3.</strong> Share one link</li>
           </ol>
           <Link href="/create">

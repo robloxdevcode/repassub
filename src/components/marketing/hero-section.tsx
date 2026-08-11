@@ -4,12 +4,10 @@ import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { HeroLiveUnlock } from "@/components/marketing/hero-live-unlock";
 import { RetroButton } from "@/components/retro";
 
-const PLATFORMS = [
-  { name: "YouTube", className: "platform-youtube" },
-  { name: "Discord", className: "platform-discord" },
-  { name: "Spotify", className: "platform-spotify" },
-  { name: "Drive", className: "landing-tag-neutral" },
-];
+const PLATFORM_BADGE = {
+  name: "70+ platforms supported",
+  className: "landing-tag-neutral",
+};
 
 export function HeroSection() {
   return (
@@ -30,14 +28,11 @@ export function HeroSection() {
             </p>
 
             <div className="mt-5 flex flex-wrap justify-center md:justify-start gap-2">
-              {PLATFORMS.map((p) => (
-                <span
-                  key={p.name}
-                  className={`font-display text-[6px] sm:text-[7px] px-2.5 py-1 border-2 border-retro-ink brutal-shadow-sm ${p.className}`}
-                >
-                  {p.name.toUpperCase()}
-                </span>
-              ))}
+              <span
+                className={`font-display text-[6px] sm:text-[7px] px-2.5 py-1 border-2 border-retro-ink brutal-shadow-sm ${PLATFORM_BADGE.className}`}
+              >
+                {PLATFORM_BADGE.name.toUpperCase()}
+              </span>
             </div>
 
             <div className="mt-8 flex justify-center md:justify-start">

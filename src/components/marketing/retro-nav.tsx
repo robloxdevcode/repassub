@@ -58,7 +58,7 @@ export function TrustMarquee() {
     "FREE TO START",
     "NO CARD",
     "2 MIN SETUP",
-    "YOUTUBE / DISCORD / DRIVE",
+    "70+ PLATFORMS",
     "5 LINKS / WEEK",
   ];
   const row = [...items, ...items];

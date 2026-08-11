@@ -6,14 +6,14 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildPageMetadata({
   title: "How It Works",
   description:
-    "Create a subscribe-to-download link in three steps: paste your file link, pick YouTube or Discord steps, share one URL.",
+    "Create a subscribe-to-download link in three steps: paste your file link, pick steps from 70+ platforms, share one URL.",
   path: "/how-it-works",
 });
 
 const steps = [
   { n: "1", title: "Create", desc: "Add your content and choose what fans must do first.", bg: "bg-pop-yellow" },
   { n: "2", title: "Customize", desc: "Title, thumbnail, button text — make it yours.", bg: "bg-pop-red text-white" },
-  { n: "3", title: "Share", desc: "Drop the link in bio, Discord, video description.", bg: "bg-pop-blue text-white" },
+  { n: "3", title: "Share", desc: "Drop the link in bio, posts, or communities.", bg: "bg-pop-blue text-white" },
   { n: "4", title: "Unlock", desc: "They complete tasks. Content opens. You gain a follower.", bg: "bg-retro-surface" },
 ];
 

@@ -5,7 +5,7 @@ import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Use Cases",
-  description: "Subscribe-to-download for music producers, Roblox devs, YouTubers, and Discord communities.",
+  description: "Subscribe-to-download for music producers, game devs, streamers, and online communities.",
   path: "/use-cases",
 });
 

@@ -6,14 +6,14 @@ import { buildPageMetadata } from "@/lib/seo";
 export const metadata = buildPageMetadata({
   title: "Free Subscribe-to-Download Links for Creators",
   description:
-    "Make them follow, then unlock. Free subscribe-to-download links — gate presets, packs, and files behind YouTube, Discord, Spotify, and more.",
+    "Make them follow, then unlock. Free subscribe-to-download links — gate presets, packs, and files behind 70+ platforms.",
   path: "/",
   keywords: [
     "subscribe to download",
     "unlock link creator",
     "free content gating",
-    "youtube subscribe download link",
-    "discord join download",
+    "70+ platforms supported",
+    "multi platform unlock",
     "Rekonise alternative",
     "link in bio download",
   ],
