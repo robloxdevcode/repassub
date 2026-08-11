@@ -6,17 +6,16 @@ import { cn } from "@/lib/utils";
 import { UserProfile } from "@clerk/nextjs";
 import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
 import { PLAN_FEATURES } from "@/lib/stripe";
-import { NotificationSettings } from "@/components/dashboard/notification-settings";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 
-const TABS = ["Account", "Plan", "Notifications"];
+const TABS = ["Account", "Plan"];
 
 export default function SettingsPage() {
   const [tab, setTab] = useState("Account");
 
   return (
     <div className="mx-auto max-w-2xl">
-      <AppPageHeader title="Settings" subtitle="Account, plan, and notifications." />
+      <AppPageHeader title="Settings" subtitle="Account and plan." />
 
       <div className="flex gap-1 mb-8 overflow-x-auto">
         {TABS.map((t) => (
@@ -80,7 +79,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {tab === "Notifications" && <NotificationSettings />}
       </AppCard>
     </div>
   );

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Press_Start_2P, Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { RetroToastProvider } from "@/components/retro";
-import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { CurrencyProvider } from "@/components/providers/currency-provider";
 import { buildRootMetadata } from "@/lib/seo";
 import "./globals.css";
@@ -42,11 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             },
           }}
         >
-          <PostHogProvider>
-            <CurrencyProvider>
-              <RetroToastProvider>{children}</RetroToastProvider>
-            </CurrencyProvider>
-          </PostHogProvider>
+          <CurrencyProvider>
+            <RetroToastProvider>{children}</RetroToastProvider>
+          </CurrencyProvider>
         </ClerkProvider>
       </body>
     </html>

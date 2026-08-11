@@ -5,8 +5,6 @@ import { trackEvent } from "@/lib/analytics";
 import type { AnalyticsEventType } from "@prisma/client";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
-import { getUnlockUrlForRequest } from "@/lib/site-url";
-import { sendUnlockNotificationEmail, isEmailConfigured } from "@/lib/email";
 
 export async function getOrCreateVisitorId() {
   const cookieStore = await cookies();
@@ -130,16 +128,8 @@ export async function unlockContent(campaignId: string) {
 
   const campaign = await db.campaign.findUnique({
     where: { id: campaignId },
-    include: { content: true, user: true },
+    include: { content: true },
   });
-
-  if (campaign?.user.notifyUnlockEmail && campaign.user.email && isEmailConfigured()) {
-    sendUnlockNotificationEmail({
-      to: campaign.user.email,
-      campaignTitle: campaign.title,
-      unlockUrl: await getUnlockUrlForRequest(campaign.user.username, campaign.slug),
-    }).catch((err) => console.error("[email] unlock notification failed", err));
-  }
 
   return { session: updated, content: campaign?.content };
 }
