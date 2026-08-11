@@ -62,7 +62,7 @@ export function HeroSection() {
               <HeroLiveUnlock size="md" className="w-full mx-auto" />
             </div>
             <p className="mt-3 text-xs text-retro-text-muted text-center md:text-right max-w-[280px]">
-              Tasks tick off · bar fills · file unlocks.
+              Tasks tick off, bar fills, file unlocks.
             </p>
           </div>
         </div>

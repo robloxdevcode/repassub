@@ -14,7 +14,7 @@ export function RetroFooter() {
           <Link href="/privacy" className="hover:text-white">Privacy</Link>
         </div>
       </div>
-      <p className="text-center font-body text-xs text-white/40 pb-6">© 2026 Linklock</p>
+      <p className="text-center font-body text-xs text-white/40 pb-6">&copy; 2026 Linklock</p>
     </footer>
   );
 }

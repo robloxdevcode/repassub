@@ -80,6 +80,25 @@ export function getPlatform(id: string) {
   return UNLOCK_PLATFORMS.find((p) => p.id === id);
 }
 
+/** Guess platform from a pasted link (YouTube, Discord, etc.). */
+export function detectPlatformFromUrl(url: string): PlatformPreset | null {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  try {
+    const host = new URL(trimmed).hostname.toLowerCase();
+    if (host.includes("youtube.com") || host.includes("youtu.be")) return getPlatform("youtube") ?? null;
+    if (host.includes("instagram.com")) return getPlatform("instagram") ?? null;
+    if (host.includes("tiktok.com")) return getPlatform("tiktok") ?? null;
+    if (host.includes("spotify.com")) return getPlatform("spotify") ?? null;
+    if (host.includes("discord.gg") || host.includes("discord.com")) return getPlatform("discord") ?? null;
+    if (host.includes("twitch.tv")) return getPlatform("twitch") ?? null;
+    if (host.includes("twitter.com") || host.includes("x.com")) return getPlatform("twitter") ?? null;
+    return getPlatform("website") ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function guessPlatform(type: ActionType, label: string): PlatformPreset {
   const l = label.toLowerCase();
   if (type === "SUBSCRIBE" || l.includes("youtube")) return UNLOCK_PLATFORMS[0];

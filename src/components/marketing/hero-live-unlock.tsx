@@ -81,7 +81,7 @@ export function HeroLiveUnlock({
             <p className="font-display text-[6px] leading-relaxed text-retro-ink">EXAMPLE</p>
           </div>
           <p className="font-body text-[10px] text-retro-text-dim text-center mb-3 leading-snug">
-            Subscribe → like → unlock. So clean.
+            Subscribe, like, unlock. So clean.
           </p>
 
           <div className="flex flex-col gap-1.5 mb-3">

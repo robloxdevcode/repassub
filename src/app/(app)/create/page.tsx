@@ -15,7 +15,7 @@ import {
   getCampaign,
 } from "@/lib/actions/campaigns";
 import { formatUnlockQuotaReset } from "@/lib/stripe";
-import { UNLOCK_PLATFORMS, getPlatform, guessPlatform } from "@/lib/unlock-platforms";
+import { detectPlatformFromUrl, getPlatform, guessPlatform } from "@/lib/unlock-platforms";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard } from "@/components/dashboard/app-page-header";
 import { UNLOCK_THEMES } from "@/lib/unlock-themes";
@@ -24,8 +24,8 @@ import { Link as LinkIcon, FileText, Check, Plus, Trash2 } from "lucide-react";
 import type { ContentType } from "@prisma/client";
 
 const CONTENT_TYPES = [
-  { type: "URL" as ContentType, label: "Link", hint: "Google Drive, Dropbox, your site — any URL", icon: LinkIcon },
-  { type: "TEXT" as ContentType, label: "Text / code", hint: "Show text or a key after unlock", icon: FileText },
+  { type: "URL" as ContentType, label: "Link", hint: "Drive, Dropbox, any download URL", icon: LinkIcon },
+  { type: "TEXT" as ContentType, label: "Text / code", hint: "Show a key or message after unlock", icon: FileText },
 ];
 
 type ActionDraft = {
@@ -33,17 +33,18 @@ type ActionDraft = {
   platformId: string;
   url: string;
   label: string;
+  labelTouched: boolean;
 };
 
-const STEPS = ["Your link", "Their steps", "Publish"];
+const STEPS = ["Your file", "Fan steps", "Publish"];
 
-function newActionDraft(platformId: string = "youtube"): ActionDraft {
-  const platform = getPlatform(platformId);
+function newActionDraft(): ActionDraft {
   return {
     id: crypto.randomUUID(),
-    platformId,
+    platformId: "website",
     url: "",
-    label: platform?.label || "Complete step",
+    label: "Complete this step",
+    labelTouched: false,
   };
 }
 
@@ -124,6 +125,7 @@ function CreateUnlockWizard() {
                 platformId: platform.id,
                 url: config?.url || "",
                 label: a.label,
+                labelTouched: true,
               };
             })
           );
@@ -146,9 +148,9 @@ function CreateUnlockWizard() {
   }, [campaignId, title]);
 
   function validateContent(): string | null {
-    if (contentType === "URL" && !externalUrl.trim()) return "Paste a link";
+    if (contentType === "URL" && !externalUrl.trim()) return "Paste your download link";
     if (contentType === "URL" && !/^https?:\/\/.+/i.test(externalUrl.trim())) return "Link must start with http:// or https://";
-    if (contentType === "TEXT" && !textBody.trim()) return "Write what they unlock";
+    if (contentType === "TEXT" && !textBody.trim()) return "Write what fans unlock";
     return null;
   }
 
@@ -173,27 +175,24 @@ function CreateUnlockWizard() {
       await updateCampaignContent(id, content);
       setStep(1);
     } catch (e) {
-      toast(e instanceof Error ? e.message : "Could not save download", "error");
+      toast(e instanceof Error ? e.message : "Could not save", "error");
     } finally {
       setLoading(false);
     }
   }
 
   function validateActions(): string | null {
-    if (actions.length === 0) return "Add at least one step";
+    if (actions.length === 0) return "Add at least one step for fans";
     if (actions.length > actionLimit) {
       return plan === "FREE"
-        ? `Free plan allows ${actionLimit} steps. Remove ${actions.length - actionLimit} or upgrade to Pro.`
-        : `Pro plan allows up to ${actionLimit} steps. Remove ${actions.length - actionLimit}.`;
+        ? `Free plan: max ${actionLimit} steps. Remove ${actions.length - actionLimit} or upgrade.`
+        : `Pro plan: max ${actionLimit} steps.`;
     }
     for (const action of actions) {
-      const platform = getPlatform(action.platformId);
-      if (!platform) return "Invalid platform on a step";
-      if (!action.label.trim()) return "Name each step button";
-      if (!action.url.trim()) return `Paste your ${platform.shortName} link`;
-      if (!/^https?:\/\/.+/i.test(action.url.trim())) {
-        return `${platform.shortName} link must start with http:// or https://`;
-      }
+      if (!action.url.trim()) return "Paste a link for each step";
+      if (!/^https?:\/\/.+/i.test(action.url.trim())) return "Each link must start with http:// or https://";
+      if (!action.label.trim()) return "Name the button fans will tap";
+      if (!getPlatform(action.platformId)) return "Could not detect platform on one step — check the link";
     }
     return null;
   }
@@ -259,16 +258,35 @@ function CreateUnlockWizard() {
     }
   }
 
-  function addAction(platformId: string) {
+  function addAction() {
     if (actions.length >= actionLimit) {
       toast(`${plan === "FREE" ? "Free" : "Pro"} plan: max ${actionLimit} steps.`, "error");
       return;
     }
-    setActions((prev) => [...prev, newActionDraft(platformId)]);
+    setActions((prev) => [...prev, newActionDraft()]);
   }
 
-  function updateAction(id: string, patch: Partial<ActionDraft>) {
-    setActions((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
+  function updateActionUrl(id: string, url: string) {
+    const detected = detectPlatformFromUrl(url);
+    setActions((prev) =>
+      prev.map((a) => {
+        if (a.id !== id) return a;
+        const next: ActionDraft = { ...a, url };
+        if (detected) {
+          next.platformId = detected.id;
+          if (!a.labelTouched) {
+            next.label = detected.label;
+          }
+        }
+        return next;
+      })
+    );
+  }
+
+  function updateActionLabel(id: string, label: string) {
+    setActions((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, label, labelTouched: true } : a))
+    );
   }
 
   function removeAction(id: string) {
@@ -280,9 +298,8 @@ function CreateUnlockWizard() {
     return (
       <div className="mx-auto max-w-lg text-center">
         <AppCard className="p-8" accent="green">
-          <p className="font-display text-[8px] text-retro-success mb-3 tracking-widest">LIVE</p>
-          <h1 className="font-body text-2xl font-bold mb-2">Your link is ready</h1>
-          <p className="font-body text-sm text-retro-text-dim mb-4">Share this in your video or bio:</p>
+          <h1 className="font-body text-2xl font-bold mb-2">Link is live</h1>
+          <p className="font-body text-sm text-retro-text-dim mb-4">Share this anywhere:</p>
           <p className="font-mono text-sm bg-retro-surface-2 border-2 border-retro-ink p-3 break-all">{url}</p>
           <div className="mt-8">
             <RetroButton onClick={() => navigator.clipboard.writeText(url)} className="w-full sm:w-auto">
@@ -290,7 +307,7 @@ function CreateUnlockWizard() {
             </RetroButton>
           </div>
           <Link href="/dashboard" className="inline-block mt-6 font-body text-sm text-retro-blue hover:underline">
-            Done
+            Back to dashboard
           </Link>
         </AppCard>
       </div>
@@ -298,44 +315,32 @@ function CreateUnlockWizard() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-2xl">
       <div className="mb-8">
-        <p className="font-display text-[8px] text-retro-accent mb-2 tracking-widest">CREATE</p>
-        <h1 className="font-body text-2xl font-bold">Create unlock link</h1>
+        <h1 className="font-body text-2xl font-bold">Create link</h1>
         <p className="mt-2 text-sm text-retro-text-dim">
-          {STEPS[step]} — step {step + 1} of {STEPS.length}
+          Step {step + 1} of {STEPS.length}: {STEPS[step]}
         </p>
         {plan === "FREE" && linkQuota && (
-          <p className="mt-2 text-xs text-retro-text-dim">
-            {linkQuota.used}/{linkQuota.limit} links this week · {formatUnlockQuotaReset(linkQuota.resetsAt)}
+          <p className="mt-1 text-xs text-retro-text-muted">
+            {linkQuota.used}/{linkQuota.limit} links this week ({formatUnlockQuotaReset(linkQuota.resetsAt)})
           </p>
         )}
-        <div className="app-wizard-header mt-4">
-          {STEPS.map((label, i) => (
-            <span
-              key={label}
-              className={`app-wizard-step ${i === step ? "app-wizard-step-active" : i < step ? "app-wizard-step-done" : ""}`}
-            >
-              {i + 1}. {label.toUpperCase()}
-            </span>
-          ))}
-        </div>
+        <RetroProgressBar value={step + 1} max={STEPS.length} showPercent={false} className="mt-4" />
       </div>
 
       {atLinkLimit && (
         <UpgradeNudge
           className="mb-6"
-          title="You've used all 5 free links this week"
-          description="Delete an old link from My links, wait for the weekly reset, or upgrade to Pro for unlimited links."
+          title="Weekly link limit reached"
+          description="Delete an old link, wait for reset, or upgrade to Pro."
         />
       )}
 
-      <RetroProgressBar value={step + 1} max={STEPS.length} showPercent={false} className="mb-8" />
-
       {step === 0 && (
         <AppCard className="p-6" accent="yellow">
-          <h2 className="font-body text-lg font-bold mb-2">What are you giving away?</h2>
-          <p className="text-sm text-retro-text-dim mb-6">Paste a link or write text — fans get it after your steps.</p>
+          <h2 className="font-body text-lg font-bold mb-1">What do fans unlock?</h2>
+          <p className="text-sm text-retro-text-dim mb-6">Paste the file or page they get after finishing your steps.</p>
           <div className="grid gap-3 sm:grid-cols-2 mb-6">
             {CONTENT_TYPES.map(({ type, label, hint, icon: Icon }) => (
               <button
@@ -356,18 +361,24 @@ function CreateUnlockWizard() {
 
           {contentType === "URL" && (
             <RetroInput
-              label="Link"
+              label="Download link"
               placeholder="https://drive.google.com/file/..."
               value={externalUrl}
               onChange={(e) => setExternalUrl(e.target.value)}
             />
           )}
           {contentType === "TEXT" && (
-            <RetroTextarea label="Text / code" rows={6} placeholder="Paste your code, key, or message..." value={textBody} onChange={(e) => setTextBody(e.target.value)} />
+            <RetroTextarea
+              label="Text fans see"
+              rows={6}
+              placeholder="Your code, key, or message..."
+              value={textBody}
+              onChange={(e) => setTextBody(e.target.value)}
+            />
           )}
 
-          <div className="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            <RetroButton onClick={handleContentNext} loading={loading} disabled={atLinkLimit} className="w-full sm:w-auto">
+          <div className="mt-8 flex justify-end">
+            <RetroButton onClick={handleContentNext} loading={loading} disabled={atLinkLimit}>
               Next
             </RetroButton>
           </div>
@@ -378,73 +389,49 @@ function CreateUnlockWizard() {
         <AppCard className="p-6" accent="red">
           <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
             <div>
-              <h2 className="font-body text-lg font-bold mb-1">What must they do first?</h2>
+              <h2 className="font-body text-lg font-bold mb-1">What must fans do first?</h2>
               <p className="text-sm text-retro-text-dim">
-                Pick a platform, paste your link, and name the button fans will tap.
+                Add a step, paste your subscribe/join/follow link — we name the button for you.
               </p>
             </div>
-            <span className="font-display text-[7px] bg-retro-yellow border-2 border-retro-ink px-2 py-1 shrink-0">
-              {plan === "FREE"
-                ? `FREE: ${actions.length}/${actionLimit} STEPS`
-                : `PRO: ${actions.length}/${actionLimit} STEPS`}
+            <span className="text-xs font-semibold bg-retro-surface-2 border border-retro-ink px-2 py-1 shrink-0">
+              {actions.length}/{actionLimit} steps
             </span>
           </div>
 
-          <p className="font-body text-xs font-semibold text-retro-text-dim mb-2">Supported platforms</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
-            {UNLOCK_PLATFORMS.map((platform) => (
-              <button
-                key={platform.id}
-                type="button"
-                disabled={actions.length >= actionLimit}
-                onClick={() => addAction(platform.id)}
-                className={`flex min-h-[72px] flex-col items-center justify-center gap-1 border-2 border-retro-ink px-2 py-3 text-center transition-all disabled:cursor-not-allowed disabled:opacity-40 ${platform.accent}`}
-              >
-                <Plus size={14} className="shrink-0" />
-                <span className="font-body text-[11px] font-bold leading-tight">{platform.shortName}</span>
-              </button>
-            ))}
-          </div>
-
-          {actions.length === 0 && (
-            <div className="border-2 border-dashed border-retro-ink/30 p-6 text-center mb-6">
-              <p className="font-body text-sm text-retro-text-dim">
-                Tap a platform above to add your first step.
-              </p>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-4 mb-6">
+          <div className="flex flex-col gap-4 mb-4">
             {actions.map((action, index) => {
-              const platform = getPlatform(action.platformId)!;
+              const platform = getPlatform(action.platformId);
               return (
                 <div key={action.id} className="brutal-border bg-retro-surface-2 p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className={`font-body text-xs font-bold px-2 py-1 border-2 border-retro-ink ${platform.accent}`}>
-                      {platform.shortName}
-                    </span>
-                    <span className="font-display text-[8px] text-retro-text-dim">STEP {index + 1}</span>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="text-xs font-bold text-retro-text-dim">Step {index + 1}</span>
+                    {platform && (
+                      <span className={`text-xs font-bold px-2 py-0.5 border border-retro-ink ${platform.accent}`}>
+                        {platform.shortName}
+                      </span>
+                    )}
                     <button
                       type="button"
                       onClick={() => removeAction(action.id)}
-                      className="ml-auto min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-retro-accent hover:bg-retro-accent/10 border-2 border-transparent hover:border-retro-accent"
-                      aria-label={`Remove ${platform.shortName} step`}
+                      className="ml-auto p-2 text-retro-accent hover:bg-retro-accent/10"
+                      aria-label="Remove step"
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
                   <RetroInput
-                    label="Button name"
-                    placeholder={platform.label}
-                    value={action.label}
-                    onChange={(e) => updateAction(action.id, { label: e.target.value })}
+                    label="Paste link"
+                    placeholder="https://youtube.com/@you or discord.gg/..."
+                    value={action.url}
+                    onChange={(e) => updateActionUrl(action.id, e.target.value)}
                   />
                   <div className="mt-3">
                     <RetroInput
-                      label={`${platform.shortName} link`}
-                      placeholder={platform.placeholder}
-                      value={action.url}
-                      onChange={(e) => updateAction(action.id, { url: e.target.value })}
+                      label="Button name (what fans tap)"
+                      placeholder="Subscribe on YouTube"
+                      value={action.label}
+                      onChange={(e) => updateActionLabel(action.id, e.target.value)}
                     />
                   </div>
                 </div>
@@ -452,22 +439,32 @@ function CreateUnlockWizard() {
             })}
           </div>
 
-          {plan === "FREE" && actions.length >= actionLimit && (
-            <UpgradeNudge
-              className="mb-4"
-              title="Free plan: 2 steps max"
-              description="Upgrade to Pro for up to 4 steps per unlock link."
-            />
+          {actions.length === 0 && (
+            <p className="text-sm text-retro-text-dim text-center py-4 mb-2 border-2 border-dashed border-retro-ink/25">
+              No steps yet — add one below.
+            </p>
           )}
-          {plan !== "FREE" && actions.length >= actionLimit && (
-            <p className="text-xs text-retro-text-dim mb-4">Pro plan = {actionLimit} steps max.</p>
+
+          <RetroButton
+            type="button"
+            variant="secondary"
+            onClick={addAction}
+            disabled={actions.length >= actionLimit}
+            className="w-full mb-6"
+          >
+            <Plus size={16} />
+            Add step
+          </RetroButton>
+
+          {plan === "FREE" && actions.length >= actionLimit && (
+            <UpgradeNudge className="mb-4" title="Free: 2 steps max" description="Pro allows up to 4 steps per link." />
           )}
 
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-            <RetroButton variant="ghost" onClick={() => setStep(0)} className="w-full sm:w-auto">
+            <RetroButton variant="ghost" onClick={() => setStep(0)}>
               Back
             </RetroButton>
-            <RetroButton onClick={handleActionsNext} loading={loading} className="w-full sm:w-auto">
+            <RetroButton onClick={handleActionsNext} loading={loading}>
               Next
             </RetroButton>
           </div>
@@ -476,10 +473,10 @@ function CreateUnlockWizard() {
 
       {step === 2 && (
         <AppCard className="p-6" accent="blue">
-          <h2 className="font-body text-lg font-bold mb-2">Name your link</h2>
-          <p className="text-sm text-retro-text-dim mb-6">Fans see this on your unlock page.</p>
+          <h2 className="font-body text-lg font-bold mb-1">Finish up</h2>
+          <p className="text-sm text-retro-text-dim mb-6">Name your page — fans see this before they unlock.</p>
           <RetroInput
-            label="Link name"
+            label="Page title"
             placeholder="Free preset pack"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -495,7 +492,7 @@ function CreateUnlockWizard() {
 
           {isPro ? (
             <div className="mt-6 pt-6 border-t-2 border-retro-ink/10 space-y-4">
-              <p className="font-body text-sm font-bold">Pro branding</p>
+              <p className="font-body text-sm font-bold">Pro options</p>
               <RetroInput
                 label="Custom URL ending"
                 placeholder="free-preset-pack"
@@ -508,7 +505,7 @@ function CreateUnlockWizard() {
                 </p>
               )}
               <RetroInput
-                label="Logo image URL (optional)"
+                label="Logo URL (optional)"
                 placeholder="https://..."
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
@@ -534,17 +531,17 @@ function CreateUnlockWizard() {
           ) : (
             <UpgradeNudge
               className="mt-6"
-              title="Want your own look?"
-              description="Pro removes ads, adds custom URL, colors, logo, and stats."
+              title="Want custom URL and colors?"
+              description="Pro removes ads and adds branding plus stats."
             />
           )}
 
           <div className="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-            <RetroButton variant="ghost" onClick={() => setStep(1)} className="w-full sm:w-auto">
+            <RetroButton variant="ghost" onClick={() => setStep(1)}>
               Back
             </RetroButton>
-            <RetroButton onClick={handlePublishStep} loading={loading} className="w-full sm:w-auto">
-              Publish
+            <RetroButton onClick={handlePublishStep} loading={loading}>
+              Publish link
             </RetroButton>
           </div>
         </AppCard>

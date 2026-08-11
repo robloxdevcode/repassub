@@ -452,7 +452,7 @@ body {
 
 .animate-pop { animation: pop 0.4s ease; }
 
-/* ── Marketing polish ── */
+/* -- Marketing polish -- */
 .marketing-grain {
   position: absolute;
   inset: 0;
@@ -652,7 +652,7 @@ body {
   box-shadow: 0 4px 0 var(--retro-ink);
 }
 
-/* ── Homepage polish ── */
+/* -- Homepage polish -- */
 
 .home-hero-badge {
   font-family: var(--font-display);
@@ -711,7 +711,7 @@ body {
   transform: rotate(2deg);
 }
 
-/* Hero v2 — vibrant retro split */
+/* Hero v2 - vibrant retro split */
 .hero-v2 {
   background: var(--retro-bg);
 }
@@ -905,7 +905,7 @@ body {
   color: var(--retro-ink);
 }
 
-/* ── Linklock homepage — unified panel design ── */
+/* -- Linklock homepage - unified panel design -- */
 
 :root {
   --ll-pink: #f5e8ed;
@@ -934,7 +934,7 @@ body {
   letter-spacing: -0.03em;
 }
 
-/* Hero — one panel, preview attached */
+/* Hero - one panel, preview attached */
 .ll-hero {
   background: var(--ll-pink);
   border-bottom: 3px solid var(--retro-ink);
@@ -1041,7 +1041,7 @@ body {
   font-weight: 700;
 }
 
-/* Preview column — glued to hero panel */
+/* Preview column - glued to hero panel */
 .ll-hero-preview-col {
   display: flex;
   flex-direction: column;
@@ -1328,7 +1328,7 @@ body {
   background: var(--retro-surface-3);
 }
 
-/* ── Marketing homepage — structured (legacy mk) ── */
+/* -- Marketing homepage - structured (legacy mk) -- */
 
 :root {
   --mk-pink-bg: #f7eef2;
@@ -1594,7 +1594,7 @@ body {
   background: var(--retro-surface);
 }
 
-/* ── Homepage arcade — dark hero (legacy) ── */
+/* -- Homepage arcade - dark hero (legacy) -- */
 
 .home-arcade {
   background: #0a0a0a;
@@ -1778,7 +1778,7 @@ body {
   background: var(--retro-surface-2);
 }
 
-/* ── Homepage v3 — arcade poster (legacy) ── */
+/* -- Homepage v3 - arcade poster (legacy) -- */
 
 .home-hero {
   background: var(--retro-bg);
@@ -2339,7 +2339,7 @@ body {
   .section-y { padding: 6rem 0; }
 }
 
-/* ── App dashboard ── */
+/* -- App dashboard -- */
 
 .app-stage {
   position: relative;
@@ -2498,7 +2498,7 @@ body {
   color: white;
 }
 
-/* ── Homepage energy (hp-*) ── */
+/* -- Homepage energy (hp-*) -- */
 .hp-deco {
   position: absolute;
   pointer-events: none;
@@ -2629,7 +2629,7 @@ body {
   }
 }
 
-/* ── Simple landing page ── */
+/* -- Simple landing page -- */
 .landing-simple-hero {
   position: relative;
   background: linear-gradient(180deg, var(--retro-bg) 0%, var(--retro-surface) 100%);
@@ -2637,15 +2637,7 @@ body {
 
 .landing-color-stripe {
   height: 8px;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--retro-accent) 0,
-    var(--retro-accent) 24px,
-    var(--retro-yellow) 24px,
-    var(--retro-yellow) 48px,
-    var(--retro-blue) 48px,
-    var(--retro-blue) 72px
-  );
+  background: var(--retro-ink);
   border-bottom: 3px solid var(--retro-ink);
 }
 

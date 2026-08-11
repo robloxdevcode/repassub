@@ -303,7 +303,7 @@ export function PublicUnlockClient({
 
         <p className="mt-6 text-center text-xs text-retro-text-muted">
           {campaign.user.displayName || campaign.user.username}
-          {!isPro && " · Linklock"}
+          {!isPro && " — Linklock"}
         </p>
       </div>
 
