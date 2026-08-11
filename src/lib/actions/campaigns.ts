@@ -10,6 +10,18 @@ import { getUnlockUrlForRequest } from "@/lib/site-url";
 import { campaignViewCountSelect } from "@/lib/analytics";
 import type { ActionType, ContentType, VerificationMode, Prisma } from "@prisma/client";
 
+async function allocateUniqueSlug(userId: string, preferred: string) {
+  const base = slugify(preferred) || "unlock";
+  for (let i = 0; i < 50; i++) {
+    const slug = i === 0 ? base : `${base}-${i + 1}`;
+    const existing = await db.campaign.findUnique({
+      where: { userId_slug: { userId, slug } },
+    });
+    if (!existing) return slug;
+  }
+  return `${base}-${Date.now().toString(36)}`;
+}
+
 export async function createCampaign(data: {
   title: string;
   description?: string;
@@ -37,13 +49,8 @@ export async function createCampaign(data: {
 
   const parsed = createCampaignSchema.parse({
     ...data,
-    slug: data.slug || slugify(data.title),
+    slug: data.slug || (await allocateUniqueSlug(user.id, data.title || "unlock")),
   });
-
-  const existing = await db.campaign.findUnique({
-    where: { userId_slug: { userId: user.id, slug: parsed.slug } },
-  });
-  if (existing) throw new Error("Slug already in use");
 
   const campaign = await db.campaign.create({
     data: {
@@ -59,7 +66,7 @@ export async function createCampaign(data: {
   });
 
   revalidatePath("/unlocks");
-  return campaign;
+  return { id: campaign.id, slug: campaign.slug, title: campaign.title };
 }
 
 export async function updateCampaignContent(
@@ -80,13 +87,37 @@ export async function updateCampaignContent(
 
   contentSchema.parse(content);
 
+  const payload =
+    content.type === "TEXT"
+      ? {
+          type: content.type,
+          textBody: content.textBody,
+          externalUrl: null,
+          fileUrl: null,
+          fileName: null,
+        }
+      : content.type === "URL"
+        ? {
+            type: content.type,
+            externalUrl: content.externalUrl,
+            textBody: null,
+            fileUrl: null,
+            fileName: null,
+          }
+        : {
+            type: content.type,
+            fileUrl: content.fileUrl,
+            fileName: content.fileName,
+            externalUrl: null,
+            textBody: null,
+          };
+
   await db.content.upsert({
     where: { campaignId },
-    create: { campaignId, ...content },
-    update: content,
+    create: { campaignId, ...payload },
+    update: payload,
   });
 
-  revalidatePath(`/create`);
   return { success: true };
 }
 
@@ -129,7 +160,6 @@ export async function updateCampaignActions(
     })),
   });
 
-  revalidatePath(`/create`);
   return { success: true };
 }
 
@@ -178,9 +208,16 @@ export async function updateCampaignCustomization(
     },
   });
 
-  revalidatePath(`/create`);
   revalidatePath(`/u/${user.username}/${updated.slug}`);
-  return updated;
+  return {
+    id: updated.id,
+    slug: updated.slug,
+    title: updated.title,
+    description: updated.description,
+    buttonText: updated.buttonText,
+    theme: updated.theme,
+    logoUrl: updated.logoUrl,
+  };
 }
 
 export async function publishCampaign(campaignId: string) {

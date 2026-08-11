@@ -38,6 +38,17 @@ type ActionDraft = {
 
 const STEPS = ["Your file", "Fan steps", "Publish"];
 
+function actionErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error) {
+    const msg = error.message;
+    if (msg.includes("Server Components render") || msg.includes("Minified React error #441")) {
+      return "Could not save — please try again.";
+    }
+    return msg || fallback;
+  }
+  return fallback;
+}
+
 function newActionDraft(): ActionDraft {
   return {
     id: crypto.randomUUID(),
@@ -175,7 +186,7 @@ function CreateUnlockWizard() {
       await updateCampaignContent(id, content);
       setStep(1);
     } catch (e) {
-      toast(e instanceof Error ? e.message : "Could not save", "error");
+      toast(actionErrorMessage(e, "Could not save"), "error");
     } finally {
       setLoading(false);
     }
@@ -220,7 +231,7 @@ function CreateUnlockWizard() {
       );
       setStep(2);
     } catch (e) {
-      toast(e instanceof Error ? e.message : "Could not save steps", "error");
+      toast(actionErrorMessage(e, "Could not save steps"), "error");
     } finally {
       setLoading(false);
     }
@@ -252,7 +263,7 @@ function CreateUnlockWizard() {
       setPublished(true);
       toast("Your link is live!", "success");
     } catch (e) {
-      toast(e instanceof Error ? e.message : "Could not publish", "error");
+      toast(actionErrorMessage(e, "Could not publish"), "error");
     } finally {
       setLoading(false);
     }
