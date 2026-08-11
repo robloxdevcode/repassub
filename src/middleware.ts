@@ -47,6 +47,10 @@ export default clerkMiddleware(async (auth, req) => {
 
   const { userId } = await auth();
 
+  if (pathname === "/" && userId) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
   if (isAuthRoute(req) && userId) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
