@@ -5,7 +5,6 @@ import { RetroToastProvider } from "@/components/retro";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
 import { CurrencyProvider } from "@/components/providers/currency-provider";
 import { buildRootMetadata } from "@/lib/seo";
-import { ADSENSE_CLIENT } from "@/lib/adsense";
 import "./globals.css";
 
 const pressStart = Press_Start_2P({
@@ -19,38 +18,37 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
+const ADSENSE_SRC =
+  "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1007476096338167";
+
 export const metadata: Metadata = buildRootMetadata();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
-      signInFallbackRedirectUrl="/dashboard"
-      signUpFallbackRedirectUrl="/dashboard"
-      appearance={{
-        variables: {
-          colorPrimary: "#ff2b2b",
-          colorBackground: "#ffffff",
-        },
-      }}
-    >
-      <html lang="en" className={`${pressStart.variable} ${spaceGrotesk.variable} h-full`}>
-        <head>
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
-            crossOrigin="anonymous"
-          />
-        </head>
-        <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
+    <html lang="en" className={`${pressStart.variable} ${spaceGrotesk.variable} h-full`}>
+      <head>
+        <script async src={ADSENSE_SRC} crossOrigin="anonymous" />
+      </head>
+      <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
+        <ClerkProvider
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          signInFallbackRedirectUrl="/dashboard"
+          signUpFallbackRedirectUrl="/dashboard"
+          appearance={{
+            variables: {
+              colorPrimary: "#ff2b2b",
+              colorBackground: "#ffffff",
+            },
+          }}
+        >
           <PostHogProvider>
             <CurrencyProvider>
               <RetroToastProvider>{children}</RetroToastProvider>
             </CurrencyProvider>
           </PostHogProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
