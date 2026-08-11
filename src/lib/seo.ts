@@ -6,6 +6,9 @@ export const SITE_NAME = "Linklock";
 export const DEFAULT_KEYWORDS = [
   "subscribe to download",
   "unlock link",
+  "content locker",
+  "link gate",
+  "social unlock",
   "content gating",
   "creator unlock page",
   "youtube subscribe download",
@@ -14,7 +17,19 @@ export const DEFAULT_KEYWORDS = [
   "link in bio tool",
   "preset pack download",
   "Rekonise alternative",
+  "link monetization",
+  "follow to unlock",
+  "subscribe to unlock",
+  "gated download link",
+  "creator growth tool",
 ];
+
+const OG_IMAGE = {
+  url: "/og.png",
+  width: 1200,
+  height: 630,
+  alt: `${SITE_NAME} — subscribe-to-download links for creators`,
+};
 
 const DEFAULT_DESCRIPTION =
   "Make them follow, then unlock. Free subscribe-to-download links for creators — gate files behind YouTube, Discord, Spotify, and more.";
@@ -26,7 +41,7 @@ export const HOME_FAQS = [
   },
   {
     q: "What can I give away?",
-    a: "Any link — Drive, Dropbox, your site — or text after unlock. We don't host files.",
+    a: "Any link — Drive, Dropbox, your site — or text after unlock. We don't host files; you keep your existing links.",
   },
   {
     q: "How many steps can I add?",
@@ -39,6 +54,25 @@ export const HOME_FAQS = [
   {
     q: "What does Pro include?",
     a: "No ads, unlimited links, custom branding, and conversion stats.",
+  },
+];
+
+export const SUPPORT_FAQS = [
+  {
+    q: "Is Linklock really free?",
+    a: "Yes. Free plan: 5 links per week, 2 steps per link. No credit card to sign up.",
+  },
+  {
+    q: "What can I give away?",
+    a: "Any download link (Drive, Dropbox, etc.) or text/code shown after unlock.",
+  },
+  {
+    q: "Do fans need an account?",
+    a: "No. They complete your steps and get the content — no Linklock sign-up for them.",
+  },
+  {
+    q: "Something broken?",
+    a: "Email us and we'll help.",
   },
 ];
 
@@ -92,13 +126,13 @@ export function buildPageMetadata({
       siteName: SITE_NAME,
       title: `${title} | ${SITE_NAME}`,
       description,
-      images: [{ url: "/logo.png", width: 1024, height: 682, alt: `${SITE_NAME} logo` }],
+      images: [OG_IMAGE],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: `${title} | ${SITE_NAME}`,
       description,
-      images: ["/logo.png"],
+      images: [OG_IMAGE.url],
     },
   };
 }
@@ -128,13 +162,13 @@ export function buildRootMetadata(): Metadata {
       siteName: SITE_NAME,
       title: "Linklock — Free Subscribe-to-Download Links for Creators",
       description: DEFAULT_DESCRIPTION,
-      images: [{ url: "/logo.png", width: 1024, height: 682, alt: `${SITE_NAME} logo` }],
+      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title: "Linklock — Free Subscribe-to-Download Links for Creators",
       description: DEFAULT_DESCRIPTION,
-      images: ["/logo.png"],
+      images: [OG_IMAGE.url],
     },
     icons: {
       icon: [{ url: "/favicon.ico", sizes: "any" }],
@@ -164,6 +198,14 @@ export function websiteJsonLd() {
     name: SITE_NAME,
     url: siteUrl,
     description: DEFAULT_DESCRIPTION,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/blog?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
   };
 }
 

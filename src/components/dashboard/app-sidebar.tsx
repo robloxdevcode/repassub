@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard, Lock, Plus, Settings, User, CreditCard, Menu, X, Shield, BarChart3,
 } from "lucide-react";
@@ -22,12 +22,7 @@ const mainNavItems = [
 export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const onCreate = pathname.startsWith("/create");
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <>
@@ -81,7 +76,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
               );
             })}
 
-            {mounted && isAdmin && (
+            {isAdmin && (
               <Link
                 href="/admin"
                 onClick={() => setOpen(false)}

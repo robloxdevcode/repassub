@@ -3,7 +3,7 @@
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { RetroButton } from "@/components/retro";
 import { useCurrency } from "@/components/providers/currency-provider";
-
+import { HOME_FAQS } from "@/lib/seo";
 export { HeroSection } from "@/components/marketing/hero-section";
 
 const STEPS = [
@@ -58,29 +58,14 @@ export function StepsSection() {
 export function FaqSection() {
   const { labels, discountPercent } = useCurrency();
 
-  const faqs = [
-    {
-      q: "Is Linklock free?",
-      a: "Yes. 5 unlock links per week, 2 steps each, basic stats. No credit card to sign up.",
-    },
-    {
-      q: "What can I give away?",
-      a: "Any link — Drive, Dropbox, your site — or text after unlock. We don't host files; you keep your existing links.",
-    },
-    {
-      q: "How many steps can I add?",
-      a: "Free: 2 per link. Pro: 4. YouTube, Discord, Spotify, and more.",
-    },
-    {
-      q: "Do fans need an account?",
-      a: "No. They open your link, finish your steps, and get the content.",
-    },
-    {
-      q: "What does Pro include?",
-      a: `No ads, unlimited links, custom branding, and stats. ${labels.yearly} (${discountPercent}% off) or ${labels.monthly}.`,
-    },
-  ];
-
+  const faqs = HOME_FAQS.map((item) =>
+    item.q === "What does Pro include?"
+      ? {
+          ...item,
+          a: `No ads, unlimited links, custom branding, and stats. ${labels.yearly} (${discountPercent}% off) or ${labels.monthly}.`,
+        }
+      : item
+  );
   return (
     <section id="faq" className="landing-section border-b-[3px] border-retro-ink bg-retro-bg scroll-mt-20">
       <div className="mx-auto max-w-3xl px-4 py-12 md:py-16">

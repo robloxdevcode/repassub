@@ -82,6 +82,7 @@ export function PublicUnlockClient({
   const [showAnimation, setShowAnimation] = useState(false);
   const [content, setContent] = useState<ContentItem | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
 
   useEffect(() => {
     trackCampaignView(campaign.id);
@@ -105,6 +106,9 @@ export function PublicUnlockClient({
           completedActions: (result.session.completedActions as string[]) || [],
           status: result.session.status,
         });
+        setUnlockError(null);
+      } catch {
+        setUnlockError("Could not verify that step. Try again.");
       } finally {
         setVerifyingId(null);
       }
@@ -124,6 +128,7 @@ export function PublicUnlockClient({
     const config = action.config as Record<string, string>;
     if (config?.url) window.open(config.url, "_blank", "noopener,noreferrer");
 
+    setUnlockError(null);
     setVerifyingId(action.id);
   }
 
@@ -132,11 +137,12 @@ export function PublicUnlockClient({
       const result = await unlockContent(campaign.id);
       setUnlocked(true);
       setContent(result.content ?? campaign.content);
+      setUnlockError(null);
     } catch {
-      setUnlocked(true);
-      setContent(campaign.content);
+      setUnlockError("Could not unlock content. Please try again.");
+    } finally {
+      setShowAnimation(false);
     }
-    setShowAnimation(false);
   }
 
   return (
@@ -274,6 +280,12 @@ export function PublicUnlockClient({
                 </>
               )}
             </RetroButton>
+
+            {unlockError && (
+              <p className="mt-3 text-center text-sm font-semibold text-retro-error" role="alert">
+                {unlockError}
+              </p>
+            )}
           </>
         ) : (
           <div className="text-center py-4">

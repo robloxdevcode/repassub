@@ -1,22 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { RetroButton } from "@/components/retro";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
+import { useMarketingSignedIn } from "@/components/marketing/marketing-auth-provider";
 
 export function MarketingNavActions() {
-  const { isSignedIn } = useAuth();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <div className="h-9 w-[88px] border-2 border-retro-ink/20 bg-retro-surface-2" aria-hidden />;
-  }
+  const isSignedIn = useMarketingSignedIn();
 
   if (isSignedIn) {
     return (

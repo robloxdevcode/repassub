@@ -9,6 +9,9 @@ import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { cn } from "@/lib/utils";
 
 const links = [
+  { href: "/features", label: "Features" },
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/blog", label: "Blog" },
   { href: "/pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
 ];

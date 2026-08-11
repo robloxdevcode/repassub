@@ -22,15 +22,20 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    getDashboardStats().then((s) => {
-      setUser(s.user);
-      setDisplayName(s.user.displayName || "");
-      setBio(s.user.bio || "");
-      setUsername(s.user.username);
-      setAvatarUrl(s.user.avatarUrl);
-    });
+    getDashboardStats()
+      .then((s) => {
+        setUser(s.user);
+        setDisplayName(s.user.displayName || "");
+        setBio(s.user.bio || "");
+        setUsername(s.user.username);
+        setAvatarUrl(s.user.avatarUrl);
+      })
+      .catch((e) => {
+        setLoadError(e instanceof Error ? e.message : "Could not load profile");
+      });
   }, []);
 
   async function handleSave() {
@@ -43,6 +48,15 @@ export default function ProfilePage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (loadError) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <AppPageHeader title="Profile" subtitle="Your name and photo show on unlock pages." />
+        <AppCard className="p-6 text-sm text-retro-error">{loadError}</AppCard>
+      </div>
+    );
   }
 
   if (!user) return null;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import { useMarketingSignedIn } from "@/components/marketing/marketing-auth-provider";
 
 export function MarketingAuthLink({
   href,
@@ -14,7 +14,7 @@ export function MarketingAuthLink({
   className?: string;
   children: React.ReactNode;
 }) {
-  const { isSignedIn } = useAuth();
+  const isSignedIn = useMarketingSignedIn();
 
   return (
     <Link href={isSignedIn ? signedInHref : href} className={className}>

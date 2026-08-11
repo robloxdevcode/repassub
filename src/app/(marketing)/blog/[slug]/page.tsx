@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: post.excerpt,
     path: `/blog/${post.slug}`,
     openGraphType: "article",
+    noIndex: true,
   });
 }
 
