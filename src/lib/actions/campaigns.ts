@@ -118,6 +118,11 @@ export async function updateCampaignContent(
     update: payload,
   });
 
+  revalidatePath("/unlocks");
+  if (campaign.status === "PUBLISHED") {
+    revalidatePath(`/u/${user.username}/${campaign.slug}`);
+  }
+
   return { success: true };
 }
 
@@ -159,6 +164,11 @@ export async function updateCampaignActions(
       sortOrder: i,
     })),
   });
+
+  revalidatePath("/unlocks");
+  if (campaign.status === "PUBLISHED") {
+    revalidatePath(`/u/${user.username}/${campaign.slug}`);
+  }
 
   return { success: true };
 }

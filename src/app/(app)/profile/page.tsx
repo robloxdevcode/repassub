@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { RetroButton, RetroInput, RetroTextarea } from "@/components/retro";
+import { RetroButton, RetroInput, RetroTextarea, RetroLoading } from "@/components/retro";
 import { useToast } from "@/components/retro";
 import { updateProfile } from "@/lib/actions/campaigns";
 import { getDashboardStats } from "@/lib/actions/dashboard";
@@ -59,7 +59,16 @@ export default function ProfilePage() {
     );
   }
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <AppPageHeader title="Profile" subtitle="Your name and photo show on unlock pages." />
+        <AppCard className="p-6">
+          <RetroLoading message="Loading profile..." />
+        </AppCard>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-2xl">

@@ -96,7 +96,7 @@ export async function getAnalyticsBreakdown(userId: string) {
 
   const campaignIds = campaigns.map((c) => c.id);
 
-  const [bySource, byDevice, byCountry] = await Promise.all([
+  const [bySource, byDevice, byCountry, perCampaignEvents] = await Promise.all([
     db.analyticsEvent.groupBy({
       by: ["source"],
       where: { campaignId: { in: campaignIds }, source: { not: null } },
@@ -116,9 +116,29 @@ export async function getAnalyticsBreakdown(userId: string) {
       orderBy: { _count: { country: "desc" } },
       take: 10,
     }),
+    db.analyticsEvent.groupBy({
+      by: ["campaignId", "type"],
+      where: { campaignId: { in: campaignIds } },
+      _count: { type: true },
+    }),
   ]);
 
-  return { bySource, byDevice, byCountry, campaigns };
+  const campaignStats = campaigns.map((c) => {
+    const rows = perCampaignEvents.filter((e) => e.campaignId === c.id);
+    const counts = Object.fromEntries(rows.map((r) => [r.type, r._count.type])) as Record<string, number>;
+    const views = counts.VIEW || 0;
+    const unlocked = counts.UNLOCK || 0;
+    return {
+      id: c.id,
+      title: c.title,
+      slug: c.slug,
+      views,
+      unlocked,
+      conversion: views > 0 ? (unlocked / views) * 100 : 0,
+    };
+  }).sort((a, b) => b.views - a.views);
+
+  return { bySource, byDevice, byCountry, campaigns, campaignStats };
 }
 
 function startOfUtcDay(date = new Date()) {

@@ -1,17 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { UserProfile } from "@clerk/nextjs";
 import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
 import { PLAN_FEATURES } from "@/lib/stripe";
+import { getBillingData } from "@/lib/actions/payments";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
+import { RetroLoading } from "@/components/retro";
 
 const TABS = ["Account", "Plan"];
 
 export default function SettingsPage() {
   const [tab, setTab] = useState("Account");
+  const [plan, setPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    getBillingData()
+      .then((data) => setPlan(data.plan))
+      .catch(() => setPlan("FREE"));
+  }, []);
+
+  const isPro = plan === "PRO" || plan === "BUSINESS";
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -55,26 +66,52 @@ export default function SettingsPage() {
 
         {tab === "Plan" && (
           <div className="flex flex-col gap-4">
-            <div className="brutal-border bg-retro-surface-2 p-4">
-              <p className="font-body font-bold">Free plan</p>
-              <ul className="mt-2 text-sm text-retro-text-dim space-y-1 list-disc list-inside">
-                {PLAN_FEATURES.FREE.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="brutal-border bg-retro-yellow/30 p-4">
-              <p className="font-body font-bold">Pro plan</p>
-              <ul className="mt-2 text-sm text-retro-text-dim space-y-1 list-disc list-inside">
-                {PLAN_FEATURES.PRO.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </div>
+            {plan === null ? (
+              <RetroLoading message="Loading plan..." />
+            ) : (
+              <>
+                <div
+                  className={cn(
+                    "brutal-border p-4",
+                    !isPro ? "bg-retro-yellow/40 ring-2 ring-retro-accent" : "bg-retro-surface-2"
+                  )}
+                >
+                  <p className="font-body font-bold flex items-center gap-2">
+                    Free plan
+                    {!isPro && (
+                      <span className="text-[10px] font-display bg-retro-accent text-white px-2 py-0.5">CURRENT</span>
+                    )}
+                  </p>
+                  <ul className="mt-2 text-sm text-retro-text-dim space-y-1 list-disc list-inside">
+                    {PLAN_FEATURES.FREE.map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div
+                  className={cn(
+                    "brutal-border p-4",
+                    isPro ? "bg-retro-yellow/40 ring-2 ring-retro-accent" : "bg-retro-yellow/30"
+                  )}
+                >
+                  <p className="font-body font-bold flex items-center gap-2">
+                    Pro plan
+                    {isPro && (
+                      <span className="text-[10px] font-display bg-retro-accent text-white px-2 py-0.5">CURRENT</span>
+                    )}
+                  </p>
+                  <ul className="mt-2 text-sm text-retro-text-dim space-y-1 list-disc list-inside">
+                    {PLAN_FEATURES.PRO.map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
             <p className="text-sm text-retro-text-dim">
               <Link href="/profile" className="text-retro-blue underline">Edit profile &amp; photo</Link>
               {" · "}
-              <a href="/billing" className="text-retro-blue underline">Manage billing</a>
+              <Link href="/billing" className="text-retro-blue underline">Manage billing</Link>
             </p>
           </div>
         )}
@@ -83,3 +120,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

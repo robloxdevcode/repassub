@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { RetroLoading } from "@/components/retro";
 import { RetroButton, RetroInput, RetroTextarea, RetroProgressBar } from "@/components/retro";
@@ -61,6 +61,7 @@ function newActionDraft(): ActionDraft {
 
 function CreateUnlockWizard() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { toast } = useToast();
   const editId = searchParams.get("id");
 
@@ -71,6 +72,7 @@ function CreateUnlockWizard() {
   const [slug, setSlug] = useState("");
   const [published, setPublished] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState("");
+  const [campaignStatus, setCampaignStatus] = useState<"DRAFT" | "PUBLISHED">("DRAFT");
   const [actionLimit, setActionLimit] = useState(2);
   const [plan, setPlan] = useState("FREE");
   const [linkQuota, setLinkQuota] = useState<{ used: number; limit: number; remaining: number; resetsAt: Date | null } | null>(null);
@@ -88,6 +90,7 @@ function CreateUnlockWizard() {
   const [logoUrl, setLogoUrl] = useState("");
 
   const isPro = isProPlan(plan);
+  const isPublishedEdit = !!editId && campaignStatus === "PUBLISHED";
 
   const atLinkLimit =
     !editId && linkQuota !== null && linkQuota.limit !== Infinity && linkQuota.remaining <= 0;
@@ -141,9 +144,21 @@ function CreateUnlockWizard() {
             })
           );
         }
+        setCampaignStatus(campaign.status as "DRAFT" | "PUBLISHED");
+        if (campaign.content && campaign.actions.length) {
+          setStep(2);
+        } else if (campaign.content) {
+          setStep(1);
+        }
       });
     }
   }, [editId]);
+
+  useEffect(() => {
+    if (step === 1 && actions.length === 0) {
+      setActions([newActionDraft()]);
+    }
+  }, [step, actions.length]);
 
   const ensureCampaign = useCallback(async () => {
     if (campaignId) return campaignId;
@@ -237,7 +252,7 @@ function CreateUnlockWizard() {
     }
   }
 
-  async function handlePublishStep() {
+  async function handleFinishStep() {
     if (!title.trim()) {
       toast("Give your link a name", "error");
       return;
@@ -258,12 +273,19 @@ function CreateUnlockWizard() {
           : {}),
       });
       setSlug(updated.slug);
+
+      if (isPublishedEdit) {
+        toast("Changes saved", "success");
+        router.push("/unlocks");
+        return;
+      }
+
       const result = await publishCampaign(id);
       setPublishedUrl(result.unlockUrl);
       setPublished(true);
       toast("Your link is live!", "success");
     } catch (e) {
-      toast(actionErrorMessage(e, "Could not publish"), "error");
+      toast(actionErrorMessage(e, isPublishedEdit ? "Could not save" : "Could not publish"), "error");
     } finally {
       setLoading(false);
     }
@@ -328,7 +350,7 @@ function CreateUnlockWizard() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-8">
-        <h1 className="font-body text-2xl font-bold">Create link</h1>
+        <h1 className="font-body text-2xl font-bold">{editId ? "Edit link" : "Create link"}</h1>
         <p className="mt-2 text-sm text-retro-text-dim">
           Step {step + 1} of {STEPS.length}: {STEPS[step]}
         </p>
@@ -493,6 +515,15 @@ function CreateUnlockWizard() {
             onChange={(e) => setTitle(e.target.value)}
           />
           <div className="mt-4">
+            <RetroTextarea
+              label="Description (optional)"
+              rows={3}
+              placeholder="Short note fans see before unlocking..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <div className="mt-4">
             <RetroInput
               label="Unlock button text"
               placeholder="Get download"
@@ -551,8 +582,8 @@ function CreateUnlockWizard() {
             <RetroButton variant="ghost" onClick={() => setStep(1)}>
               Back
             </RetroButton>
-            <RetroButton onClick={handlePublishStep} loading={loading}>
-              Publish link
+            <RetroButton onClick={handleFinishStep} loading={loading}>
+              {isPublishedEdit ? "Save changes" : "Publish link"}
             </RetroButton>
           </div>
         </AppCard>

@@ -21,7 +21,10 @@ export const DEFAULT_KEYWORDS = [
   "follow to unlock",
   "subscribe to unlock",
   "gated download link",
-  "creator growth tool",
+  "Linklock",
+  "linklock.org",
+  "social media unlock page",
+  "fan gate download",
 ];
 
 const OG_IMAGE = {
@@ -237,6 +240,74 @@ export function faqJsonLd(faqs: { q: string; a: string }[]) {
       name: item.q,
       acceptedAnswer: { "@type": "Answer", text: item.a },
     })),
+  };
+}
+
+export function articleJsonLd(input: {
+  title: string;
+  description: string;
+  path: string;
+  datePublished: string;
+}) {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.title,
+    description: input.description,
+    datePublished: input.datePublished,
+    dateModified: input.datePublished,
+    author: { "@type": "Organization", name: SITE_NAME, url: siteUrl },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      logo: { "@type": "ImageObject", url: absoluteUrl("/logo.png") },
+    },
+    mainEntityOfPage: absoluteUrl(input.path),
+    image: absoluteUrl(OG_IMAGE.url),
+  };
+}
+
+export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path),
+    })),
+  };
+}
+
+export function pricingJsonLd() {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${SITE_NAME} Pro`,
+    description: "Unlimited unlock links, no ads, custom branding, and advanced analytics for creators.",
+    brand: { "@type": "Brand", name: SITE_NAME },
+    url: absoluteUrl("/pricing"),
+    offers: [
+      {
+        "@type": "Offer",
+        name: "Free",
+        price: "0",
+        priceCurrency: "EUR",
+        url: siteUrl,
+        description: "5 links per week, 2 steps each",
+      },
+      {
+        "@type": "Offer",
+        name: "Pro",
+        price: "6.99",
+        priceCurrency: "EUR",
+        url: absoluteUrl("/pricing"),
+        description: "Unlimited links, no ads, branding, analytics",
+      },
+    ],
   };
 }
 

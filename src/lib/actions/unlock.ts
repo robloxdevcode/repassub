@@ -59,15 +59,12 @@ export async function getUnlockSession(campaignId: string) {
     return session;
   }
 
-  // Every revisit or refresh starts fresh — do all steps again
-  return db.unlockSession.update({
-    where: { id: existing.id },
-    data: {
-      status: "STARTED",
-      completedActions: [],
-      unlockedAt: null,
-    },
-  });
+  // Preserve fan progress across refresh; only reset if starting a new visit after unlock
+  if (existing.status === "UNLOCKED") {
+    return existing;
+  }
+
+  return existing;
 }
 
 export async function completeAction(campaignId: string, actionId: string) {

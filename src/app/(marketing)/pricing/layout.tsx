@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { buildPageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/marketing/json-ld";
+import { buildPageMetadata, pricingJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Pricing — Free & Pro Plans",
@@ -10,5 +11,10 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <JsonLd data={pricingJsonLd()} />
+      {children}
+    </>
+  );
 }

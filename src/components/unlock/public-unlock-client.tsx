@@ -14,7 +14,7 @@ import { UnlockPageAd } from "./unlock-page-ad";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { unlockThemeClass } from "@/lib/unlock-themes";
 import { cn } from "@/lib/utils";
-import { Check, Lock, Play, MessageCircle, Music2, UserPlus, ExternalLink, Loader2, ArrowUpRight } from "lucide-react";
+import { Check, Lock, Play, MessageCircle, Music2, UserPlus, ExternalLink, Loader2, ArrowUpRight, Copy } from "lucide-react";
 
 const VERIFY_SECONDS = 14;
 
@@ -82,16 +82,24 @@ export function PublicUnlockClient({
   const [showAnimation, setShowAnimation] = useState(false);
   const [content, setContent] = useState<ContentItem | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
+  const [verifySecondsLeft, setVerifySecondsLeft] = useState(VERIFY_SECONDS);
   const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     trackCampaignView(campaign.id);
-    getUnlockSession(campaign.id).then(() => {
-      setSession({ completedActions: [], status: "STARTED" });
-      setUnlocked(false);
-      setContent(null);
+    getUnlockSession(campaign.id).then((session) => {
+      const completedActions = (session.completedActions as string[]) || [];
+      setSession({ completedActions, status: session.status });
+      if (session.status === "UNLOCKED") {
+        setUnlocked(true);
+        setContent(campaign.content);
+      } else {
+        setUnlocked(false);
+        setContent(null);
+      }
     });
-  }, [campaign.id]);
+  }, [campaign.id, campaign.content]);
 
   const completed = session?.completedActions || [];
   const total = campaign.actions.length;
@@ -118,9 +126,29 @@ export function PublicUnlockClient({
 
   useEffect(() => {
     if (!verifyingId) return;
+    setVerifySecondsLeft(VERIFY_SECONDS);
     const timer = setTimeout(() => finishVerification(verifyingId), VERIFY_SECONDS * 1000);
     return () => clearTimeout(timer);
   }, [verifyingId, finishVerification]);
+
+  useEffect(() => {
+    if (!verifyingId) return;
+    setVerifySecondsLeft(VERIFY_SECONDS);
+    const interval = setInterval(() => {
+      setVerifySecondsLeft((s) => (s > 0 ? s - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [verifyingId]);
+
+  async function copyText(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setUnlockError("Could not copy — select the text manually.");
+    }
+  }
 
   function startAction(action: ActionItem) {
     if (verifyingId || completed.includes(action.id)) return;
@@ -218,7 +246,9 @@ export function PublicUnlockClient({
                         <Loader2 size={16} className="animate-spin shrink-0" />
                         <span className="font-semibold">Checking…</span>
                       </div>
-                      <span className="text-xs opacity-80 pl-6">Finish the step in the other tab</span>
+                      <span className="text-xs opacity-80 pl-6">
+                        Finish the step in the other tab ({verifySecondsLeft}s)
+                      </span>
                     </div>
                   );
                 }
@@ -306,8 +336,14 @@ export function PublicUnlockClient({
               </a>
             )}
             {content?.type === "TEXT" && content.textBody && (
-              <div className="mt-4 text-left brutal-border bg-retro-surface-2 p-4 text-sm whitespace-pre-wrap">
-                {content.textBody}
+              <div className="mt-4 text-left">
+                <div className="brutal-border bg-retro-surface-2 p-4 text-sm whitespace-pre-wrap mb-3">
+                  {content.textBody}
+                </div>
+                <RetroButton size="md" variant="secondary" onClick={() => copyText(content.textBody!)} className="w-full">
+                  <Copy size={16} />
+                  {copied ? "Copied!" : "Copy text"}
+                </RetroButton>
               </div>
             )}
           </div>

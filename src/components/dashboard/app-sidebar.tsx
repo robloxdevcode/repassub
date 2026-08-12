@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  LayoutDashboard, Lock, Plus, Settings, User, CreditCard, Menu, X, Shield, BarChart3,
+  LayoutDashboard, Lock, Plus, Settings, User, CreditCard, Menu, X, Shield, BarChart3, Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
@@ -14,6 +14,7 @@ const mainNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/unlocks", label: "My links", icon: Lock },
   { href: "/analytics", label: "Stats", icon: BarChart3 },
+  { href: "/audience", label: "Audience", icon: Users },
   { href: "/profile", label: "Profile", icon: User },
   { href: "/billing", label: "Billing", icon: CreditCard },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -22,7 +23,18 @@ const mainNavItems = [
 export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [atQuotaLimit, setAtQuotaLimit] = useState(false);
   const onCreate = pathname.startsWith("/create");
+
+  useEffect(() => {
+    import("@/lib/actions/campaigns").then(({ getUnlockQuota }) =>
+      getUnlockQuota()
+        .then((q) => {
+          setAtQuotaLimit(q.limit !== Infinity && q.remaining <= 0);
+        })
+        .catch(() => {})
+    );
+  }, []);
 
   return (
     <>
@@ -46,15 +58,17 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
           </Link>
 
           <Link
-            href="/create"
+            href={atQuotaLimit ? "/unlocks" : "/create"}
             onClick={() => setOpen(false)}
             className={cn(
               "sidebar-nav-item sidebar-nav-create mb-4 font-bold",
-              onCreate && "ring-2 ring-white/30"
+              onCreate && "ring-2 ring-white/30",
+              atQuotaLimit && "opacity-80"
             )}
+            title={atQuotaLimit ? "Weekly link limit reached" : undefined}
           >
             <Plus size={16} />
-            Create link
+            {atQuotaLimit ? "Link limit reached" : "Create link"}
           </Link>
 
           <nav className="flex flex-1 flex-col gap-1">
