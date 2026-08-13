@@ -328,4 +328,5 @@ export const SITEMAP_ROUTES: {
   { path: "/blog", priority: 0.65, changeFrequency: "weekly" },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly" },
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/refund-policy", priority: 0.3, changeFrequency: "yearly" },
 ];

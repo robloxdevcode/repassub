@@ -152,6 +152,13 @@ export function BillingPageClient() {
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-xs text-retro-text-muted">
+          All Pro payments are final. See our{" "}
+          <Link href="/refund-policy" className="text-retro-blue hover:underline">
+            Refund Policy
+          </Link>
+          .
+        </p>
       </AppCard>
     </div>
   );

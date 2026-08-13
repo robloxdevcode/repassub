@@ -17,6 +17,7 @@ export function RetroFooter() {
           <Link href="/support" className="hover:text-white">Support</Link>
           <Link href="/terms" className="hover:text-white">Terms</Link>
           <Link href="/privacy" className="hover:text-white">Privacy</Link>
+          <Link href="/refund-policy" className="hover:text-white">Refunds</Link>
         </div>
       </div>
       <p className="text-center font-body text-xs text-white/40 pb-6">&copy; 2026 Linklock</p>
