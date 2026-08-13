@@ -16,7 +16,7 @@ export function buildOgImage(title?: string, subtitle?: string) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#ff2b2b",
+          background: "#ff0040",
           border: "12px solid #0a0a0a",
           padding: "64px",
           fontFamily: "system-ui, sans-serif",
