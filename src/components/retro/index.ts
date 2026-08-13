@@ -1,4 +1,5 @@
 export { RetroButton } from "./retro-button";
+export { RetroLink } from "./retro-link";
 export { RetroCard, HudStatCard } from "./retro-card";
 export { RetroInput, RetroTextarea } from "./retro-input";
 export { RetroProgressBar } from "./retro-progress";

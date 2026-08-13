@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard, Lock, Plus, Settings, User, CreditCard, Menu, X, Shield, BarChart3, Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
+import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 
 const mainNavItems = [
@@ -23,23 +24,12 @@ const mainNavItems = [
 export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [atQuotaLimit, setAtQuotaLimit] = useState(false);
   const onCreate = pathname.startsWith("/create");
-
-  useEffect(() => {
-    import("@/lib/actions/campaigns").then(({ getUnlockQuota }) =>
-      getUnlockQuota()
-        .then((q) => {
-          setAtQuotaLimit(q.limit !== Infinity && q.remaining <= 0);
-        })
-        .catch(() => {})
-    );
-  }, []);
 
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-50 md:hidden bg-retro-surface border border-retro-border rounded-xl p-2 shadow-sm"
+        className="fixed left-4 top-4 z-50 md:hidden bg-retro-surface border border-retro-border rounded-xl p-2 shadow-sm touch-manipulation active:scale-95 transition-transform duration-75"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Close menu" : "Open menu"}
       >
@@ -48,27 +38,26 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
 
       <aside
         className={cn(
-          "app-sidebar fixed inset-y-0 left-0 z-40 w-60 text-retro-text border-r border-retro-border transition-transform md:translate-x-0",
+          "app-sidebar fixed inset-y-0 left-0 z-40 w-60 text-retro-text border-r border-retro-border transition-transform duration-150 md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex h-full flex-col p-4">
-          <Link href="/dashboard" className="mb-6 px-2 block" onClick={() => setOpen(false)}>
+          <Link href="/dashboard" prefetch className="mb-6 px-2 block" onClick={() => setOpen(false)}>
             <LinklockLogo size={36} showWordmark wordmarkClassName="text-retro-text" />
           </Link>
 
           <Link
-            href={atQuotaLimit ? "/unlocks" : "/create"}
+            href="/create"
+            prefetch
             onClick={() => setOpen(false)}
             className={cn(
               "sidebar-nav-item sidebar-nav-create mb-4 font-bold",
-              onCreate && "ring-2 ring-white/30",
-              atQuotaLimit && "opacity-80"
+              onCreate && "ring-2 ring-white/30"
             )}
-            title={atQuotaLimit ? "Weekly link limit reached" : undefined}
           >
             <Plus size={16} />
-            {atQuotaLimit ? "Link limit reached" : "Create link"}
+            Create link
           </Link>
 
           <nav className="flex flex-1 flex-col gap-1">
@@ -78,6 +67,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch
                   onClick={() => setOpen(false)}
                   className={cn(
                     "sidebar-nav-item rounded-lg",
@@ -93,6 +83,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
             {isAdmin && (
               <Link
                 href="/admin"
+                prefetch
                 onClick={() => setOpen(false)}
                 className={cn(
                   "sidebar-nav-item mt-3 border border-retro-error/40 text-retro-error hover:bg-retro-error/10",
@@ -119,6 +110,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
 export function AppShell({ children, isAdmin = false }: { children: React.ReactNode; isAdmin?: boolean }) {
   return (
     <>
+      <AppNavProgress />
       <AppSidebar isAdmin={isAdmin} />
       <div className="app-stage md:ml-60 min-h-screen">
         <main className="p-4 pt-16 md:p-8 md:pt-10">{children}</main>

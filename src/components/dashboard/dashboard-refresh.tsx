@@ -3,11 +3,16 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export function DashboardRefresh({ intervalMs = 45000 }: { intervalMs?: number }) {
+export function DashboardRefresh({ intervalMs = 120000 }: { intervalMs?: number }) {
   const router = useRouter();
 
   useEffect(() => {
-    const id = window.setInterval(() => router.refresh(), intervalMs);
+    function tick() {
+      if (document.hidden) return;
+      router.refresh();
+    }
+
+    const id = window.setInterval(tick, intervalMs);
     return () => window.clearInterval(id);
   }, [router, intervalMs]);
 

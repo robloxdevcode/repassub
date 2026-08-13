@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteCampaign } from "@/lib/actions/campaigns";
 import { RetroButton } from "@/components/retro";
@@ -14,31 +14,23 @@ export function DeleteUnlockButton({
   title: string;
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   async function handleDelete() {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
 
-    setLoading(true);
     try {
       await deleteCampaign(campaignId);
-      router.refresh();
+      startTransition(() => router.refresh());
     } catch (e) {
       alert(e instanceof Error ? e.message : "Could not delete link");
-    } finally {
-      setLoading(false);
     }
   }
 
   return (
-    <RetroButton
-      variant="danger"
-      size="sm"
-      onClick={handleDelete}
-      disabled={loading}
-    >
+    <RetroButton variant="danger" size="sm" onClick={handleDelete} loading={pending}>
       <Trash2 size={14} />
-      {loading ? "Deleting…" : "Delete"}
+      Delete
     </RetroButton>
   );
 }

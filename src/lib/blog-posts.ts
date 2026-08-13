@@ -16,7 +16,7 @@ export const BLOG_POSTS: BlogPost[] = [
     body: [
       "Linklock is a subscribe-to-download tool built for creators who want growth without complicated setup. Paste your file link, add the steps fans must complete, and share one URL everywhere.",
       "Unlike heavy content lockers, Linklock keeps the fan experience clean: a short checklist, a progress bar, and instant unlock when steps are done. You keep hosting files on your own links — we never store your downloads.",
-      "Launch unlimited gated links for free — 5 new links per week and 2 steps each on Free. Pro removes limits, adds full branding, audience insights, and no Linklock ads.",
+      "Linklock is free with unlimited links and 4 steps per link. Pro adds 10 steps, custom branding, deep analytics, and ad-free unlock pages.",
       "Whether you share preset packs, mod files, guides, or invite links, Linklock turns every download into a chance to grow your audience.",
     ],
   },
@@ -43,7 +43,7 @@ export const BLOG_POSTS: BlogPost[] = [
     body: [
       "Action gating means fans complete a task before accessing your content. Linklock supports 70+ platforms so you can match steps to where your audience already lives.",
       "For video creators, a subscribe step plus a like or notification reminder converts well. For communities, a single join step is often enough.",
-      "Free accounts can add 2 steps per link; Pro allows 4 for deeper funnels. Start simple — you can always duplicate a winning link and experiment.",
+      "Free accounts get 4 steps per link; Pro allows 10 for longer funnels. Start with what converts, then upgrade when you need more depth.",
       "Avoid steps that feel unrelated to the reward. If you offer a music pack, asking fans to join your community is fine; asking for unrelated actions hurts trust.",
       "Test on mobile. Most fans open bio and description links on phones — keep titles short and buttons easy to tap.",
     ],

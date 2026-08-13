@@ -59,8 +59,7 @@ export default function PricingPage() {
             Pro when you&apos;re ready to scale.
           </h1>
           <p className="mt-4 text-lg text-retro-text-dim max-w-xl">
-            Launch gated links for free. Upgrade to Pro for unlimited links, full branding, and insights that
-            show what drives growth.
+            Unlimited links on Free with 4 steps each. Pro unlocks 10 steps, full branding, deep analytics, and no ads.
           </p>
         </div>
       </section>

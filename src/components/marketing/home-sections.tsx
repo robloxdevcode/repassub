@@ -19,8 +19,8 @@ const STEPS = [
   },
   {
     icon: MousePointerClick,
-    title: "Add 1–2 simple steps",
-    desc: "Subscribe, follow, or join — we detect the platform for you.",
+    title: "Add up to 4 fan steps",
+    desc: "Follow, subscribe, or join — up to 10 steps on Pro.",
   },
   {
     icon: Share2,
@@ -61,8 +61,7 @@ export function PlansSection() {
       <div className="mx-auto max-w-5xl px-4 py-16 md:py-20">
         <h2 className="simple-section-title text-center mb-3">Free vs Pro</h2>
         <p className="text-center text-retro-text-dim mb-10 max-w-lg mx-auto">
-          Start free with everything you need. Upgrade when you want unlimited links, full branding, and growth
-          insights.
+          Free gives you unlimited links and 4 steps per link. Pro adds 10 steps, full branding, analytics, and no ads.
         </p>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">

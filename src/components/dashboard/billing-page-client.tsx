@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { RetroButton } from "@/components/retro";
+import { RetroButton, RetroLink } from "@/components/retro";
 import { useToast } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { getBillingData, createBillingPortal, createCheckoutSession } from "@/lib/actions/payments";
@@ -76,7 +76,7 @@ export function BillingPageClient() {
             <div>
               <p className="font-body font-bold text-retro-ink">You&apos;re Pro now!</p>
               <p className="text-sm text-retro-text-dim mt-1">
-                Unlimited links, full branding, audience insights, and a clean pro experience — all unlocked.
+                10 steps per link, full branding, deep analytics, and a clean ad-free experience — all unlocked.
               </p>
             </div>
           </div>
@@ -107,11 +107,9 @@ export function BillingPageClient() {
                 <RetroButton variant="primary" loading={loading} onClick={handleUpgrade} className="w-full sm:w-auto">
                   Upgrade to Pro
                 </RetroButton>
-                <Link href="/pricing" prefetch className="w-full sm:w-auto">
-                  <RetroButton variant="ghost" className="w-full">
-                    Compare plans
-                  </RetroButton>
-                </Link>
+                <RetroLink href="/pricing" variant="ghost" className="w-full sm:w-auto">
+                  Compare plans
+                </RetroLink>
               </>
             )}
           </div>

@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useTransition, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { RetroLoading } from "@/components/retro";
-import { RetroButton, RetroInput, RetroTextarea, RetroProgressBar } from "@/components/retro";
+import { RetroLoading, RetroButton, RetroInput, RetroTextarea, RetroProgressBar, RetroLink } from "@/components/retro";
 import { useToast } from "@/components/retro";
 import {
   createCampaign,
@@ -14,12 +12,11 @@ import {
   publishCampaign,
   getCampaign,
 } from "@/lib/actions/campaigns";
-import { formatUnlockQuotaReset } from "@/lib/stripe";
+import { isProPlan, PLAN_LIMITS } from "@/lib/stripe";
 import { detectPlatformFromUrl, getPlatform, guessPlatform } from "@/lib/unlock-platforms";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard } from "@/components/dashboard/app-page-header";
 import { UNLOCK_THEMES } from "@/lib/unlock-themes";
-import { isProPlan } from "@/lib/stripe";
 import { Link as LinkIcon, FileText, Check, Plus, Trash2 } from "lucide-react";
 import type { ContentType } from "@prisma/client";
 
@@ -62,6 +59,7 @@ function newActionDraft(): ActionDraft {
 function CreateUnlockWizard() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [, startNav] = useTransition();
   const { toast } = useToast();
   const editId = searchParams.get("id");
 
@@ -73,9 +71,8 @@ function CreateUnlockWizard() {
   const [published, setPublished] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState("");
   const [campaignStatus, setCampaignStatus] = useState<"DRAFT" | "PUBLISHED">("DRAFT");
-  const [actionLimit, setActionLimit] = useState(2);
+  const [actionLimit, setActionLimit] = useState(4);
   const [plan, setPlan] = useState("FREE");
-  const [linkQuota, setLinkQuota] = useState<{ used: number; limit: number; remaining: number; resetsAt: Date | null } | null>(null);
 
   const [contentType, setContentType] = useState<ContentType>("URL");
   const [externalUrl, setExternalUrl] = useState("");
@@ -92,16 +89,12 @@ function CreateUnlockWizard() {
   const isPro = isProPlan(plan);
   const isPublishedEdit = !!editId && campaignStatus === "PUBLISHED";
 
-  const atLinkLimit =
-    !editId && linkQuota !== null && linkQuota.limit !== Infinity && linkQuota.remaining <= 0;
-
   useEffect(() => {
     import("@/lib/actions/dashboard").then(({ getDashboardStats }) =>
       getDashboardStats().then((s) => {
         setUsername(s.user.username);
-        setActionLimit(s.actionLimit === Infinity ? 99 : s.actionLimit);
+        setActionLimit(s.actionLimit);
         setPlan(s.plan);
-        setLinkQuota(s.unlockQuota);
       })
     );
   }, []);
@@ -162,15 +155,10 @@ function CreateUnlockWizard() {
 
   const ensureCampaign = useCallback(async () => {
     if (campaignId) return campaignId;
-    setLoading(true);
-    try {
-      const campaign = await createCampaign({ title: title || "My unlock" });
-      setCampaignId(campaign.id);
-      setSlug(campaign.slug);
-      return campaign.id;
-    } finally {
-      setLoading(false);
-    }
+    const campaign = await createCampaign({ title: title || "My unlock" });
+    setCampaignId(campaign.id);
+    setSlug(campaign.slug);
+    return campaign.id;
   }, [campaignId, title]);
 
   function validateContent(): string | null {
@@ -181,15 +169,13 @@ function CreateUnlockWizard() {
   }
 
   async function handleContentNext() {
-    if (atLinkLimit) {
-      toast(`Free plan: ${linkQuota?.limit} links per week. Delete one or upgrade.`, "error");
-      return;
-    }
     const err = validateContent();
     if (err) {
       toast(err, "error");
       return;
     }
+
+    setStep(1);
     setLoading(true);
     try {
       const id = await ensureCampaign();
@@ -199,8 +185,8 @@ function CreateUnlockWizard() {
           : { type: "TEXT" as ContentType, textBody: textBody.trim() };
 
       await updateCampaignContent(id, content);
-      setStep(1);
     } catch (e) {
+      setStep(0);
       toast(actionErrorMessage(e, "Could not save"), "error");
     } finally {
       setLoading(false);
@@ -211,7 +197,7 @@ function CreateUnlockWizard() {
     if (actions.length === 0) return "Add at least one step for fans";
     if (actions.length > actionLimit) {
       return plan === "FREE"
-        ? `Free plan: max ${actionLimit} steps. Remove ${actions.length - actionLimit} or upgrade.`
+        ? `Free plan: max ${actionLimit} steps. Remove ${actions.length - actionLimit} or upgrade to Pro for 10.`
         : `Pro plan: max ${actionLimit} steps.`;
     }
     for (const action of actions) {
@@ -229,6 +215,8 @@ function CreateUnlockWizard() {
       toast(err, "error");
       return;
     }
+
+    setStep(2);
     setLoading(true);
     try {
       const id = await ensureCampaign();
@@ -244,8 +232,8 @@ function CreateUnlockWizard() {
           };
         })
       );
-      setStep(2);
     } catch (e) {
+      setStep(1);
       toast(actionErrorMessage(e, "Could not save steps"), "error");
     } finally {
       setLoading(false);
@@ -276,7 +264,7 @@ function CreateUnlockWizard() {
 
       if (isPublishedEdit) {
         toast("Changes saved", "success");
-        router.push("/unlocks");
+        startNav(() => router.push("/unlocks"));
         return;
       }
 
@@ -339,9 +327,9 @@ function CreateUnlockWizard() {
               Copy link
             </RetroButton>
           </div>
-          <Link href="/dashboard" className="inline-block mt-6 font-body text-sm text-retro-blue hover:underline">
+          <RetroLink href="/dashboard" variant="ghost" className="inline-block mt-6 text-sm">
             Back to dashboard
-          </Link>
+          </RetroLink>
         </AppCard>
       </div>
     );
@@ -354,21 +342,13 @@ function CreateUnlockWizard() {
         <p className="mt-2 text-sm text-retro-text-dim">
           Step {step + 1} of {STEPS.length}: {STEPS[step]}
         </p>
-        {plan === "FREE" && linkQuota && (
+        {plan === "FREE" && (
           <p className="mt-1 text-xs text-retro-text-muted">
-            {linkQuota.used}/{linkQuota.limit} links this week ({formatUnlockQuotaReset(linkQuota.resetsAt)})
+            Free · unlimited links · up to {actionLimit} steps ({PLAN_LIMITS.PRO.actionsPerUnlock} on Pro)
           </p>
         )}
         <RetroProgressBar value={step + 1} max={STEPS.length} showPercent={false} className="mt-4" />
       </div>
-
-      {atLinkLimit && (
-        <UpgradeNudge
-          className="mb-6"
-          title="Weekly link limit reached"
-          description="Delete an old link, wait for reset, or upgrade to Pro."
-        />
-      )}
 
       {step === 0 && (
         <AppCard className="p-6" accent="yellow">
@@ -380,7 +360,7 @@ function CreateUnlockWizard() {
                 key={type}
                 type="button"
                 onClick={() => setContentType(type)}
-                className={`brutal-border p-4 text-left transition-all hover:-translate-y-0.5 ${
+                className={`brutal-border p-4 text-left transition-colors duration-75 ${
                   contentType === type ? "border-retro-accent bg-retro-accent/10 brutal-shadow-sm" : "bg-retro-surface-2"
                 }`}
               >
@@ -411,7 +391,7 @@ function CreateUnlockWizard() {
           )}
 
           <div className="mt-8 flex justify-end">
-            <RetroButton onClick={handleContentNext} loading={loading} disabled={atLinkLimit}>
+            <RetroButton onClick={handleContentNext} loading={loading}>
               Next
             </RetroButton>
           </div>
@@ -490,7 +470,11 @@ function CreateUnlockWizard() {
           </RetroButton>
 
           {plan === "FREE" && actions.length >= actionLimit && (
-            <UpgradeNudge className="mb-4" title="Free: 2 steps max" description="Pro allows up to 4 steps per link." />
+            <UpgradeNudge
+              className="mb-4"
+              title="Free: 4 steps max"
+              description={`Pro lets you add up to ${PLAN_LIMITS.PRO.actionsPerUnlock} steps per link.`}
+            />
           )}
 
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
@@ -573,8 +557,8 @@ function CreateUnlockWizard() {
           ) : (
             <UpgradeNudge
               className="mt-6"
-              title="Want custom URL and colors?"
-              description="Pro removes ads and adds branding plus stats."
+              title="Want 10 steps and custom branding?"
+              description="Pro adds deeper funnels, your logo and colors, analytics, and no ads."
             />
           )}
 

@@ -3,10 +3,9 @@ import { getDashboardStats } from "@/lib/actions/dashboard";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { AppCard } from "@/components/dashboard/app-page-header";
 import { DashboardRefresh } from "@/components/dashboard/dashboard-refresh";
-import { RetroButton } from "@/components/retro";
+import { RetroLink } from "@/components/retro";
 import { formatNumber } from "@/lib/utils";
 import { getRequestSiteUrl } from "@/lib/site-url";
-import { formatUnlockQuotaReset } from "@/lib/stripe";
 import { ProPriceText } from "@/components/marketing/pro-price-text";
 import { Eye, Lock, Plus, Pencil } from "lucide-react";
 
@@ -15,10 +14,6 @@ export default async function DashboardPage() {
   const siteUrl = await getRequestSiteUrl();
   const hasUnlocks = stats.campaignCount > 0 || stats.recentCampaigns.length > 0;
   const firstName = stats.user.displayName?.split(" ")[0];
-  const atQuotaLimit =
-    stats.plan === "FREE" &&
-    stats.unlockQuota.limit !== Infinity &&
-    stats.unlockQuota.remaining <= 0;
   const isPro = stats.plan === "PRO" || stats.plan === "BUSINESS";
 
   return (
@@ -37,25 +32,15 @@ export default async function DashboardPage() {
           </p>
           {stats.plan === "FREE" && (
             <p className="mt-2 text-xs text-retro-text-muted">
-              {stats.unlockQuota.used}/{stats.unlockQuota.limit} links this week ({formatUnlockQuotaReset(stats.unlockQuota.resetsAt)})
+              Free plan · unlimited links · up to 4 steps per link
             </p>
           )}
         </div>
 
-        {atQuotaLimit ? (
-          <Link href="/unlocks" className="shrink-0">
-            <RetroButton variant="secondary" size="lg">
-              My links
-            </RetroButton>
-          </Link>
-        ) : (
-          <Link href="/create" className="shrink-0">
-            <RetroButton size="lg" className="inline-flex items-center gap-2">
-              <Plus size={16} />
-              New link
-            </RetroButton>
-          </Link>
-        )}
+        <RetroLink href="/create" size="lg" className="inline-flex items-center gap-2 shrink-0">
+          <Plus size={16} />
+          New link
+        </RetroLink>
       </div>
 
       {!hasUnlocks && (
@@ -63,12 +48,10 @@ export default async function DashboardPage() {
           <h2 className="font-body text-xl font-bold mb-3">No links yet</h2>
           <ol className="text-sm text-retro-text-dim text-left max-w-xs mx-auto space-y-2 mb-6">
             <li><strong className="text-retro-ink">1.</strong> Paste what fans download</li>
-            <li><strong className="text-retro-ink">2.</strong> Add steps (paste any platform link)</li>
+            <li><strong className="text-retro-ink">2.</strong> Add up to 4 fan steps (10 on Pro)</li>
             <li><strong className="text-retro-ink">3.</strong> Share one link</li>
           </ol>
-          <Link href="/create">
-            <RetroButton>Create my first link</RetroButton>
-          </Link>
+          <RetroLink href="/create">Create my first link</RetroLink>
         </AppCard>
       )}
 
@@ -102,7 +85,7 @@ export default async function DashboardPage() {
 
           {isPro && (
             <p className="text-xs text-retro-text-dim mb-6 -mt-4">
-              <Link href="/analytics" className="text-retro-blue hover:underline">
+              <Link href="/analytics" prefetch className="text-retro-blue hover:underline">
                 Full stats
               </Link>
             </p>
@@ -111,7 +94,7 @@ export default async function DashboardPage() {
           <AppCard className="p-6 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-body text-lg font-bold">Recent links</h2>
-              <Link href="/unlocks" className="text-xs text-retro-blue hover:underline">
+              <Link href="/unlocks" prefetch className="text-xs text-retro-blue hover:underline">
                 All links
               </Link>
             </div>
@@ -136,12 +119,10 @@ export default async function DashboardPage() {
                     </div>
                     <div className="flex flex-wrap gap-2 shrink-0">
                       {url && <CopyLinkButton url={url} />}
-                      <Link href={`/create?id=${campaign.id}`}>
-                        <RetroButton variant="ghost" size="sm">
-                          <Pencil size={14} />
-                          Edit
-                        </RetroButton>
-                      </Link>
+                      <RetroLink href={`/create?id=${campaign.id}`} variant="ghost" size="sm">
+                        <Pencil size={14} />
+                        Edit
+                      </RetroLink>
                     </div>
                   </article>
                 );
@@ -156,13 +137,13 @@ export default async function DashboardPage() {
           <div>
             <p className="font-body text-sm font-bold">Upgrade to Pro</p>
             <p className="text-sm text-retro-text-dim mt-1">
-              Remove limits, go fully on-brand, unlock audience insights, and drop Linklock ads.{" "}
+              10 steps per link, full branding, deep analytics, and no Linklock ads.{" "}
               <ProPriceText variant="monthly" />
             </p>
           </div>
-          <Link href="/billing" prefetch>
-            <RetroButton className="w-full sm:w-auto">Upgrade</RetroButton>
-          </Link>
+          <RetroLink href="/billing" className="w-full sm:w-auto">
+            Upgrade
+          </RetroLink>
         </AppCard>
       )}
     </div>

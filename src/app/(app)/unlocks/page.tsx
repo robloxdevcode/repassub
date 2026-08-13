@@ -1,51 +1,29 @@
-import Link from "next/link";
-import { getUserCampaigns, getUnlockQuota } from "@/lib/actions/campaigns";
-import { RetroButton } from "@/components/retro";
+import { RetroLink } from "@/components/retro";
+import { getUserCampaigns } from "@/lib/actions/campaigns";
 import { DeleteUnlockButton } from "@/components/dashboard/delete-unlock-button";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
-import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { getRequestSiteUrl } from "@/lib/site-url";
 import { requireUser } from "@/lib/auth";
-import { formatUnlockQuotaReset } from "@/lib/stripe";
 import { Pencil } from "lucide-react";
 
 export default async function UnlocksPage() {
   const user = await requireUser();
-  const [campaigns, quota, siteUrl] = await Promise.all([
-    getUserCampaigns(),
-    getUnlockQuota(),
-    getRequestSiteUrl(),
-  ]);
-  const atLimit = quota.limit !== Infinity && quota.remaining <= 0;
+  const [campaigns, siteUrl] = await Promise.all([getUserCampaigns(), getRequestSiteUrl()]);
 
   return (
     <div className="max-w-4xl mx-auto">
       <AppPageHeader
         title="My links"
-        subtitle={
-          quota.plan === "FREE"
-            ? `${quota.used}/${quota.limit} used · ${formatUnlockQuotaReset(quota.resetsAt)}`
-            : "All your unlock links in one place."
-        }
-        action={!atLimit ? { href: "/create", label: "New link" } : undefined}
+        subtitle="All your unlock links in one place — create as many as you need on Free."
+        action={{ href: "/create", label: "New link" }}
       />
-
-      {quota.plan === "FREE" && atLimit && (
-        <UpgradeNudge
-          className="mb-6"
-          title="Weekly limit reached"
-          description="Delete a link below or upgrade in Billing."
-        />
-      )}
 
       {campaigns.length === 0 ? (
         <div className="empty-state">
           <p className="font-body text-lg font-bold">No links yet</p>
           <p className="text-sm text-retro-text-dim mt-2 mb-6">Create your first unlock link to get started.</p>
-          <Link href="/create">
-            <RetroButton>Create link</RetroButton>
-          </Link>
+          <RetroLink href="/create">Create link</RetroLink>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -64,12 +42,10 @@ export default async function UnlocksPage() {
                   </div>
                   <div className="flex flex-wrap gap-2 shrink-0">
                     {url && <CopyLinkButton url={url} />}
-                    <Link href={`/create?id=${campaign.id}`}>
-                      <RetroButton variant="ghost" size="sm">
-                        <Pencil size={14} />
-                        Edit
-                      </RetroButton>
-                    </Link>
+                    <RetroLink href={`/create?id=${campaign.id}`} variant="ghost" size="sm">
+                      <Pencil size={14} />
+                      Edit
+                    </RetroLink>
                     <DeleteUnlockButton campaignId={campaign.id} title={campaign.title} />
                   </div>
                 </div>

@@ -86,13 +86,13 @@ export default function TermsPage() {
         <Section title="4. Free and Paid Plans">
           <p>
             Linklock offers a Free plan and paid subscription plans (such as Pro). Plan features—including
-            weekly link limits, maximum steps per unlock, advertising on public unlock pages, analytics
-            depth, and support level—are described on our Pricing page and may change from time to time.
+            maximum steps per unlock, advertising on public unlock pages, analytics depth, branding tools,
+            and support level—are described on our Pricing page and may change from time to time.
           </p>
           <p>
-            Free plan users receive a limited number of new unlock links per rolling period (currently
-            five links per week unless stated otherwise on the site). When you reach a limit, you must
-            delete an existing link, wait for the reset period, or upgrade to a paid plan to create more.
+            The Free plan includes unlimited unlock links and up to four steps per link unless stated
+            otherwise on the site. Pro includes up to ten steps per link plus additional features listed on
+            our Pricing page.
           </p>
           <p>
             Paid subscriptions are processed by Stripe. By subscribing, you also agree to Stripe&apos;s

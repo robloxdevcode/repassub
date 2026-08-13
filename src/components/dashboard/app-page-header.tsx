@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { RetroButton } from "@/components/retro";
+import { RetroLink } from "@/components/retro";
 import type { ReactNode } from "react";
 
 export function AppPageHeader({
@@ -19,11 +18,9 @@ export function AppPageHeader({
         {subtitle ? <p className="mt-2 text-sm text-retro-text-dim">{subtitle}</p> : null}
       </div>
       {action ? (
-        <Link href={action.href} className="shrink-0">
-          <RetroButton size="lg" variant="primary" className="w-full sm:w-auto">
-            {action.label}
-          </RetroButton>
-        </Link>
+        <RetroLink href={action.href} size="lg" variant="primary" className="w-full sm:w-auto shrink-0">
+          {action.label}
+        </RetroLink>
       ) : null}
     </div>
   );

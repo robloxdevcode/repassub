@@ -23,36 +23,37 @@ export const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { typescript: true })
   : null;
 
+/** @deprecated Weekly quotas removed — free plan has unlimited links. */
 export const FREE_UNLOCK_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const PLAN_LIMITS = {
-  FREE: { unlocks: 5, actionsPerUnlock: 2, analytics: "basic" as const, ads: true },
-  PRO: { unlocks: Infinity, actionsPerUnlock: 4, analytics: "advanced" as const, ads: false },
-  BUSINESS: { unlocks: Infinity, actionsPerUnlock: 4, analytics: "advanced" as const, ads: false },
-};
+  FREE: { unlocks: Infinity, actionsPerUnlock: 4, analytics: "basic" as const, ads: true },
+  PRO: { unlocks: Infinity, actionsPerUnlock: 10, analytics: "advanced" as const, ads: false },
+  BUSINESS: { unlocks: Infinity, actionsPerUnlock: 10, analytics: "advanced" as const, ads: false },
+} as const;
 
 export const PLAN_FEATURES = {
   FREE: [
-    "Launch unlimited gated links for free",
-    "Grow followers, subscribers, and email signups",
-    "See enough performance data to get started",
+    "Create unlimited unlock links — free forever",
+    "Add up to 4 fan steps on every link",
+    "See views and unlock counts from day one",
   ],
   PRO: [
-    "Remove limits and run higher-converting campaigns",
-    "Make every unlock page fully on-brand",
-    "Unlock full audience insights to see what drives growth",
-    "Remove ads and branding for a more professional experience",
+    "Build deeper funnels with up to 10 steps per link",
+    "Your logo, colors, and custom URL on every page",
+    "Deep conversion and audience analytics",
+    "Clean unlock pages with zero Linklock branding",
   ],
 } as const;
 
 export const PLAN_FINE_PRINT = {
-  FREE: "Free includes 5 new links per week and 2 steps per link.",
-  PRO: "Pro adds unlimited links, 4 steps per link, full analytics, and no Linklock ads.",
+  FREE: "Unlimited links · 4 steps per link · starter stats · Linklock ads on pages.",
+  PRO: "Unlimited links · 10 steps per link · full analytics · no Linklock ads.",
 } as const;
 
 export const PLAN_TAGLINE = {
-  FREE: "Start gating content and growing your audience today.",
-  PRO: "For creators who want results without limits or distractions.",
+  FREE: "Gate content and grow your audience at zero cost.",
+  PRO: "More steps, full branding, and pro-grade analytics.",
 } as const;
 
 export function getUnlockQuotaWindowStart(now = new Date()) {
@@ -63,13 +64,8 @@ export function getUnlockQuotaResetAt(oldestCampaignCreatedAt: Date) {
   return new Date(oldestCampaignCreatedAt.getTime() + FREE_UNLOCK_WINDOW_MS);
 }
 
-export function formatUnlockQuotaReset(resetsAt: Date | null) {
-  if (!resetsAt) return "5 links per week on free";
-  const ms = resetsAt.getTime() - Date.now();
-  if (ms <= 0) return "Quota refreshing soon";
-  const days = Math.ceil(ms / (24 * 60 * 60 * 1000));
-  if (days <= 1) return "Resets tomorrow";
-  return `Resets in ${days} day${days === 1 ? "" : "s"}`;
+export function formatUnlockQuotaReset(_resetsAt: Date | null) {
+  return "Unlimited links on Free";
 }
 
 export function getUserPlan(plan?: string) {

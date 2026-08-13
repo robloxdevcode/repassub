@@ -113,7 +113,7 @@ export default function PrivacyPage() {
             <li>Create and maintain your account and authenticate you</li>
             <li>Publish and render unlock pages you configure</li>
             <li>Track analytics and show statistics in your dashboard</li>
-            <li>Enforce plan limits (such as weekly link quotas on the Free plan)</li>
+            <li>Enforce plan limits (such as maximum steps per unlock on each plan)</li>
             <li>Process subscriptions and send billing-related communications via Stripe</li>
             <li>Send optional email notifications you enable (for example unlock alerts via Resend)</li>
             <li>Provide customer support and respond to inquiries</li>

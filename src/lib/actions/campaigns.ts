@@ -32,21 +32,6 @@ export async function createCampaign(data: {
 }) {
   const user = await requireUser();
 
-  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
-  const limit = PLAN_LIMITS[plan].unlocks;
-
-  if (limit !== Infinity) {
-    const windowStart = getUnlockQuotaWindowStart();
-    const count = await db.campaign.count({
-      where: { userId: user.id, createdAt: { gte: windowStart } },
-    });
-    if (count >= limit) {
-      throw new Error(
-        `Free plan: ${limit} links per week. Delete an old link or upgrade to Pro for unlimited.`
-      );
-    }
-  }
-
   const parsed = createCampaignSchema.parse({
     ...data,
     slug: data.slug || (await allocateUniqueSlug(user.id, data.title || "unlock")),
@@ -146,7 +131,7 @@ export async function updateCampaignActions(
   if (actions.length > actionLimit) {
     throw new Error(
       plan === "FREE"
-        ? `Free plan allows ${actionLimit} steps per unlock. Upgrade to Pro for up to 4 steps.`
+        ? `Free plan allows ${actionLimit} steps per unlock. Upgrade to Pro for up to ${PLAN_LIMITS.PRO.actionsPerUnlock} steps.`
         : `Pro plan allows up to ${actionLimit} steps per unlock.`
     );
   }

@@ -40,7 +40,7 @@ const DEFAULT_DESCRIPTION =
 export const HOME_FAQS = [
   {
     q: "Is Linklock free?",
-    a: "Yes. Launch gated links for free — includes 5 new links per week, 2 steps each, and starter stats. No credit card to sign up.",
+    a: "Yes. Unlimited links, 4 steps per link, and starter stats — no credit card to sign up.",
   },
   {
     q: "What can I give away?",
@@ -48,7 +48,7 @@ export const HOME_FAQS = [
   },
   {
     q: "How many steps can I add?",
-    a: "Free: 2 per link. Pro: 4. Over 70+ platforms supported.",
+    a: "Free: 4 per link. Pro: 10. Over 70+ platforms supported.",
   },
   {
     q: "Do fans need an account?",
@@ -56,14 +56,14 @@ export const HOME_FAQS = [
   },
   {
     q: "What does Pro include?",
-    a: "Remove limits, fully on-brand unlock pages, full audience insights, and no Linklock ads or branding.",
+    a: "10 steps per link, full page branding, deep analytics, and no Linklock ads.",
   },
 ];
 
 export const SUPPORT_FAQS = [
   {
     q: "Is Linklock really free?",
-    a: "Yes. Launch gated links for free with 5 new links per week and 2 steps per link. No credit card to sign up.",
+    a: "Yes. Unlimited links and 4 steps per link on Free. No credit card to sign up.",
   },
   {
     q: "What can I give away?",
@@ -226,7 +226,7 @@ export function softwareApplicationJsonLd() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "EUR",
-      description: "Free tier — launch gated links with 5 new links per week",
+      description: "Free tier — unlimited links, 4 steps per link",
     },
   };
 }
@@ -287,7 +287,7 @@ export function pricingJsonLd() {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `${SITE_NAME} Pro`,
-    description: "Unlimited links, on-brand unlock pages, full audience insights, and no Linklock ads.",
+    description: "Unlimited links, 10 steps per link, on-brand pages, deep analytics, and no Linklock ads.",
     brand: { "@type": "Brand", name: SITE_NAME },
     url: absoluteUrl("/pricing"),
     offers: [
@@ -297,7 +297,7 @@ export function pricingJsonLd() {
         price: "0",
         priceCurrency: "EUR",
         url: siteUrl,
-        description: "Launch gated links free — 5 new links per week, 2 steps each",
+        description: "Unlimited links free · 4 steps per link",
       },
       {
         "@type": "Offer",
@@ -305,7 +305,7 @@ export function pricingJsonLd() {
         price: "6.99",
         priceCurrency: "EUR",
         url: absoluteUrl("/pricing"),
-        description: "Unlimited links, branding, insights, no ads",
+        description: "10 steps per link, branding, analytics, no ads",
       },
     ],
   };

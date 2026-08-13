@@ -2374,7 +2374,7 @@ body {
   font-weight: 500;
   border: 1px solid transparent;
   border-radius: 0.75rem;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 75ms ease-out, color 75ms ease-out;
 }
 
 .sidebar-nav-item:hover {
@@ -2426,11 +2426,32 @@ body {
 
 .app-card {
   background: var(--retro-surface);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.app-card:hover {
-  transform: translate(-1px, -1px);
+.sidebar-nav-item:active,
+.sidebar-nav-create:active {
+  transform: scale(0.98);
+}
+
+.app-nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 100;
+  background: linear-gradient(90deg, transparent, var(--retro-accent), transparent);
+  animation: app-nav-progress 0.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes app-nav-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .app-card-accent-red { border-left: 6px solid var(--retro-accent); }
@@ -2458,12 +2479,10 @@ body {
   border: 2px solid var(--retro-ink);
   background: var(--retro-surface-2);
   padding: 1rem;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  transition: border-color 75ms ease-out;
 }
 
 .link-row:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--retro-ink);
   border-color: var(--retro-blue);
 }
 
