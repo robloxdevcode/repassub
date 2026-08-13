@@ -16,8 +16,7 @@ export function buildOgImage(title?: string, subtitle?: string) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#ff0040",
-          border: "12px solid #0a0a0a",
+          background: "linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)",
           padding: "64px",
           fontFamily: "system-ui, sans-serif",
         }}
@@ -33,13 +32,14 @@ export function buildOgImage(title?: string, subtitle?: string) {
             style={{
               width: "72px",
               height: "72px",
-              background: "#ffd600",
-              border: "4px solid #0a0a0a",
+              background: "#ffffff",
+              borderRadius: "16px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "36px",
               fontWeight: 900,
+              color: "#7c3aed",
             }}
           >
             L
@@ -47,12 +47,12 @@ export function buildOgImage(title?: string, subtitle?: string) {
           <span
             style={{
               fontSize: "48px",
-              fontWeight: 900,
-              color: "#ffd600",
+              fontWeight: 800,
+              color: "#ffffff",
               letterSpacing: "-0.02em",
             }}
           >
-            LINKLOCK
+            Linklock
           </span>
         </div>
 
@@ -60,7 +60,7 @@ export function buildOgImage(title?: string, subtitle?: string) {
           <div
             style={{
               fontSize: headline.length > 40 ? "52px" : "64px",
-              fontWeight: 900,
+              fontWeight: 800,
               color: "#ffffff",
               lineHeight: 1.05,
               maxWidth: "900px",
@@ -71,8 +71,8 @@ export function buildOgImage(title?: string, subtitle?: string) {
           <div
             style={{
               fontSize: "28px",
-              fontWeight: 600,
-              color: "#ffd600",
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.85)",
               maxWidth: "800px",
             }}
           >
@@ -87,20 +87,20 @@ export function buildOgImage(title?: string, subtitle?: string) {
             justifyContent: "space-between",
           }}
         >
-          <span style={{ fontSize: "22px", fontWeight: 700, color: "#ffffff" }}>
+          <span style={{ fontSize: "22px", fontWeight: 600, color: "rgba(255,255,255,0.9)" }}>
             linklock.org
           </span>
           <div
             style={{
-              background: "#ffd600",
-              color: "#0a0a0a",
+              background: "#ffffff",
+              color: "#7c3aed",
               padding: "12px 24px",
               fontSize: "20px",
-              fontWeight: 800,
-              border: "4px solid #0a0a0a",
+              fontWeight: 700,
+              borderRadius: "12px",
             }}
           >
-            START FREE
+            Start free
           </div>
         </div>
       </div>

@@ -4,61 +4,36 @@ import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { HeroLiveUnlock } from "@/components/marketing/hero-live-unlock";
 import { RetroButton } from "@/components/retro";
 
-const PLATFORM_BADGE = {
-  name: "70+ platforms supported",
-  className: "landing-tag-neutral",
-};
-
 export function HeroSection() {
   return (
-    <section className="landing-simple-hero border-b-[3px] border-retro-ink overflow-hidden">
-      <div className="landing-color-stripe" aria-hidden />
-
-      <div className="mx-auto max-w-5xl px-4 py-12 md:py-16">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
-          <div className="text-center md:text-left min-w-0">
-            <h1 className="landing-hero-title font-body text-retro-ink">
-              Make them <span className="text-retro-accent">follow</span>.
+    <section className="simple-hero">
+      <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="text-center lg:text-left">
+            <p className="simple-badge mb-4">70+ platforms · Free to start</p>
+            <h1 className="simple-hero-title">
+              Make them follow.
               <br />
-              Then <span className="text-retro-blue">unlock</span>.
+              Then unlock your file.
             </h1>
-
-            <p className="mt-4 text-base md:text-lg text-retro-text-dim leading-relaxed max-w-md mx-auto md:mx-0">
-              One link. Fans finish your steps — then your file drops. Free to start.
+            <p className="mt-5 text-lg text-retro-text-dim leading-relaxed max-w-lg mx-auto lg:mx-0">
+              One link. Fans tap your steps — subscribe, follow, or join — then your download opens.
+              No account needed for them.
             </p>
-
-            <div className="mt-5 flex flex-wrap justify-center md:justify-start gap-2">
-              <span
-                className={`font-display text-[6px] sm:text-[7px] px-2.5 py-1 border-2 border-retro-ink brutal-shadow-sm ${PLATFORM_BADGE.className}`}
-              >
-                {PLATFORM_BADGE.name.toUpperCase()}
-              </span>
-            </div>
-
-            <div className="mt-8 flex justify-center md:justify-start">
+            <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
               <MarketingAuthLink href="/sign-up" className="w-full sm:w-auto">
-                <RetroButton size="lg" variant="primary" className="w-full sm:w-auto min-w-[180px]">
-                  Start free
+                <RetroButton size="lg" variant="primary" className="w-full sm:min-w-[220px]">
+                  Create my first link
                 </RetroButton>
               </MarketingAuthLink>
             </div>
-
-            <p className="mt-4 font-body text-sm text-retro-text-muted max-w-md mx-auto md:mx-0">
-              Over <span className="font-bold text-retro-ink">1,250+</span> users already joined.
+            <p className="mt-4 text-sm text-retro-text-muted">
+              Free forever · No card required
             </p>
           </div>
 
-          <div className="landing-demo-panel min-w-0 flex flex-col items-center md:items-end">
-            <p className="font-display text-[8px] text-retro-text-muted tracking-[0.15em] mb-3 flex items-center gap-2">
-              <span className="live-pill live-pill-sm">LIVE</span>
-              FAN VIEW
-            </p>
-            <div className="landing-demo-frame w-full max-w-[280px]">
-              <HeroLiveUnlock size="md" className="w-full mx-auto" />
-            </div>
-            <p className="mt-3 text-xs text-retro-text-muted text-center md:text-right max-w-[280px]">
-              Tasks tick off, bar fills, file unlocks.
-            </p>
+          <div className="flex justify-center lg:justify-end">
+            <HeroLiveUnlock size="lg" className="w-full max-w-[360px]" />
           </div>
         </div>
       </div>

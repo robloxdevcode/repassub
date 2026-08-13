@@ -4,49 +4,44 @@ import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { RetroButton } from "@/components/retro";
 import { useCurrency } from "@/components/providers/currency-provider";
 import { HOME_FAQS } from "@/lib/seo";
+import { Link2, MousePointerClick, Share2 } from "lucide-react";
+
 export { HeroSection } from "@/components/marketing/hero-section";
 
 const STEPS = [
   {
-    n: "01",
-    title: "Paste your link",
-    desc: "Any file link or URL you already host.",
-    tone: "landing-step-red",
+    icon: Link2,
+    title: "Paste your file link",
+    desc: "Google Drive, Dropbox, or any URL you already use.",
   },
   {
-    n: "02",
-    title: "Pick the steps",
-    desc: "Subscribe, follow, join — 70+ platforms, 2 free steps, 4 on Pro.",
-    tone: "landing-step-blue",
+    icon: MousePointerClick,
+    title: "Add 1–2 simple steps",
+    desc: "Subscribe, follow, or join — we detect the platform for you.",
   },
   {
-    n: "03",
-    title: "Share once",
-    desc: "Bio, posts, communities — one link everywhere.",
-    tone: "landing-step-yellow",
+    icon: Share2,
+    title: "Share one link",
+    desc: "Put it in your bio, video, or Discord. Done.",
   },
 ];
 
 export function StepsSection() {
   return (
-    <section className="landing-section border-b-[3px] border-retro-ink bg-retro-surface-2">
-      <div className="mx-auto max-w-5xl px-4 py-12 md:py-16">
-        <div className="mb-10 max-w-xl">
-          <p className="font-display text-[8px] text-retro-accent tracking-[0.2em] mb-3">HOW IT WORKS</p>
-          <h2 className="landing-section-title font-body text-retro-ink">
-            Three steps. <span className="text-retro-blue">Two minutes.</span>
-          </h2>
-        </div>
+    <section className="simple-section bg-retro-surface-2">
+      <div className="mx-auto max-w-5xl px-4 py-16 md:py-20">
+        <h2 className="simple-section-title text-center mb-3">How it works</h2>
+        <p className="text-center text-retro-text-dim mb-12 max-w-md mx-auto">
+          Three steps. About two minutes. No tech skills needed.
+        </p>
 
-        <div className="grid md:grid-cols-3 gap-4">
-          {STEPS.map((step) => (
-            <article
-              key={step.n}
-              className={`landing-step-card brutal-border brutal-shadow p-5 md:p-6 h-full ${step.tone}`}
-            >
-              <span className="font-display text-[10px] opacity-90">{step.n}</span>
-              <h3 className="font-body text-lg font-bold mt-3 mb-2">{step.title}</h3>
-              <p className="font-body text-sm opacity-95 leading-relaxed">{step.desc}</p>
+        <div className="grid md:grid-cols-3 gap-6">
+          {STEPS.map((step, i) => (
+            <article key={step.title} className="simple-step-card">
+              <span className="simple-step-num">{i + 1}</span>
+              <step.icon size={22} className="text-retro-accent mb-3" strokeWidth={2} />
+              <h3 className="text-base font-bold mb-2">{step.title}</h3>
+              <p className="text-sm text-retro-text-dim leading-relaxed">{step.desc}</p>
             </article>
           ))}
         </div>
@@ -66,29 +61,17 @@ export function FaqSection() {
         }
       : item
   );
+
   return (
-    <section id="faq" className="landing-section border-b-[3px] border-retro-ink bg-retro-bg scroll-mt-20">
-      <div className="mx-auto max-w-3xl px-4 py-12 md:py-16">
-        <p className="font-display text-[8px] text-retro-accent tracking-[0.2em] mb-3">FAQ</p>
-        <h2 className="landing-section-title font-body text-retro-ink mb-8">
-          Quick <span className="text-retro-accent">answers</span>
-        </h2>
+    <section id="faq" className="simple-section scroll-mt-20">
+      <div className="mx-auto max-w-2xl px-4 py-16 md:py-20">
+        <h2 className="simple-section-title text-center mb-10">Questions</h2>
 
         <div className="flex flex-col gap-3">
           {faqs.map((item) => (
-            <details
-              key={item.q}
-              className="brutal-border brutal-shadow bg-retro-surface p-4 md:p-5 group landing-faq-item"
-            >
-              <summary className="font-body font-bold text-sm md:text-base cursor-pointer list-none flex items-center justify-between gap-4">
-                {item.q}
-                <span className="font-display text-retro-accent group-open:rotate-45 transition-transform">
-                  +
-                </span>
-              </summary>
-              <p className="font-body text-sm text-retro-text-dim leading-relaxed mt-3 pt-3 border-t-2 border-retro-ink/10">
-                {item.a}
-              </p>
+            <details key={item.q} className="simple-faq">
+              <summary className="simple-faq-q">{item.q}</summary>
+              <p className="simple-faq-a">{item.a}</p>
             </details>
           ))}
         </div>
@@ -99,17 +82,17 @@ export function FaqSection() {
 
 export function CtaSection() {
   return (
-    <section className="landing-section landing-cta bg-pop-red text-white border-b-[3px] border-retro-ink">
-      <div className="mx-auto max-w-3xl px-4 py-12 md:py-16 text-center">
-        <h2 className="landing-section-title font-body mb-3">
-          Your audience is waiting.
+    <section className="simple-section simple-cta">
+      <div className="mx-auto max-w-2xl px-4 py-16 md:py-20 text-center">
+        <h2 className="simple-section-title text-white mb-3">
+          Ready to grow while you share?
         </h2>
-        <p className="font-body text-white/85 mb-8 max-w-md mx-auto">
-          First unlock link in about two minutes. Free every week.
+        <p className="text-white/80 mb-8 max-w-md mx-auto">
+          Join creators who turn downloads into followers. Start free in minutes.
         </p>
         <MarketingAuthLink href="/sign-up" className="inline-block">
-          <RetroButton size="lg" variant="secondary" className="min-w-[200px] bg-retro-yellow text-retro-ink border-retro-ink">
-            Start free
+          <RetroButton size="lg" variant="white" className="min-w-[220px]">
+            Get started free
           </RetroButton>
         </MarketingAuthLink>
       </div>

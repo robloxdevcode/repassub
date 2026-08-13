@@ -3,24 +3,21 @@ import { LinklockLogo } from "@/components/brand/linklock-logo";
 
 export function RetroFooter() {
   return (
-    <footer className="bg-ink text-retro-text-on-dark border-t-[3px] border-retro-ink">
-      <div className="mx-auto max-w-6xl px-4 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <LinklockLogo size={40} showWordmark wordmarkClassName="text-retro-yellow" />
-        <div className="flex flex-wrap gap-x-4 gap-y-2 font-body text-sm text-white/70">
-          <Link href="/features" className="hover:text-white">Features</Link>
-          <Link href="/how-it-works" className="hover:text-white">How it works</Link>
-          <Link href="/blog" className="hover:text-white">Blog</Link>
-          <Link href="/docs" className="hover:text-white">Docs</Link>
-          <Link href="/creators" className="hover:text-white">Creators</Link>
-          <Link href="/pricing" className="hover:text-white">Pricing</Link>
-          <Link href="/#faq" className="hover:text-white">FAQ</Link>
-          <Link href="/support" className="hover:text-white">Support</Link>
-          <Link href="/terms" className="hover:text-white">Terms</Link>
-          <Link href="/privacy" className="hover:text-white">Privacy</Link>
-          <Link href="/refund-policy" className="hover:text-white">Refunds</Link>
+    <footer className="simple-footer border-t border-retro-border bg-retro-surface">
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8">
+          <LinklockLogo size={36} showWordmark wordmarkClassName="text-retro-text" />
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-retro-text-dim">
+            <Link href="/pricing" className="hover:text-retro-accent">Pricing</Link>
+            <Link href="/features" className="hover:text-retro-accent">Features</Link>
+            <Link href="/support" className="hover:text-retro-accent">Support</Link>
+            <Link href="/terms" className="hover:text-retro-accent">Terms</Link>
+            <Link href="/privacy" className="hover:text-retro-accent">Privacy</Link>
+            <Link href="/refund-policy" className="hover:text-retro-accent">Refunds</Link>
+          </div>
         </div>
+        <p className="mt-8 text-xs text-retro-text-muted">&copy; 2026 Linklock</p>
       </div>
-      <p className="text-center font-body text-xs text-white/40 pb-6">&copy; 2026 Linklock</p>
     </footer>
   );
 }

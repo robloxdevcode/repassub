@@ -39,7 +39,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-50 md:hidden bg-retro-yellow border-2 border-retro-ink p-2 brutal-shadow-sm"
+        className="fixed left-4 top-4 z-50 md:hidden bg-retro-surface border border-retro-border rounded-xl p-2 shadow-sm"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Close menu" : "Open menu"}
       >
@@ -48,13 +48,13 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
 
       <aside
         className={cn(
-          "app-sidebar fixed inset-y-0 left-0 z-40 w-60 text-white border-r-[3px] border-retro-accent transition-transform md:translate-x-0",
+          "app-sidebar fixed inset-y-0 left-0 z-40 w-60 text-retro-text border-r border-retro-border transition-transform md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex h-full flex-col p-4">
           <Link href="/dashboard" className="mb-6 px-2 block" onClick={() => setOpen(false)}>
-            <LinklockLogo size={36} showWordmark wordmarkClassName="text-retro-yellow" />
+            <LinklockLogo size={36} showWordmark wordmarkClassName="text-retro-text" />
           </Link>
 
           <Link
@@ -80,8 +80,8 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "sidebar-nav-item",
-                    active ? "sidebar-nav-active text-white" : "text-white/70"
+                    "sidebar-nav-item rounded-lg",
+                    active ? "sidebar-nav-active" : "text-retro-text-dim hover:text-retro-text"
                   )}
                 >
                   <item.icon size={16} />
@@ -105,7 +105,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
             )}
           </nav>
 
-          <div className="border-t border-white/10 pt-4 mt-2">
+          <div className="border-t border-retro-border pt-4 mt-2">
             <ClerkUserMenu />
           </div>
         </div>

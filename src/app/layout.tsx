@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           signUpFallbackRedirectUrl="/dashboard"
           appearance={{
             variables: {
-              colorPrimary: "#ff2b2b",
+              colorPrimary: "#7c3aed",
               colorBackground: "#ffffff",
             },
           }}
