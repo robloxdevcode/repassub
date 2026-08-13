@@ -16,7 +16,7 @@ export function buildOgImage(title?: string, subtitle?: string) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "linear-gradient(135deg, #059669 0%, #0d9488 100%)",
+          background: "#0284c7",
           padding: "64px",
           fontFamily: "system-ui, sans-serif",
         }}
@@ -39,7 +39,7 @@ export function buildOgImage(title?: string, subtitle?: string) {
               justifyContent: "center",
               fontSize: "36px",
               fontWeight: 900,
-              color: "#059669",
+              color: "#0284c7",
             }}
           >
             L
@@ -93,7 +93,7 @@ export function buildOgImage(title?: string, subtitle?: string) {
           <div
             style={{
               background: "#ffffff",
-              color: "#059669",
+              color: "#0284c7",
               padding: "12px 24px",
               fontSize: "20px",
               fontWeight: 700,

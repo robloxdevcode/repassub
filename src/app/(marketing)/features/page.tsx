@@ -25,12 +25,10 @@ const features = [
 export default function FeaturesPage() {
   return (
     <div>
-      <section className="simple-hero border-b border-retro-border">
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
-          <h1 className="simple-hero-title">What you get</h1>
-          <p className="mt-4 text-lg text-retro-text-dim max-w-xl">
-            Follow-to-unlock pages, unlimited free links, and Pro tools for branding and analytics.
-          </p>
+      <section className="simple-hero border-b border-retro-border py-12 px-4">
+        <div className="mx-auto max-w-6xl">
+          <h1 className="simple-hero-title">Features</h1>
+          <p className="mt-3 text-retro-text-dim">Gate downloads. Grow your audience. That&apos;s it.</p>
         </div>
       </section>
 
