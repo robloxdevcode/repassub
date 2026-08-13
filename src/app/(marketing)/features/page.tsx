@@ -27,9 +27,9 @@ export default function FeaturesPage() {
     <div>
       <section className="simple-hero border-b border-retro-border">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
-          <h1 className="simple-hero-title">Features</h1>
-          <p className="mt-4 text-lg text-retro-text-dim max-w-lg">
-            Tools to gate content and grow your channels — simple for you, fast for fans.
+          <h1 className="simple-hero-title">What you get</h1>
+          <p className="mt-4 text-lg text-retro-text-dim max-w-xl">
+            Follow-to-unlock pages, unlimited free links, and Pro tools for branding and analytics.
           </p>
         </div>
       </section>

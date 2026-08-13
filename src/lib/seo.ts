@@ -35,7 +35,7 @@ const OG_IMAGE = {
 };
 
 const DEFAULT_DESCRIPTION =
-  "Make them follow, then unlock. Free subscribe-to-download links for creators — gate files behind 70+ platforms.";
+  "Gate downloads behind follows and subs. Unlimited free links, 4 fan steps, 70+ platforms — Pro adds 10 steps, branding, and analytics.";
 
 export const HOME_FAQS = [
   {

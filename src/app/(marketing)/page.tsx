@@ -1,21 +1,26 @@
 import { HeroSection } from "@/components/marketing/hero-section";
-import { StepsSection, PlansSection, FaqSection, CtaSection } from "@/components/marketing/home-sections";
+import {
+  WhatWeOfferSection,
+  StepsSection,
+  PlansSection,
+  FaqSection,
+  CtaSection,
+} from "@/components/marketing/home-sections";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Free Subscribe-to-Download Links for Creators",
+  title: "Follow-to-Unlock Links — Gate Downloads Behind Fan Steps",
   description:
-    "Make them follow, then unlock. Free subscribe-to-download links — gate presets, packs, and files behind 70+ platforms.",
+    "Gate any download behind a follow or subscribe. Unlimited free links, 4 fan steps, 70+ platforms. Pro adds 10 steps, branding, and analytics.",
   path: "/",
   keywords: [
+    "follow to unlock",
     "subscribe to download",
+    "content gating",
     "unlock link creator",
-    "free content gating",
-    "70+ platforms supported",
-    "multi platform unlock",
-    "Rekonise alternative",
-    "link in bio download",
+    "free gated links",
+    "70+ platforms",
   ],
 });
 
@@ -24,6 +29,7 @@ export default function HomePage() {
     <>
       <HomeStructuredData />
       <HeroSection />
+      <WhatWeOfferSection />
       <StepsSection />
       <PlansSection />
       <FaqSection />

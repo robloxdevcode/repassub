@@ -52,14 +52,14 @@ export default function PricingPage() {
     <div>
       <section className="simple-hero border-b border-retro-border">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
-          <p className="simple-badge mb-4">Simple pricing</p>
+          <p className="simple-badge mb-4">Pricing</p>
           <h1 className="simple-hero-title max-w-2xl">
-            Free to start.
+            Free: unlimited links, 4 steps.
             <br />
-            Pro when you&apos;re ready to scale.
+            Pro: 10 steps + branding.
           </h1>
           <p className="mt-4 text-lg text-retro-text-dim max-w-xl">
-            Unlimited links on Free with 4 steps each. Pro unlocks 10 steps, full branding, deep analytics, and no ads.
+            Pick the plan that fits. No hidden limits on how many links you create on Free.
           </p>
         </div>
       </section>
