@@ -2735,6 +2735,43 @@ body {
   border-bottom: none;
 }
 
+.simple-plan-card {
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.simple-plan-card--popular {
+  border-color: var(--retro-accent);
+  box-shadow: 0 0 0 1px var(--retro-accent), 0 12px 40px rgba(124, 58, 237, 0.12);
+}
+
+.simple-toggle {
+  display: inline-flex;
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+  border-radius: 9999px;
+  padding: 0.25rem;
+}
+
+.simple-toggle-btn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  color: var(--retro-text-dim);
+  transition: background 75ms ease-out, color 75ms ease-out;
+}
+
+.simple-toggle-btn--active {
+  background: var(--retro-accent);
+  color: white;
+}
+
 .simple-footer {
   border-bottom: none;
 }

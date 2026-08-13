@@ -154,12 +154,13 @@ export default async function DashboardPage() {
       {!isPro && (
         <AppCard className="p-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="font-body text-sm font-bold">Free plan</p>
+            <p className="font-body text-sm font-bold">Upgrade to Pro</p>
             <p className="text-sm text-retro-text-dim mt-1">
-              Pro = unlimited links, no ads, custom URL. <ProPriceText variant="monthly" />
+              Remove limits, go fully on-brand, unlock audience insights, and drop Linklock ads.{" "}
+              <ProPriceText variant="monthly" />
             </p>
           </div>
-          <Link href="/billing">
+          <Link href="/billing" prefetch>
             <RetroButton className="w-full sm:w-auto">Upgrade</RetroButton>
           </Link>
         </AppCard>

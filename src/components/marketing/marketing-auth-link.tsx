@@ -17,7 +17,7 @@ export function MarketingAuthLink({
   const isSignedIn = useMarketingSignedIn();
 
   return (
-    <Link href={isSignedIn ? signedInHref : href} className={className}>
+    <Link href={isSignedIn ? signedInHref : href} prefetch className={className}>
       {children}
     </Link>
   );

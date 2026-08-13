@@ -5,7 +5,7 @@ import { buildPageMetadata, pricingJsonLd } from "@/lib/seo";
 export const metadata: Metadata = buildPageMetadata({
   title: "Pricing — Free & Pro Plans",
   description:
-    "Linklock is free to start with 5 links per week. Pro removes ads, adds branding, stats, and unlimited links from €35.85/year.",
+    "Launch gated links for free. Pro removes limits, adds full branding, audience insights, and a professional ad-free experience.",
   path: "/pricing",
   keywords: ["unlock link pricing", "content gating pro", "creator tool pricing", "Rekonise alternative price"],
 });

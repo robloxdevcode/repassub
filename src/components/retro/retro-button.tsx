@@ -37,8 +37,9 @@ export const RetroButton = forwardRef<HTMLButtonElement, RetroButtonProps>(
         disabled={disabled || loading}
         className={cn(
           "font-body inline-flex items-center justify-center gap-2 font-semibold rounded-xl border",
-          "transition-colors duration-150",
-          "disabled:opacity-40 disabled:cursor-not-allowed",
+          "transition-[color,background-color,transform,opacity] duration-75 ease-out",
+          "active:scale-[0.98] select-none touch-manipulation",
+          "disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100",
           variants[variant],
           sizes[size],
           className

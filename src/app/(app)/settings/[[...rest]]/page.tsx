@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { UserProfile } from "@clerk/nextjs";
 import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
-import { PLAN_FEATURES } from "@/lib/stripe";
+import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
+import { PLAN_FEATURES, PLAN_FINE_PRINT } from "@/lib/stripe";
 import { getBillingData } from "@/lib/actions/payments";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { RetroLoading } from "@/components/retro";
@@ -34,10 +35,10 @@ export default function SettingsPage() {
             key={t}
             onClick={() => setTab(t)}
             className={cn(
-              "font-body text-sm font-semibold px-4 py-2 border-2 transition-all whitespace-nowrap",
+              "font-body text-sm font-semibold px-4 py-2 rounded-lg border transition-colors duration-75 whitespace-nowrap",
               tab === t
-                ? "border-retro-ink bg-retro-yellow brutal-shadow-sm"
-                : "border-transparent text-retro-text-dim hover:border-retro-ink/30"
+                ? "border-retro-accent bg-retro-accent/10 text-retro-accent"
+                : "border-transparent text-retro-text-dim hover:bg-retro-surface-2"
             )}
           >
             {t}
@@ -72,46 +73,46 @@ export default function SettingsPage() {
               <>
                 <div
                   className={cn(
-                    "brutal-border p-4",
-                    !isPro ? "bg-retro-yellow/40 ring-2 ring-retro-accent" : "bg-retro-surface-2"
+                    "simple-plan-card",
+                    !isPro ? "simple-plan-card--popular" : ""
                   )}
                 >
                   <p className="font-body font-bold flex items-center gap-2">
-                    Free plan
+                    Free
                     {!isPro && (
-                      <span className="text-[10px] font-display bg-retro-accent text-white px-2 py-0.5">CURRENT</span>
+                      <span className="text-[10px] font-semibold bg-retro-accent text-white px-2 py-0.5 rounded-full">
+                        Current
+                      </span>
                     )}
                   </p>
-                  <ul className="mt-2 text-sm text-retro-text-dim space-y-1 list-disc list-inside">
-                    {PLAN_FEATURES.FREE.map((f) => (
-                      <li key={f}>{f}</li>
-                    ))}
-                  </ul>
+                  <div className="mt-3">
+                    <PlanFeatureList features={PLAN_FEATURES.FREE} finePrint={PLAN_FINE_PRINT.FREE} />
+                  </div>
                 </div>
                 <div
                   className={cn(
-                    "brutal-border p-4",
-                    isPro ? "bg-retro-yellow/40 ring-2 ring-retro-accent" : "bg-retro-yellow/30"
+                    "simple-plan-card",
+                    isPro ? "simple-plan-card--popular" : ""
                   )}
                 >
                   <p className="font-body font-bold flex items-center gap-2">
-                    Pro plan
+                    Pro
                     {isPro && (
-                      <span className="text-[10px] font-display bg-retro-accent text-white px-2 py-0.5">CURRENT</span>
+                      <span className="text-[10px] font-semibold bg-retro-accent text-white px-2 py-0.5 rounded-full">
+                        Current
+                      </span>
                     )}
                   </p>
-                  <ul className="mt-2 text-sm text-retro-text-dim space-y-1 list-disc list-inside">
-                    {PLAN_FEATURES.PRO.map((f) => (
-                      <li key={f}>{f}</li>
-                    ))}
-                  </ul>
+                  <div className="mt-3">
+                    <PlanFeatureList features={PLAN_FEATURES.PRO} finePrint={PLAN_FINE_PRINT.PRO} />
+                  </div>
                 </div>
               </>
             )}
             <p className="text-sm text-retro-text-dim">
-              <Link href="/profile" className="text-retro-blue underline">Edit profile &amp; photo</Link>
+              <Link href="/profile" className="text-retro-accent hover:underline">Edit profile &amp; photo</Link>
               {" · "}
-              <Link href="/billing" className="text-retro-blue underline">Manage billing</Link>
+              <Link href="/billing" prefetch className="text-retro-accent hover:underline">Manage billing</Link>
             </p>
           </div>
         )}

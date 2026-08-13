@@ -1,5 +1,5 @@
 import { HeroSection } from "@/components/marketing/hero-section";
-import { StepsSection, FaqSection, CtaSection } from "@/components/marketing/home-sections";
+import { StepsSection, PlansSection, FaqSection, CtaSection } from "@/components/marketing/home-sections";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -25,6 +25,7 @@ export default function HomePage() {
       <HomeStructuredData />
       <HeroSection />
       <StepsSection />
+      <PlansSection />
       <FaqSection />
       <CtaSection />
     </>

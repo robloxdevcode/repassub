@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { RetroButton, RetroCard } from "@/components/retro";
+import { RetroButton } from "@/components/retro";
+import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { createCheckoutSession } from "@/lib/actions/payments";
 import { useToast } from "@/components/retro";
 import { useCurrency } from "@/components/providers/currency-provider";
-import { PLAN_FEATURES } from "@/lib/stripe";
+import { PLAN_FEATURES, PLAN_FINE_PRINT, PLAN_TAGLINE } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 
 export default function PricingPage() {
@@ -21,14 +22,17 @@ export default function PricingPage() {
       plan: null as null,
       price: { monthly: 0, yearly: 0 },
       features: [...PLAN_FEATURES.FREE],
-      color: "white" as const,
+      finePrint: PLAN_FINE_PRINT.FREE,
+      tagline: PLAN_TAGLINE.FREE,
+      popular: false,
     },
     {
       name: "Pro",
       plan: "PRO" as const,
       price: prices,
       features: [...PLAN_FEATURES.PRO],
-      color: "yellow" as const,
+      finePrint: PLAN_FINE_PRINT.PRO,
+      tagline: PLAN_TAGLINE.PRO,
       popular: true,
     },
   ];
@@ -40,88 +44,92 @@ export default function PricingPage() {
       if (url) window.location.href = url;
     } catch {
       toast("Stripe not configured.", "error");
-    } finally {
       setLoading(false);
     }
   }
 
   return (
     <div>
-      <section className="bg-pop-red text-white border-b-[3px] border-retro-ink py-16 md:py-20 px-4">
-        <div className="mx-auto max-w-6xl">
-          <p className="font-display text-[8px] text-retro-yellow mb-4">PRICING</p>
-          <h1 className="section-title font-body text-white">
-            Free to start.<br />
-            Pro from {formatPrice(prices.yearly)}/yr — {discountPercent}% off.
+      <section className="simple-hero border-b border-retro-border">
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
+          <p className="simple-badge mb-4">Simple pricing</p>
+          <h1 className="simple-hero-title max-w-2xl">
+            Free to start.
+            <br />
+            Pro when you&apos;re ready to scale.
           </h1>
+          <p className="mt-4 text-lg text-retro-text-dim max-w-xl">
+            Launch gated links for free. Upgrade to Pro for unlimited links, full branding, and insights that
+            show what drives growth.
+          </p>
         </div>
       </section>
 
       <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
-        <div className="inline-flex border-[3px] border-retro-ink mb-12 brutal-shadow-sm">
+        <div className="simple-toggle mb-10">
           <button
+            type="button"
             onClick={() => setYearly(false)}
-            className={cn(
-              "font-display text-[8px] px-5 py-3 transition-colors",
-              !yearly ? "bg-retro-ink text-white" : "bg-white text-retro-ink hover:bg-retro-surface-2"
-            )}
+            className={cn("simple-toggle-btn", !yearly && "simple-toggle-btn--active")}
           >
-            MONTHLY
+            Monthly
           </button>
           <button
+            type="button"
             onClick={() => setYearly(true)}
-            className={cn(
-              "font-display text-[8px] px-5 py-3 border-l-[3px] border-retro-ink transition-colors",
-              yearly ? "bg-retro-yellow text-retro-ink" : "bg-white text-retro-ink hover:bg-retro-surface-2"
-            )}
+            className={cn("simple-toggle-btn", yearly && "simple-toggle-btn--active")}
           >
-            YEARLY -{discountPercent}%
+            Yearly · {discountPercent}% off
           </button>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
+        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
           {plans.map((p) => (
-            <RetroCard key={p.name} color={p.color} glow={p.popular} className="flex flex-col">
-              {p.popular && <span className="font-display text-[8px] mb-2">MOST POPULAR</span>}
-              <h3 className="font-body text-2xl font-bold">{p.name}</h3>
-              <p className="font-display text-2xl mt-4">
+            <article
+              key={p.name}
+              className={cn("simple-plan-card", p.popular && "simple-plan-card--popular")}
+            >
+              {p.popular ? (
+                <span className="text-xs font-semibold text-retro-accent mb-2">Most popular</span>
+              ) : null}
+              <h3 className="text-2xl font-bold">{p.name}</h3>
+              <p className="mt-1 text-sm text-retro-text-dim">{p.tagline}</p>
+              <p className="text-3xl font-bold mt-5">
                 {p.price.monthly === 0
                   ? formatPrice(0)
                   : formatPrice(yearly ? p.price.yearly : p.price.monthly)}
-                {p.price.monthly > 0 && (
-                  <span className="font-body text-sm font-normal opacity-70"> /{yearly ? "yr" : "mo"}</span>
-                )}
+                {p.price.monthly > 0 ? (
+                  <span className="text-base font-normal text-retro-text-dim"> /{yearly ? "yr" : "mo"}</span>
+                ) : null}
               </p>
-              {p.plan && yearly && (
-                <p className="mt-2 font-body text-sm text-retro-text-dim">
+              {p.plan && yearly ? (
+                <p className="mt-2 text-sm text-retro-text-dim">
                   <span className="line-through opacity-60">{formatPrice(yearlyCompareAtCents)}/yr</span>
                   <span className="ml-2 font-semibold text-retro-accent">{discountPercent}% off</span>
                 </p>
-              )}
-              {p.plan && yearly && (
-                <p className="mt-1 font-body text-xs text-retro-text-muted">
+              ) : null}
+              {p.plan && yearly ? (
+                <p className="mt-1 text-xs text-retro-text-muted">
                   Works out to {formatPrice(Math.round(p.price.yearly / 12))}/mo billed yearly
                 </p>
-              )}
-              <ul className="mt-8 space-y-3 flex-1 font-body text-sm">
-                {p.features.map((f) => (
-                  <li key={f} className="flex gap-2">
-                    <span>✓</span> {f}
-                  </li>
-                ))}
-              </ul>
+              ) : null}
+              <div className="mt-8">
+                <PlanFeatureList features={p.features} finePrint={p.finePrint} />
+              </div>
               <div className="mt-8">
                 {p.plan ? (
                   <RetroButton className="w-full" variant="primary" loading={loading} onClick={handleUpgrade}>
                     Upgrade to Pro
                   </RetroButton>
                 ) : (
-                  <Link href="/sign-up">
-                    <RetroButton className="w-full" variant="secondary">Start free</RetroButton>
+                  <Link href="/sign-up" prefetch className="block">
+                    <RetroButton className="w-full" variant="secondary">
+                      Start free
+                    </RetroButton>
                   </Link>
                 )}
               </div>
-            </RetroCard>
+            </article>
           ))}
         </div>
       </div>

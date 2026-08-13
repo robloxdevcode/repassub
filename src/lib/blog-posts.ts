@@ -16,7 +16,7 @@ export const BLOG_POSTS: BlogPost[] = [
     body: [
       "Linklock is a subscribe-to-download tool built for creators who want growth without complicated setup. Paste your file link, add the steps fans must complete, and share one URL everywhere.",
       "Unlike heavy content lockers, Linklock keeps the fan experience clean: a short checklist, a progress bar, and instant unlock when steps are done. You keep hosting files on your own links — we never store your downloads.",
-      "The free plan includes 5 links per week with 2 steps each. Pro removes ads, unlocks unlimited links, custom branding, and advanced analytics.",
+      "Launch unlimited gated links for free — 5 new links per week and 2 steps each on Free. Pro removes limits, adds full branding, audience insights, and no Linklock ads.",
       "Whether you share preset packs, mod files, guides, or invite links, Linklock turns every download into a chance to grow your audience.",
     ],
   },

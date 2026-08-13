@@ -5,11 +5,12 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { RetroButton } from "@/components/retro";
 import { useToast } from "@/components/retro";
+import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { getBillingData, createBillingPortal, createCheckoutSession } from "@/lib/actions/payments";
-import { PLAN_FEATURES } from "@/lib/stripe";
+import { PLAN_FEATURES, PLAN_FINE_PRINT } from "@/lib/stripe";
 import { ProPriceText } from "@/components/marketing/pro-price-text";
 import { useCurrency } from "@/components/providers/currency-provider";
-import { Check, CreditCard, PartyPopper } from "lucide-react";
+import { CreditCard, PartyPopper } from "lucide-react";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { cn } from "@/lib/utils";
 
@@ -75,7 +76,7 @@ export function BillingPageClient() {
             <div>
               <p className="font-body font-bold text-retro-ink">You&apos;re Pro now!</p>
               <p className="text-sm text-retro-text-dim mt-1">
-                Unlimited links, no ads, custom branding, and advanced stats are unlocked.
+                Unlimited links, full branding, audience insights, and a clean pro experience — all unlocked.
               </p>
             </div>
           </div>
@@ -106,7 +107,7 @@ export function BillingPageClient() {
                 <RetroButton variant="primary" loading={loading} onClick={handleUpgrade} className="w-full sm:w-auto">
                   Upgrade to Pro
                 </RetroButton>
-                <Link href="/pricing" className="w-full sm:w-auto">
+                <Link href="/pricing" prefetch className="w-full sm:w-auto">
                   <RetroButton variant="ghost" className="w-full">
                     Compare plans
                   </RetroButton>
@@ -118,40 +119,30 @@ export function BillingPageClient() {
       </AppCard>
 
       {!isPro && (
-        <div className="inline-flex border-[3px] border-retro-ink mb-6 brutal-shadow-sm">
+        <div className="simple-toggle mb-6">
           <button
             type="button"
             onClick={() => setYearly(false)}
-            className={cn(
-              "font-display text-[8px] px-5 py-3 transition-colors",
-              !yearly ? "bg-retro-ink text-white" : "bg-white text-retro-ink hover:bg-retro-surface-2"
-            )}
+            className={cn("simple-toggle-btn", !yearly && "simple-toggle-btn--active")}
           >
-            MONTHLY
+            Monthly
           </button>
           <button
             type="button"
             onClick={() => setYearly(true)}
-            className={cn(
-              "font-display text-[8px] px-5 py-3 border-l-[3px] border-retro-ink transition-colors",
-              yearly ? "bg-retro-yellow text-retro-ink" : "bg-white text-retro-ink hover:bg-retro-surface-2"
-            )}
+            className={cn("simple-toggle-btn", yearly && "simple-toggle-btn--active")}
           >
-            YEARLY
+            Yearly
           </button>
         </div>
       )}
 
       <AppCard className="p-6" accent="blue">
         <p className="font-body text-sm font-bold mb-4">What&apos;s included</p>
-        <ul className="space-y-2">
-          {features.map((f) => (
-            <li key={f} className="flex items-start gap-2 text-sm text-retro-text-dim">
-              <Check size={14} className="text-retro-success shrink-0 mt-0.5" />
-              {f}
-            </li>
-          ))}
-        </ul>
+        <PlanFeatureList
+          features={features}
+          finePrint={isPro ? PLAN_FINE_PRINT.PRO : PLAN_FINE_PRINT.FREE}
+        />
         <p className="mt-4 text-xs text-retro-text-muted">
           All Pro payments are final. See our{" "}
           <Link href="/refund-policy" className="text-retro-blue hover:underline">
