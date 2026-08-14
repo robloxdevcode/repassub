@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Lock } from "lucide-react";
+import { Check, Download, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ACTIONS = [
@@ -42,12 +42,21 @@ export function HeroLiveUnlock({
 
   return (
     <div
-      className={cn("simple-demo-card w-full", className)}
+      className={cn("ll-demo-card w-full", className)}
       aria-label="Unlock page preview"
     >
       <div className={pad}>
-        <h3 className="text-lg font-bold text-retro-text mb-1">Free Sample Pack Vol. 3</h3>
-        <p className="text-sm text-retro-text-dim mb-5">Complete the steps below to download</p>
+        <div className="flex items-start justify-between gap-3 mb-5">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-retro-text-muted mb-1">
+              Unlock page
+            </p>
+            <h3 className="text-lg font-bold text-retro-text leading-tight">
+              Free Sample Pack Vol. 3
+            </h3>
+          </div>
+          <span className="ll-demo-live">Live</span>
+        </div>
 
         <div className="flex flex-col gap-2 mb-5">
           {ACTIONS.map((label, i) => {
@@ -55,18 +64,10 @@ export function HeroLiveUnlock({
             return (
               <div
                 key={label}
-                className={cn(
-                  "simple-action-row",
-                  done && "simple-action-row--done"
-                )}
+                className={cn("ll-action-row", done && "ll-action-row--done")}
               >
-                <span
-                  className={cn(
-                    "simple-action-check",
-                    done && "simple-action-check--done"
-                  )}
-                >
-                  {done ? <Check size={14} strokeWidth={2.5} /> : i + 1}
+                <span className={cn("ll-action-check", done && "ll-action-check--done")}>
+                  {done ? <Check size={13} strokeWidth={2.5} /> : i + 1}
                 </span>
                 <span className="text-sm font-medium">{label}</span>
               </div>
@@ -74,15 +75,15 @@ export function HeroLiveUnlock({
           })}
         </div>
 
-        <div className="flex justify-between text-xs text-retro-text-dim mb-2">
+        <div className="flex justify-between text-xs text-retro-text-muted mb-2">
           <span>Progress</span>
           <span className="font-semibold text-retro-text tabular-nums">
             {progress}/{total}
           </span>
         </div>
-        <div className="simple-progress mb-5">
+        <div className="ll-progress mb-5">
           <div
-            className="simple-progress-fill"
+            className="ll-progress-fill"
             style={{ width: `${(progress / total) * 100}%` }}
           />
         </div>
@@ -91,12 +92,12 @@ export function HeroLiveUnlock({
           type="button"
           tabIndex={-1}
           className={cn(
-            "simple-unlock-btn w-full",
-            unlocked && "simple-unlock-btn--ready",
-            progress >= total && !unlocked && "simple-unlock-btn--active"
+            "ll-unlock-btn w-full",
+            unlocked && "ll-unlock-btn--ready",
+            progress >= total && !unlocked && "ll-unlock-btn--active"
           )}
         >
-          <Lock size={16} />
+          {unlocked ? <Download size={16} /> : <Lock size={16} />}
           {unlocked ? "Download ready" : "Unlock download"}
         </button>
       </div>

@@ -29,7 +29,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-50 md:hidden bg-retro-surface border border-retro-border rounded-xl p-2 shadow-sm touch-manipulation active:scale-95 transition-transform duration-75"
+        className="fixed left-4 top-4 z-50 md:hidden ll-app-card p-2 touch-manipulation active:scale-95 transition-transform duration-75"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Close menu" : "Open menu"}
       >

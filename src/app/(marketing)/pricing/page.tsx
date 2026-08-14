@@ -49,36 +49,39 @@ export default function PricingPage() {
 
   return (
     <div>
-      <section className="simple-hero border-b border-retro-border py-12 px-4">
-        <div className="mx-auto max-w-6xl">
-          <h1 className="simple-hero-title">Plans</h1>
-          <p className="mt-3 text-retro-text-dim">Free: unlimited links, 4 steps. Pro: 10 steps, branding, no ads.</p>
+      <section className="ll-page-hero border-b border-retro-border">
+        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+          <p className="ll-label">Pricing</p>
+          <h1 className="ll-section-title mt-3">Plans</h1>
+          <p className="mt-4 text-retro-text-dim max-w-lg">
+            Free: unlimited links, 4 steps. Pro: 10 steps, branding, no ads.
+          </p>
         </div>
       </section>
 
       <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
-        <div className="simple-toggle mb-10">
+        <div className="ll-toggle mb-10">
           <button
             type="button"
             onClick={() => setYearly(false)}
-            className={cn("simple-toggle-btn", !yearly && "simple-toggle-btn--active")}
+            className={cn("ll-toggle-btn", !yearly && "ll-toggle-btn--active")}
           >
             Monthly
           </button>
           <button
             type="button"
             onClick={() => setYearly(true)}
-            className={cn("simple-toggle-btn", yearly && "simple-toggle-btn--active")}
+            className={cn("ll-toggle-btn", yearly && "ll-toggle-btn--active")}
           >
             Yearly · {discountPercent}% off
           </button>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
+        <div className="grid gap-5 sm:grid-cols-2 max-w-3xl mx-auto">
           {plans.map((p) => (
             <article
               key={p.name}
-              className={cn("simple-plan-card", p.popular && "simple-plan-card--popular")}
+              className={cn("ll-plan-card", p.popular && "ll-plan-card--pro")}
             >
               {p.popular ? (
                 <span className="text-xs font-semibold text-retro-accent mb-2">Most popular</span>
@@ -109,7 +112,7 @@ export default function PricingPage() {
               </div>
               <div className="mt-8">
                 {p.plan ? (
-                  <RetroButton className="w-full" variant="primary" loading={loading} onClick={handleUpgrade}>
+                  <RetroButton className="w-full ll-btn-glow" variant="primary" loading={loading} onClick={handleUpgrade}>
                     Upgrade to Pro
                   </RetroButton>
                 ) : (

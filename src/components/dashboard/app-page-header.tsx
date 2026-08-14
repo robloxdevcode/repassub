@@ -13,12 +13,12 @@ export function AppPageHeader({
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p className="font-display text-[8px] text-retro-accent mb-2 tracking-widest">LINKLOCK</p>
+        <p className="text-xs font-semibold text-retro-accent mb-2 tracking-wide uppercase">Linklock</p>
         <h1 className="font-body text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
         {subtitle ? <p className="mt-2 text-sm text-retro-text-dim">{subtitle}</p> : null}
       </div>
       {action ? (
-        <RetroLink href={action.href} size="lg" variant="primary" className="w-full sm:w-auto shrink-0">
+        <RetroLink href={action.href} size="lg" variant="primary" className="w-full sm:w-auto shrink-0 ll-btn-glow">
           {action.label}
         </RetroLink>
       ) : null}
@@ -45,5 +45,5 @@ export function AppCard({
           : accent === "green"
             ? "app-card-accent-green"
             : "";
-  return <div className={`app-card brutal-border brutal-shadow ${accentClass} ${className}`}>{children}</div>;
+  return <div className={`ll-app-card ${accentClass} ${className}`}>{children}</div>;
 }

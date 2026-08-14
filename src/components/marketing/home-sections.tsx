@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import {
+  BarChart3,
+  Layers,
+  Palette,
+  Shield,
+  Sparkles,
+  Users,
+  Zap,
+} from "lucide-react";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { RetroButton } from "@/components/retro";
@@ -12,38 +20,67 @@ import { cn } from "@/lib/utils";
 
 export { HeroSection } from "@/components/marketing/hero-section";
 
-function FeatureRow({
-  label,
-  title,
-  desc,
-  visual,
-  reverse,
-}: {
-  label: string;
-  title: string;
-  desc: string;
-  visual: ReactNode;
-  reverse?: boolean;
-}) {
-  return (
-    <div className={cn("simple-feature-row", reverse && "simple-feature-row--reverse")}>
-      <div className="simple-feature-copy">
-        <p className="simple-feature-label">{label}</p>
-        <h2 className="simple-section-title mb-3">{title}</h2>
-        <p className="text-retro-text-dim leading-relaxed max-w-md">{desc}</p>
-      </div>
-      <div className="simple-feature-visual">{visual}</div>
-    </div>
-  );
-}
+const BENTO = [
+  {
+    icon: Layers,
+    title: "Stack unlock steps",
+    desc: "Subscribe, join Discord, follow — up to 4 on Free, 10 on Pro.",
+    className: "md:col-span-2",
+    accent: "red",
+  },
+  {
+    icon: BarChart3,
+    title: "Live stats",
+    desc: "Views, unlocks, and conversion on every link.",
+    className: "",
+    accent: "blue",
+  },
+  {
+    icon: Palette,
+    title: "Your branding",
+    desc: "Logo, colors, and button copy on Pro.",
+    className: "",
+    accent: "yellow",
+  },
+  {
+    icon: Users,
+    title: "Audience export",
+    desc: "CSV of everyone who unlocked.",
+    className: "",
+    accent: "green",
+  },
+  {
+    icon: Shield,
+    title: "No viewer accounts",
+    desc: "Fans unlock in one click — no signup friction.",
+    className: "md:col-span-2",
+    accent: "red",
+  },
+];
+
+const accentMap: Record<string, string> = {
+  red: "ll-bento-icon--red",
+  blue: "ll-bento-icon--blue",
+  yellow: "ll-bento-icon--yellow",
+  green: "ll-bento-icon--green",
+};
 
 export function TrustStrip() {
   return (
-    <section className="border-b border-retro-border bg-retro-surface-2">
-      <div className="mx-auto max-w-6xl px-4 py-4">
-        <p className="text-center text-sm text-retro-text-dim">
-          Unlimited links on Free · 70+ platform actions · No account needed for viewers
-        </p>
+    <section className="ll-trust">
+      <div className="mx-auto max-w-6xl px-4 py-5 flex flex-wrap items-center justify-center gap-x-10 gap-y-2 text-sm text-retro-text-dim">
+        <span className="flex items-center gap-2">
+          <Zap size={15} className="text-retro-accent" />
+          Unlimited links on Free
+        </span>
+        <span className="flex items-center gap-2">
+          <Sparkles size={15} className="text-retro-accent" />
+          70+ platform actions
+        </span>
+        <span className="flex items-center gap-2">
+          <Shield size={15} className="text-retro-accent" />
+          No account for viewers
+        </span>
       </div>
     </section>
   );
@@ -51,47 +88,30 @@ export function TrustStrip() {
 
 export function FeaturesSection() {
   return (
-    <section className="simple-section">
-      <div className="mx-auto max-w-6xl px-4 py-16 md:py-20 flex flex-col gap-20">
-        <FeatureRow
-          label="Unlock steps"
-          title="Turn downloads into followers"
-          desc="Choose what viewers must do — subscribe, join a server, follow a profile. They finish the list, then your file unlocks."
-          visual={
-            <div className="rounded-xl border border-retro-border bg-retro-surface p-5">
-              <p className="text-xs text-retro-text-muted mb-3">Actions on this link</p>
-              <div className="flex flex-wrap gap-2">
-                {["Subscribe", "Join Discord", "Follow", "Like post", "Visit link"].map((action) => (
-                  <span key={action} className="simple-action-chip">
-                    {action}
-                  </span>
-                ))}
+    <section className="ll-section">
+      <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <p className="ll-label">Features</p>
+          <h2 className="ll-section-title mt-3">Everything to gate &amp; grow</h2>
+          <p className="mt-4 text-retro-text-dim leading-relaxed">
+            Build unlock pages in minutes. Share one link. Watch your channels grow.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          {BENTO.map((item) => (
+            <article
+              key={item.title}
+              className={cn("ll-bento-card", item.className)}
+            >
+              <div className={cn("ll-bento-icon", accentMap[item.accent])}>
+                <item.icon size={20} />
               </div>
-            </div>
-          }
-        />
-        <FeatureRow
-          label="Analytics"
-          title="Track what converts"
-          desc="Views, unlocks, and completion rate on every link. See which shares actually grow your channels."
-          reverse
-          visual={
-            <div className="grid grid-cols-3 gap-3">
-              <div className="simple-stat-pill">
-                <strong>2.4k</strong>
-                <span>Views</span>
-              </div>
-              <div className="simple-stat-pill">
-                <strong>891</strong>
-                <span>Unlocks</span>
-              </div>
-              <div className="simple-stat-pill">
-                <strong>37%</strong>
-                <span>Rate</span>
-              </div>
-            </div>
-          }
-        />
+              <h3 className="font-bold text-base mt-4 mb-2">{item.title}</h3>
+              <p className="text-sm text-retro-text-dim leading-relaxed">{item.desc}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -106,37 +126,46 @@ export function PlansSection() {
   const { formatPrice, prices, discountPercent } = useCurrency();
 
   return (
-    <section id="pricing" className="simple-section scroll-mt-20 bg-retro-surface-2">
-      <div className="mx-auto max-w-3xl px-4 py-14">
-        <h2 className="simple-section-title text-center mb-2">Pricing</h2>
-        <p className="text-center text-sm text-retro-text-dim mb-8">
-          Free includes unlimited links. Pro adds more steps, branding, and removes ads.
-        </p>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <article className="simple-plan-card">
+    <section id="pricing" className="ll-section ll-section--muted scroll-mt-20">
+      <div className="mx-auto max-w-4xl px-4 py-20 md:py-28">
+        <div className="text-center mb-12">
+          <p className="ll-label">Pricing</p>
+          <h2 className="ll-section-title mt-3">Simple plans</h2>
+          <p className="mt-4 text-retro-text-dim text-sm">
+            Start free. Upgrade when you need more steps and branding.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-5">
+          <article className="ll-plan-card">
             <p className="font-bold text-lg">Free</p>
-            <p className="text-2xl font-bold mt-1">{formatPrice(0)}</p>
-            <div className="mt-4">
+            <p className="ll-plan-price mt-1">{formatPrice(0)}</p>
+            <p className="text-xs text-retro-text-muted mt-1">forever</p>
+            <div className="mt-6 flex-1">
               <PlanFeatureList features={PLAN_FEATURES.FREE} finePrint={PLAN_FINE_PRINT.FREE} />
             </div>
-            <MarketingAuthLink href="/sign-up" className="block mt-6">
+            <MarketingAuthLink href="/sign-up" className="block mt-8">
               <RetroButton variant="secondary" className="w-full">
                 Get started
               </RetroButton>
             </MarketingAuthLink>
           </article>
-          <article className="simple-plan-card simple-plan-card--popular">
-            <p className="font-bold text-lg text-retro-accent">Pro</p>
-            <p className="text-2xl font-bold mt-1">
+
+          <article className="ll-plan-card ll-plan-card--pro">
+            <div className="flex items-center gap-2">
+              <p className="font-bold text-lg">Pro</p>
+              <span className="ll-plan-badge">Popular</span>
+            </div>
+            <p className="ll-plan-price mt-1">
               {formatPrice(prices.yearly)}
               <span className="text-sm font-normal text-retro-text-dim"> /yr</span>
             </p>
             <p className="text-xs text-retro-text-muted mt-1">{discountPercent}% off vs monthly</p>
-            <div className="mt-4">
+            <div className="mt-6 flex-1">
               <PlanFeatureList features={PLAN_FEATURES.PRO} finePrint={PLAN_FINE_PRINT.PRO} />
             </div>
-            <Link href="/pricing" prefetch className="block mt-6">
-              <RetroButton className="w-full">View Pro plans</RetroButton>
+            <Link href="/pricing" prefetch className="block mt-8">
+              <RetroButton className="w-full ll-btn-glow">View Pro plans</RetroButton>
             </Link>
           </article>
         </div>
@@ -147,14 +176,20 @@ export function PlansSection() {
 
 export function FaqSection() {
   return (
-    <section id="faq" className="simple-section scroll-mt-20">
-      <div className="mx-auto max-w-xl px-4 py-14">
-        <h2 className="simple-section-title text-center mb-6">FAQ</h2>
-        <div className="flex flex-col gap-2">
-          {HOME_FAQS.map((item) => (
-            <details key={item.q} className="simple-faq">
-              <summary className="simple-faq-q">{item.q}</summary>
-              <p className="simple-faq-a">{item.a}</p>
+    <section id="faq" className="ll-section scroll-mt-20">
+      <div className="mx-auto max-w-2xl px-4 py-20 md:py-28">
+        <div className="text-center mb-10">
+          <p className="ll-label">FAQ</p>
+          <h2 className="ll-section-title mt-3">Questions</h2>
+        </div>
+        <div className="flex flex-col gap-3">
+          {HOME_FAQS.map((item, i) => (
+            <details key={item.q} className="ll-faq">
+              <summary className="ll-faq-q">
+                <span className="ll-faq-num">{String(i + 1).padStart(2, "0")}</span>
+                {item.q}
+              </summary>
+              <p className="ll-faq-a">{item.a}</p>
             </details>
           ))}
         </div>
@@ -165,18 +200,21 @@ export function FaqSection() {
 
 export function CtaSection() {
   return (
-    <section className="simple-cta py-16 text-center px-4">
-      <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-        Start gating content today
-      </h2>
-      <p className="text-white/85 mb-8 text-sm md:text-base max-w-md mx-auto">
-        Free plan — unlimited links, 4 steps per link, basic stats.
-      </p>
-      <MarketingAuthLink href="/sign-up" className="inline-block">
-        <RetroButton size="lg" variant="white">
-          Get started free
-        </RetroButton>
-      </MarketingAuthLink>
+    <section className="ll-cta">
+      <div className="ll-hero-glow ll-hero-glow--1" aria-hidden />
+      <div className="relative mx-auto max-w-3xl px-4 py-20 md:py-24 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+          Ready to grow on every share?
+        </h2>
+        <p className="mt-4 text-white/60 max-w-md mx-auto">
+          Create your first unlock link in under 2 minutes. Free, unlimited links.
+        </p>
+        <MarketingAuthLink href="/sign-up" className="inline-block mt-9">
+          <RetroButton size="lg" variant="white" className="min-w-[220px]">
+            Get started free
+          </RetroButton>
+        </MarketingAuthLink>
+      </div>
     </section>
   );
 }
