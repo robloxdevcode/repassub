@@ -4,14 +4,7 @@ import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { HeroLiveUnlock } from "@/components/marketing/hero-live-unlock";
 import { AnimatedDotBackground } from "@/components/marketing/animated-dot-background";
 import { RetroButton, RetroLink } from "@/components/retro";
-import { Play, MessageCircle, Music2, Share2 } from "lucide-react";
-
-const PLATFORMS = [
-  { icon: Play, label: "YouTube", color: "#ff0000" },
-  { icon: MessageCircle, label: "Discord", color: "#5865f2" },
-  { icon: Music2, label: "Spotify", color: "#1db954" },
-  { icon: Share2, label: "Instagram", color: "#e1306c" },
-];
+import { ArrowRight, Link2 } from "lucide-react";
 
 export function HeroSection() {
   return (
@@ -20,47 +13,52 @@ export function HeroSection() {
       <div className="ll-hero-glow ll-hero-glow--1" aria-hidden />
       <div className="ll-hero-glow ll-hero-glow--2" aria-hidden />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-16 pb-20 md:pt-24 md:pb-28">
-        <div className="grid lg:grid-cols-2 gap-14 lg:gap-10 items-center">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-14 pb-16 md:pt-20 md:pb-24">
+        <div className="grid lg:grid-cols-[1fr_400px] gap-12 lg:gap-16 items-center">
           <div className="text-center lg:text-left">
-            <span className="ll-pill">Unlock links for creators</span>
-            <h1 className="ll-hero-title mt-6">
-              Gate downloads.
+            <p className="ll-brand-tag">LINKLOCK</p>
+            <h1 className="ll-hero-title mt-4">
+              One link.
               <br />
-              <span className="ll-gradient-text">Grow your audience.</span>
+              They follow.
+              <br />
+              <span className="ll-gradient-text">They download.</span>
             </h1>
-            <p className="mt-6 text-lg text-white/65 leading-relaxed max-w-lg mx-auto lg:mx-0">
-              Fans complete subscribe, join, or follow steps — then your file unlocks.
-              No account needed for them.
-            </p>
-            <div className="mt-9 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <MarketingAuthLink href="/sign-up" className="inline-block w-full sm:w-auto">
-                <RetroButton size="lg" className="w-full sm:min-w-[220px] ll-btn-glow">
-                  Get started free
-                </RetroButton>
-              </MarketingAuthLink>
-              <RetroLink href="/#pricing" variant="ghost" size="lg" className="ll-hero-ghost w-full sm:w-auto sm:min-w-[160px]">
-                See pricing
-              </RetroLink>
-            </div>
-            <p className="mt-5 text-sm text-white/40">
-              Unlimited links · 4 steps on Free · No card
+            <p className="mt-6 text-lg text-white/60 leading-relaxed max-w-md mx-auto lg:mx-0">
+              Paste your file, pick what fans must do first — subscribe, join, follow — then share a single link.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-3 justify-center lg:justify-start">
-              {PLATFORMS.map(({ icon: Icon, label, color }) => (
-                <span key={label} className="ll-platform-chip">
-                  <Icon size={14} style={{ color }} />
-                  {label}
-                </span>
-              ))}
-              <span className="ll-platform-chip ll-platform-chip--muted">+70 more</span>
+            <div className="ll-url-bar mt-8 mx-auto lg:mx-0 max-w-md">
+              <span className="ll-url-bar-icon" aria-hidden>
+                <Link2 size={14} />
+              </span>
+              <span className="ll-url-bar-text">
+                linklock.org/u/<strong>you</strong>/pack-v3
+              </span>
+              <span className="ll-url-bar-badge">Live</span>
+            </div>
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <MarketingAuthLink href="/sign-up" className="inline-block w-full sm:w-auto">
+                <RetroButton size="lg" className="w-full sm:min-w-[220px] ll-btn-glow">
+                  Create a link
+                </RetroButton>
+              </MarketingAuthLink>
+              <RetroLink
+                href="/examples"
+                variant="ghost"
+                size="lg"
+                className="ll-hero-ghost w-full sm:w-auto sm:min-w-[160px] group"
+              >
+                See examples
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+              </RetroLink>
             </div>
           </div>
 
           <div className="flex justify-center lg:justify-end">
-            <div className="ll-demo-wrap">
-              <HeroLiveUnlock size="lg" className="w-full max-w-[380px]" />
+            <div className="ll-demo-wrap w-full max-w-[400px]">
+              <HeroLiveUnlock size="lg" className="w-full" />
             </div>
           </div>
         </div>
