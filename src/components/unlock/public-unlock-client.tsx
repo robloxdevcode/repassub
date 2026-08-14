@@ -8,6 +8,14 @@ import {
   unlockContent,
   trackCampaignView,
 } from "@/lib/actions/unlock";
+import {
+  actionProgressKey,
+  completedIdsFromKeys,
+  getStoredVisitorId,
+  mergeCompletedIds,
+  readUnlockProgress,
+  writeUnlockProgress,
+} from "@/lib/unlock-client-storage";
 import { RetroButton, UnlockAnimation } from "@/components/retro";
 import { UnlockPageBackdrop } from "./unlock-page-backdrop";
 import { UnlockPageAd } from "./unlock-page-ad";
@@ -85,21 +93,49 @@ export function PublicUnlockClient({
   const [verifySecondsLeft, setVerifySecondsLeft] = useState(VERIFY_SECONDS);
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const visitorId = getStoredVisitorId();
+
+  function persistProgress(completedIds: string[], status: string) {
+    const keys = campaign.actions
+      .filter((a) => completedIds.includes(a.id))
+      .map((a) => actionProgressKey(a));
+    writeUnlockProgress(campaign.id, { completedKeys: keys, status });
+  }
+
+  function applySession(session: { completedActions: unknown; status: string }) {
+    const serverIds = (session.completedActions as string[]) || [];
+    const cache = readUnlockProgress(campaign.id);
+    const localIds = cache ? completedIdsFromKeys(campaign.actions, cache.completedKeys) : [];
+    const merged = mergeCompletedIds(serverIds, localIds);
+    const status = session.status === "UNLOCKED" || cache?.status === "UNLOCKED" ? "UNLOCKED" : session.status;
+
+    setSession({ completedActions: merged, status });
+    persistProgress(merged, status);
+
+    if (status === "UNLOCKED") {
+      setUnlocked(true);
+      setContent(campaign.content);
+    }
+  }
 
   useEffect(() => {
-    trackCampaignView(campaign.id);
-    getUnlockSession(campaign.id).then((session) => {
-      const completedActions = (session.completedActions as string[]) || [];
-      setSession({ completedActions, status: session.status });
-      if (session.status === "UNLOCKED") {
-        setUnlocked(true);
-        setContent(campaign.content);
-      } else {
-        setUnlocked(false);
-        setContent(null);
+    const cache = readUnlockProgress(campaign.id);
+    if (cache) {
+      const localIds = completedIdsFromKeys(campaign.actions, cache.completedKeys);
+      if (localIds.length > 0 || cache.status === "UNLOCKED") {
+        setSession({ completedActions: localIds, status: cache.status });
+        if (cache.status === "UNLOCKED") {
+          setUnlocked(true);
+          setContent(campaign.content);
+        }
       }
+    }
+
+    trackCampaignView(campaign.id);
+    getUnlockSession(campaign.id, visitorId).then((session) => {
+      applySession(session);
     });
-  }, [campaign.id, campaign.content]);
+  }, [campaign.id, visitorId]);
 
   const completed = session?.completedActions || [];
   const total = campaign.actions.length;
@@ -109,11 +145,13 @@ export function PublicUnlockClient({
   const finishVerification = useCallback(
     async (actionId: string) => {
       try {
-        const result = await completeAction(campaign.id, actionId);
+        const result = await completeAction(campaign.id, actionId, visitorId);
+        const completedActions = (result.session.completedActions as string[]) || [];
         setSession({
-          completedActions: (result.session.completedActions as string[]) || [],
+          completedActions,
           status: result.session.status,
         });
+        persistProgress(completedActions, result.session.status);
         setUnlockError(null);
       } catch {
         setUnlockError("Could not verify that step. Try again.");
@@ -121,7 +159,7 @@ export function PublicUnlockClient({
         setVerifyingId(null);
       }
     },
-    [campaign.id]
+    [campaign.id, campaign.actions, visitorId]
   );
 
   useEffect(() => {
@@ -162,9 +200,13 @@ export function PublicUnlockClient({
 
   async function onAnimationComplete() {
     try {
-      const result = await unlockContent(campaign.id);
+      const result = await unlockContent(campaign.id, visitorId);
       setUnlocked(true);
       setContent(result.content ?? campaign.content);
+      persistProgress(
+        campaign.actions.map((a) => a.id),
+        "UNLOCKED"
+      );
       setUnlockError(null);
     } catch {
       setUnlockError("Could not unlock content. Please try again.");
@@ -241,13 +283,10 @@ export function PublicUnlockClient({
 
                 if (isVerifying) {
                   return (
-                    <div key={action.id} className="platform-btn platform-btn--verifying !flex-col !items-start gap-1 pb-3">
-                      <div className="flex items-center gap-2 w-full">
-                        <Loader2 size={16} className="animate-spin shrink-0" />
-                        <span className="font-semibold">Checking…</span>
-                      </div>
-                      <span className="text-xs opacity-80 pl-6">
-                        Finish the step in the other tab ({verifySecondsLeft}s)
+                    <div key={action.id} className="platform-btn platform-btn--verifying">
+                      <Loader2 size={16} className="animate-spin shrink-0" />
+                      <span className="flex-1 text-left">
+                        Checking… ({verifySecondsLeft}s)
                       </span>
                     </div>
                   );
@@ -293,7 +332,8 @@ export function PublicUnlockClient({
             </div>
 
             <RetroButton
-              className="w-full !rounded-xl"
+              className="w-full"
+              size="lg"
               disabled={!allComplete}
               onClick={() => allComplete && setShowAnimation(true)}
               variant={allComplete ? "primary" : "secondary"}
@@ -301,11 +341,11 @@ export function PublicUnlockClient({
               {allComplete ? (
                 <>
                   {campaign.buttonText || "Open"}
-                  <ArrowUpRight size={16} />
+                  <ArrowUpRight size={18} />
                 </>
               ) : (
                 <>
-                  <Lock size={14} />
+                  <Lock size={16} />
                   {`Complete ${total - progress} more step${total - progress !== 1 ? "s" : ""}`}
                 </>
               )}

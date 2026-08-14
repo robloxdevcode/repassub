@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, ButtonHTMLAttributes } from "react";
+import { forwardRef, ButtonHTMLAttributes, Fragment } from "react";
 import { retroButtonClasses, type RetroButtonSize, type RetroButtonVariant } from "./retro-button-styles";
 import { RetroSpinner } from "./retro-loading";
 
@@ -25,7 +25,7 @@ export const RetroButton = forwardRef<HTMLButtonElement, RetroButtonProps>(
         {...props}
       >
         {loading ? <RetroSpinner size="sm" /> : null}
-        <span>{children}</span>
+        {loading ? null : <Fragment>{children}</Fragment>}
       </button>
     );
   }

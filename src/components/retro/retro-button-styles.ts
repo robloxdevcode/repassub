@@ -28,9 +28,9 @@ const variants: Record<RetroButtonVariant, string> = {
 };
 
 const sizes: Record<RetroButtonSize, string> = {
-  sm: "px-5 py-2.5 text-sm min-h-[42px]",
-  md: "px-6 py-3 text-sm min-h-[46px]",
-  lg: "px-8 py-4 text-base min-h-[52px]",
+  sm: "px-5 py-3 text-sm min-h-[44px]",
+  md: "px-6 py-3.5 text-sm min-h-[48px]",
+  lg: "px-8 py-4 text-base min-h-[54px]",
 };
 
 export function retroButtonClasses({

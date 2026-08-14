@@ -2,22 +2,28 @@
 
 import { db } from "@/lib/db";
 import { trackEvent } from "@/lib/analytics";
-import type { AnalyticsEventType } from "@prisma/client";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
-export async function getOrCreateVisitorId() {
+export async function getOrCreateVisitorId(clientVisitorId?: string) {
   const cookieStore = await cookies();
-  let visitorId = cookieStore.get("linklock_visitor")?.value;
+  const fromCookie = cookieStore.get("linklock_visitor")?.value;
+  let visitorId = clientVisitorId || fromCookie;
+
   if (!visitorId) {
     visitorId = uuidv4();
+  }
+
+  if (fromCookie !== visitorId) {
     cookieStore.set("linklock_visitor", visitorId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 365,
+      path: "/",
     });
   }
+
   return visitorId;
 }
 
@@ -44,11 +50,19 @@ export async function getPublicCampaign(username: string, slug: string) {
   return campaign;
 }
 
-export async function getUnlockSession(campaignId: string) {
-  const visitorId = await getOrCreateVisitorId();
+export async function getUnlockSession(campaignId: string, clientVisitorId?: string) {
+  const visitorId = await getOrCreateVisitorId(clientVisitorId);
+  const campaign = await db.campaign.findUnique({
+    where: { id: campaignId },
+    include: { actions: { orderBy: { sortOrder: "asc" } } },
+  });
+  if (!campaign) throw new Error("Campaign not found");
+
+  const actionIds = new Set(campaign.actions.map((a) => a.id));
+
   const existing = await db.unlockSession.findFirst({
     where: { campaignId, visitorId },
-    orderBy: { createdAt: "desc" },
+    orderBy: { updatedAt: "desc" },
   });
 
   if (!existing) {
@@ -59,19 +73,28 @@ export async function getUnlockSession(campaignId: string) {
     return session;
   }
 
-  // Preserve fan progress across refresh; only reset if starting a new visit after unlock
-  if (existing.status === "UNLOCKED") {
-    return existing;
+  const rawCompleted = (existing.completedActions as string[]) || [];
+  const completedActions = rawCompleted.filter((id) => actionIds.has(id));
+
+  if (completedActions.length !== rawCompleted.length) {
+    return db.unlockSession.update({
+      where: { id: existing.id },
+      data: { completedActions },
+    });
   }
 
   return existing;
 }
 
-export async function completeAction(campaignId: string, actionId: string) {
-  const visitorId = await getOrCreateVisitorId();
+export async function completeAction(
+  campaignId: string,
+  actionId: string,
+  clientVisitorId?: string
+) {
+  const visitorId = await getOrCreateVisitorId(clientVisitorId);
   const session = await db.unlockSession.findFirst({
     where: { campaignId, visitorId },
-    orderBy: { createdAt: "desc" },
+    orderBy: { updatedAt: "desc" },
   });
   if (!session) throw new Error("No session");
 
@@ -106,11 +129,11 @@ export async function completeAction(campaignId: string, actionId: string) {
   return { session: updated, allComplete };
 }
 
-export async function unlockContent(campaignId: string) {
-  const visitorId = await getOrCreateVisitorId();
+export async function unlockContent(campaignId: string, clientVisitorId?: string) {
+  const visitorId = await getOrCreateVisitorId(clientVisitorId);
   const session = await db.unlockSession.findFirst({
     where: { campaignId, visitorId },
-    orderBy: { createdAt: "desc" },
+    orderBy: { updatedAt: "desc" },
   });
   if (!session || session.status !== "COMPLETED") {
     throw new Error("Complete all actions first");

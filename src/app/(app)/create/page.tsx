@@ -414,21 +414,24 @@ function CreateUnlockWizard() {
             {actions.map((action, index) => {
               const platform = getPlatform(action.platformId);
               return (
-                <div key={action.id} className="brutal-border bg-retro-surface-2 p-4">
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-xs font-bold text-retro-text-dim">Step {index + 1}</span>
-                    {platform && (
-                      <span className={`text-xs font-bold px-2 py-0.5 border border-retro-ink ${platform.accent}`}>
-                        {platform.shortName}
-                      </span>
-                    )}
+                <div key={action.id} className="step-card">
+                  <div className="step-card-header">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xs font-bold text-retro-text-dim shrink-0">Step {index + 1}</span>
+                      {platform && (
+                        <span className={`text-xs font-bold px-2 py-0.5 border border-retro-ink shrink-0 ${platform.accent}`}>
+                          {platform.shortName}
+                        </span>
+                      )}
+                    </div>
                     <button
                       type="button"
                       onClick={() => removeAction(action.id)}
-                      className="ml-auto p-2 text-retro-accent hover:bg-retro-accent/10"
+                      className="step-remove-btn"
                       aria-label="Remove step"
                     >
                       <Trash2 size={16} />
+                      Remove
                     </button>
                   </div>
                   <RetroInput

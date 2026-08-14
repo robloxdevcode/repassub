@@ -239,17 +239,18 @@ body {
 
 /* Platform buttons — clean unlock steps */
 .platform-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
   width: 100%;
-  padding: 12px 14px;
-  font-size: 14px;
+  padding: 0.9375rem 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #fff;
   border: 1px solid var(--retro-border);
-  border-radius: 0.75rem;
+  border-radius: 0.875rem;
   transition: opacity 0.15s;
+  text-align: left;
 }
 
 .platform-btn:hover { opacity: 0.92; }
@@ -3102,6 +3103,40 @@ body {
 .wizard-footer--split {
   flex-direction: column-reverse;
   gap: 1rem;
+}
+
+.step-card {
+  border: 1px solid var(--retro-border);
+  border-radius: 1rem;
+  background: var(--retro-surface-2);
+  padding: 1.25rem;
+}
+
+.step-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.step-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--retro-accent);
+  border: 1px solid color-mix(in srgb, var(--retro-accent) 25%, var(--retro-border));
+  background: transparent;
+  transition: background 75ms ease-out;
+  shrink: 0;
+}
+
+.step-remove-btn:hover {
+  background: color-mix(in srgb, var(--retro-accent) 8%, transparent);
 }
 
 @media (min-width: 640px) {
