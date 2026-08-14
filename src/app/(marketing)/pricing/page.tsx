@@ -1,19 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { RetroButton, RetroLink } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
-import { createCheckoutSession } from "@/lib/actions/payments";
+import { getBillingData, createCheckoutSession } from "@/lib/actions/payments";
 import { useToast } from "@/components/retro";
 import { useCurrency } from "@/components/providers/currency-provider";
 import { PLAN_FEATURES, PLAN_FINE_PRINT, PLAN_TAGLINE } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 
+function checkoutErrorMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : "";
+  if (message === "Unauthorized") {
+    return "Sign in first, then try Upgrade to Pro again.";
+  }
+  if (message === "Already subscribed") {
+    return "You're already on Pro. Open Billing to manage your plan.";
+  }
+  if (message.includes("Stripe not configured")) {
+    return "Stripe isn’t configured on this server yet.";
+  }
+  return "Couldn’t start checkout. Try again from Billing while signed in.";
+}
+
 export default function PricingPage() {
+  const { isSignedIn } = useAuth();
   const [yearly, setYearly] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
   const { toast } = useToast();
   const { prices, formatPrice, yearlyCompareAtCents, discountPercent, currency } = useCurrency();
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      setCurrentPlan(null);
+      return;
+    }
+    getBillingData()
+      .then((data) => setCurrentPlan(data.plan))
+      .catch(() => setCurrentPlan(null));
+  }, [isSignedIn]);
+
+  const isPro = currentPlan === "PRO" || currentPlan === "BUSINESS";
 
   const plans = [
     {
@@ -37,12 +66,22 @@ export default function PricingPage() {
   ];
 
   async function handleUpgrade() {
+    if (!isSignedIn) {
+      window.location.href = `/sign-in?redirect_url=${encodeURIComponent("/pricing")}`;
+      return;
+    }
+
+    if (isPro) {
+      window.location.href = "/billing";
+      return;
+    }
+
     setLoading(true);
     try {
       const { url } = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
       if (url) window.location.href = url;
-    } catch {
-      toast("Stripe not configured.", "error");
+    } catch (error) {
+      toast(checkoutErrorMessage(error), "error");
       setLoading(false);
     }
   }
@@ -112,9 +151,15 @@ export default function PricingPage() {
               </div>
               <div className="mt-8">
                 {p.plan ? (
-                  <RetroButton className="w-full ll-btn-glow" variant="primary" loading={loading} onClick={handleUpgrade}>
-                    Upgrade to Pro
-                  </RetroButton>
+                  isPro ? (
+                    <RetroLink href="/billing" variant="secondary" className="w-full">
+                      You&apos;re on Pro — manage billing
+                    </RetroLink>
+                  ) : (
+                    <RetroButton className="w-full ll-btn-glow" variant="primary" loading={loading} onClick={handleUpgrade}>
+                      Upgrade to Pro
+                    </RetroButton>
+                  )
                 ) : (
                   <RetroLink href="/sign-up" variant="secondary" className="w-full">
                     Get started free

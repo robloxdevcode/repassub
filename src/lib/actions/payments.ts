@@ -1,8 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { stripe, getOrCreateStripeCustomer } from "@/lib/stripe";
+import { stripe, getOrCreateStripeCustomer, getUserPlan } from "@/lib/stripe";
 import { DEFAULT_BILLING_CURRENCY, isBillingCurrency, type BillingCurrency } from "@/lib/currency";
 
 function getStripePriceId(plan: "PRO", period: "monthly" | "yearly", currency: BillingCurrency) {
@@ -17,6 +18,111 @@ function getStripePriceId(plan: "PRO", period: "monthly" | "yearly", currency: B
   return undefined;
 }
 
+async function activateUserSubscription(
+  userId: string,
+  plan: "PRO" | "BUSINESS",
+  stripeSubscriptionId: string
+) {
+  await db.subscription.upsert({
+    where: { userId },
+    create: {
+      userId,
+      plan,
+      stripeSubscriptionId,
+      status: "ACTIVE",
+    },
+    update: {
+      plan,
+      stripeSubscriptionId,
+      status: "ACTIVE",
+    },
+  });
+}
+
+export async function fulfillCheckoutSession(sessionId: string) {
+  const user = await requireUser();
+  if (!stripe) throw new Error("Stripe not configured");
+
+  const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    expand: ["subscription"],
+  });
+
+  if (session.metadata?.userId !== user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const isComplete =
+    session.status === "complete" ||
+    session.payment_status === "paid" ||
+    session.payment_status === "no_payment_required";
+
+  if (!isComplete) {
+    throw new Error("Payment not completed");
+  }
+
+  const plan = (session.metadata?.plan as "PRO" | "BUSINESS" | undefined) ?? "PRO";
+
+  let subscriptionId =
+    typeof session.subscription === "string"
+      ? session.subscription
+      : session.subscription?.id;
+
+  if (!subscriptionId) {
+    const customerId =
+      typeof session.customer === "string" ? session.customer : session.customer?.id;
+    if (customerId) {
+      const subs = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "active",
+        limit: 1,
+      });
+      subscriptionId = subs.data[0]?.id;
+    }
+  }
+
+  if (!subscriptionId) {
+    throw new Error("Invalid checkout session");
+  }
+
+  await activateUserSubscription(user.id, plan, subscriptionId);
+  revalidatePath("/dashboard");
+  revalidatePath("/billing");
+  revalidatePath("/settings");
+
+  return { plan };
+}
+
+/** If Stripe shows an active sub but our DB still says Free, sync it (e.g. missed webhook). */
+export async function syncProSubscriptionFromStripe() {
+  const user = await requireUser();
+  if (!stripe || !user.stripeCustomerId) {
+    return { plan: getUserPlan(user.subscriptions?.[0]?.plan), synced: false as const };
+  }
+
+  const current = getUserPlan(user.subscriptions?.[0]?.plan);
+  if (current === "PRO" || current === "BUSINESS") {
+    return { plan: current, synced: false as const };
+  }
+
+  const subs = await stripe.subscriptions.list({
+    customer: user.stripeCustomerId,
+    status: "active",
+    limit: 1,
+  });
+
+  const sub = subs.data[0];
+  if (!sub) {
+    return { plan: current, synced: false as const };
+  }
+
+  await activateUserSubscription(user.id, "PRO", sub.id);
+  revalidatePath("/dashboard");
+  revalidatePath("/billing");
+  revalidatePath("/settings");
+
+  return { plan: "PRO" as const, synced: true as const };
+}
+
 export async function createCheckoutSession(
   plan: "PRO",
   period: "monthly" | "yearly",
@@ -24,6 +130,11 @@ export async function createCheckoutSession(
 ) {
   const user = await requireUser();
   const billingCurrency = isBillingCurrency(currency) ? currency : DEFAULT_BILLING_CURRENCY;
+
+  const activePlan = user.subscriptions?.[0]?.plan;
+  if (activePlan === "PRO" || activePlan === "BUSINESS") {
+    throw new Error("Already subscribed");
+  }
 
   const priceId = getStripePriceId(plan, period, billingCurrency);
   if (!priceId) throw new Error("Stripe not configured");
@@ -47,7 +158,7 @@ export async function createCheckoutSession(
     customer: customerId,
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?success=true`,
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?welcome=pro&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
     metadata: { userId: user.id, plan },
   });
@@ -88,7 +199,7 @@ export async function createConnectAccount() {
 
 export async function getBillingData() {
   const user = await requireUser();
-  const plan = user.subscriptions?.[0]?.plan || "FREE";
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
   return { plan, subscription: user.subscriptions[0] || null };
 }
 

@@ -1,15 +1,42 @@
 import Link from "next/link";
 import { getDashboardStats } from "@/lib/actions/dashboard";
+import { fulfillCheckoutSession, syncProSubscriptionFromStripe } from "@/lib/actions/payments";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { AppCard } from "@/components/dashboard/app-page-header";
 import { DashboardRefresh } from "@/components/dashboard/dashboard-refresh";
+import { ProWelcomeMessage, ProWelcomePendingMessage } from "@/components/dashboard/pro-welcome-message";
 import { RetroLink } from "@/components/retro";
 import { formatNumber } from "@/lib/utils";
 import { getRequestSiteUrl } from "@/lib/site-url";
 import { ProPriceText } from "@/components/marketing/pro-price-text";
 import { Eye, Lock, Plus, Pencil } from "lucide-react";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const sessionId = typeof params.session_id === "string" ? params.session_id : undefined;
+  let showProWelcome = params.pro_welcome === "1";
+  let showProPending = params.pro_pending === "1";
+
+  if (params.welcome === "pro" && sessionId) {
+    try {
+      await fulfillCheckoutSession(sessionId);
+      showProWelcome = true;
+      showProPending = false;
+    } catch {
+      const synced = await syncProSubscriptionFromStripe();
+      if (synced.synced) {
+        showProWelcome = true;
+        showProPending = false;
+      } else {
+        showProPending = true;
+      }
+    }
+  }
+
   const stats = await getDashboardStats();
   const siteUrl = await getRequestSiteUrl();
   const hasUnlocks = stats.campaignCount > 0 || stats.recentCampaigns.length > 0;
@@ -19,6 +46,9 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <DashboardRefresh />
+
+      {showProWelcome ? <ProWelcomeMessage /> : null}
+      {showProPending && !showProWelcome ? <ProWelcomePendingMessage /> : null}
 
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -30,7 +60,11 @@ export default async function DashboardPage() {
               ? "Your unlock links and stats."
               : "Create a link in 3 steps: file, fan steps, publish."}
           </p>
-          {stats.plan === "FREE" && (
+          {isPro ? (
+            <p className="mt-2 text-xs font-semibold text-retro-success">
+              Pro plan · 10 steps per link · no ads
+            </p>
+          ) : (
             <p className="mt-2 text-xs text-retro-text-muted">
               Free plan · unlimited links · up to 4 steps per link
             </p>

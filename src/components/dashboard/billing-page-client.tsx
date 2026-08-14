@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { RetroButton, RetroLink } from "@/components/retro";
 import { useToast } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
@@ -14,21 +14,34 @@ import { CreditCard, PartyPopper } from "lucide-react";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { cn } from "@/lib/utils";
 
-export function BillingPageClient() {
+export function BillingPageClient({ initialShowSuccess = false }: { initialShowSuccess?: boolean }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { toast } = useToast();
   const { currency } = useCurrency();
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState("FREE");
   const [yearly, setYearly] = useState(true);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(initialShowSuccess);
 
   useEffect(() => {
     getBillingData().then((data) => setPlan(data.plan)).catch(() => {});
   }, []);
 
   useEffect(() => {
+    if (initialShowSuccess) {
+      getBillingData().then((data) => setPlan(data.plan)).catch(() => {});
+      router.refresh();
+    }
+  }, [initialShowSuccess, router]);
+
+  useEffect(() => {
     if (searchParams.get("success") === "true") {
+      const sessionId = searchParams.get("session_id");
+      if (sessionId) {
+        window.location.replace(`/dashboard?welcome=pro&session_id=${encodeURIComponent(sessionId)}`);
+        return;
+      }
       setShowSuccess(true);
       getBillingData().then((data) => setPlan(data.plan)).catch(() => {});
       window.history.replaceState({}, "", "/billing");
@@ -40,8 +53,12 @@ export function BillingPageClient() {
     try {
       const { url } = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
       if (url) window.location.href = url;
-    } catch {
-      toast("Billing is not configured yet. You can still use the free plan.", "error");
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message.includes("Stripe not configured")
+          ? "Stripe isn’t configured on this server yet."
+          : "Couldn’t start checkout. Restart the dev server if you just added Stripe keys.";
+      toast(message, "error");
     } finally {
       setLoading(false);
     }
@@ -74,7 +91,7 @@ export function BillingPageClient() {
           <div className="flex items-start gap-3">
             <PartyPopper size={22} className="text-retro-success shrink-0 mt-0.5" />
             <div>
-              <p className="font-body font-bold text-retro-ink">You&apos;re Pro now!</p>
+              <p className="font-body font-bold text-retro-ink">Thank you for going Pro!</p>
               <p className="text-sm text-retro-text-dim mt-1">
                 10 steps per link, full branding, deep analytics, and a clean ad-free experience — all unlocked.
               </p>
