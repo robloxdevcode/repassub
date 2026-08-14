@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 
 const ACTIONS = [
   "Subscribe to channel",
-  "Join server",
-  "Follow creator",
+  "Join Discord server",
+  "Follow on Instagram",
 ];
 
 export function HeroLiveUnlock({
@@ -43,14 +43,11 @@ export function HeroLiveUnlock({
   return (
     <div
       className={cn("simple-demo-card w-full", className)}
-      aria-label="Example unlock page preview"
+      aria-label="Unlock page preview"
     >
       <div className={pad}>
-        <p className="text-xs font-semibold text-retro-accent uppercase tracking-wide mb-1">
-          Example
-        </p>
-        <h3 className="text-lg font-bold text-retro-text mb-1">Free sample pack</h3>
-        <p className="text-sm text-retro-text-dim mb-5">Complete the actions to unlock</p>
+        <h3 className="text-lg font-bold text-retro-text mb-1">Free Sample Pack Vol. 3</h3>
+        <p className="text-sm text-retro-text-dim mb-5">Complete the steps below to download</p>
 
         <div className="flex flex-col gap-2 mb-5">
           {ACTIONS.map((label, i) => {
@@ -78,9 +75,9 @@ export function HeroLiveUnlock({
         </div>
 
         <div className="flex justify-between text-xs text-retro-text-dim mb-2">
-          <span>Unlock progress</span>
+          <span>Progress</span>
           <span className="font-semibold text-retro-text tabular-nums">
-            {progress}/{total} done
+            {progress}/{total}
           </span>
         </div>
         <div className="simple-progress mb-5">
@@ -100,7 +97,7 @@ export function HeroLiveUnlock({
           )}
         >
           <Lock size={16} />
-          {unlocked ? "File unlocked" : "Unlock file"}
+          {unlocked ? "Download ready" : "Unlock download"}
         </button>
       </div>
     </div>

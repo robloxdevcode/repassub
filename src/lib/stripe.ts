@@ -34,26 +34,26 @@ export const PLAN_LIMITS = {
 
 export const PLAN_FEATURES = {
   FREE: [
-    "Create unlimited unlock links — free forever",
-    "Add up to 4 fan steps on every link",
-    "See views and unlock counts from day one",
+    "Unlimited unlock links",
+    "Up to 4 steps per link",
+    "Views and unlock stats",
   ],
   PRO: [
-    "Build deeper funnels with up to 10 steps per link",
-    "Your logo, colors, and custom URL on every page",
-    "Deep conversion and audience analytics",
-    "Clean unlock pages with zero Linklock branding",
+    "Up to 10 steps per link",
+    "Custom logo and colors",
+    "Audience and conversion analytics",
+    "No Linklock branding on pages",
   ],
 } as const;
 
 export const PLAN_FINE_PRINT = {
-  FREE: "Unlimited links · 4 steps per link · starter stats · Linklock ads on pages.",
-  PRO: "Unlimited links · 10 steps per link · full analytics · no Linklock ads.",
+  FREE: "Linklock ads shown on unlock pages.",
+  PRO: "Billed yearly or monthly. Cancel anytime.",
 } as const;
 
 export const PLAN_TAGLINE = {
-  FREE: "Gate content and grow your audience at zero cost.",
-  PRO: "More steps, full branding, and pro-grade analytics.",
+  FREE: "Everything you need to start gating downloads.",
+  PRO: "More steps, your branding, no ads.",
 } as const;
 
 export function getUnlockQuotaWindowStart(now = new Date()) {

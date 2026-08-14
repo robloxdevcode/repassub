@@ -7,7 +7,7 @@ const clerkAppearance = {
   variables: { colorPrimary: "#c8ff00", colorBackground: "#141414", borderRadius: "12px" },
   elements: {
     card: "bg-retro-surface border border-retro-border rounded-2xl",
-    formButtonPrimary: "bg-retro-accent text-black rounded-full",
+    formButtonPrimary: "bg-retro-accent text-white rounded-lg",
     footerActionLink: "text-retro-accent",
   },
 };

@@ -7,8 +7,8 @@
   --retro-surface-3: #f1f3f5;
   --retro-ink: #111827;
   --retro-border: #e9ecef;
-  --retro-accent: #ff4757;
-  --retro-accent-dim: #ee5a6f;
+  --retro-accent: #f03e3e;
+  --retro-accent-dim: #e03131;
   --retro-blue: #339af0;
   --retro-blue-dim: #228be6;
   --retro-yellow: #fab005;
@@ -18,7 +18,7 @@
   --retro-success: #40c057;
   --retro-warning: #fd7e14;
   --retro-error: #fa5252;
-  --retro-glow: #ff4757;
+  --retro-glow: #f03e3e;
   --retro-text: #111827;
   --retro-text-dim: #495057;
   --retro-text-muted: #868e96;
@@ -39,15 +39,15 @@
   --retro-text-dim: #ced4da;
   --retro-text-muted: #868e96;
   --retro-text-on-dark: #ffffff;
-  --retro-accent: #ff6b7a;
-  --retro-accent-dim: #ff4757;
+  --retro-accent: #ff6b6b;
+  --retro-accent-dim: #f03e3e;
   --retro-blue: #4dabf7;
   --retro-blue-dim: #339af0;
   --retro-yellow: #fcc419;
   --retro-yellow-dim: #fab005;
   --retro-pink: #f783ac;
   --retro-cyan: #3bc9db;
-  --retro-glow: #ff6b7a;
+  --retro-glow: #ff6b6b;
 }
 
 .dark .text-retro-ink {
@@ -189,7 +189,7 @@ body {
 .brutal-border { border: 1px solid var(--retro-border); }
 .brutal-shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 14px rgba(0, 0, 0, 0.06); }
 .brutal-shadow-sm { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); }
-.brutal-shadow-red { box-shadow: 0 4px 14px rgba(255, 71, 87, 0.2); }
+.brutal-shadow-red { box-shadow: 0 4px 14px rgba(240, 62, 62, 0.2); }
 .brutal-shadow-blue { box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2); }
 
 .retro-panel {
@@ -2393,8 +2393,8 @@ body {
   background: var(--retro-accent);
   color: white;
   border-color: transparent;
-  border-radius: 9999px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  border-radius: 0.5rem;
+  box-shadow: none;
 }
 
 .sidebar-nav-create:hover {
@@ -2672,32 +2672,90 @@ body {
 }
 
 .simple-hero-title {
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
   color: var(--retro-text);
 }
 
-.simple-badge {
-  display: inline-block;
-  font-size: 0.8125rem;
+.simple-section-title {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--retro-text);
+}
+
+.simple-feature-label {
+  font-size: 0.6875rem;
   font-weight: 600;
-  color: var(--retro-accent);
-  background: color-mix(in srgb, var(--retro-accent) 10%, transparent);
-  padding: 0.375rem 0.875rem;
-  border-radius: 9999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--retro-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.simple-feature-row {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .simple-feature-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .simple-feature-row--reverse .simple-feature-copy {
+    order: 2;
+  }
+
+  .simple-feature-row--reverse .simple-feature-visual {
+    order: 1;
+  }
+}
+
+.simple-action-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--retro-border);
+  background: var(--retro-surface);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--retro-text);
+}
+
+.simple-stat-pill {
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+}
+
+.simple-stat-pill strong {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--retro-text);
+}
+
+.simple-stat-pill span {
+  font-size: 0.75rem;
+  color: var(--retro-text-muted);
 }
 
 .simple-section {
   border-bottom: 1px solid var(--retro-border);
 }
 
-.simple-section-title {
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--retro-text);
+.simple-badge {
+  display: inline-block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--retro-text-dim);
 }
 
 .simple-step-card {
@@ -2798,8 +2856,8 @@ body {
 .simple-demo-card {
   background: var(--retro-surface);
   border: 1px solid var(--retro-border);
-  border-radius: 1.25rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
 .simple-action-row {
@@ -2856,8 +2914,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.875rem 1rem;
-  border-radius: 9999px;
+  padding: 0.75rem 1rem;
+  border-radius: 0.625rem;
   font-size: 0.9375rem;
   font-weight: 600;
   background: var(--retro-surface-2);
