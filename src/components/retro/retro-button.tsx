@@ -15,7 +15,7 @@ export const RetroButton = forwardRef<HTMLButtonElement, RetroButtonProps>(
     return (
       <button
         ref={ref}
-        disabled={disabled}
+        disabled={disabled || loading}
         aria-busy={loading || undefined}
         className={retroButtonClasses({ variant, size, className, loading })}
         onClick={(event) => {

@@ -64,7 +64,7 @@ function CreateUnlockWizard() {
   const editId = searchParams.get("id");
 
   const [step, setStep] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState<"content" | "actions" | "publish" | null>(null);
   const [campaignId, setCampaignId] = useState<string | null>(editId);
   const [username, setUsername] = useState("");
   const [slug, setSlug] = useState("");
@@ -175,8 +175,7 @@ function CreateUnlockWizard() {
       return;
     }
 
-    setStep(1);
-    setLoading(true);
+    setSaving("content");
     try {
       const id = await ensureCampaign();
       const content =
@@ -185,11 +184,11 @@ function CreateUnlockWizard() {
           : { type: "TEXT" as ContentType, textBody: textBody.trim() };
 
       await updateCampaignContent(id, content);
+      setStep(1);
     } catch (e) {
-      setStep(0);
       toast(actionErrorMessage(e, "Could not save"), "error");
     } finally {
-      setLoading(false);
+      setSaving(null);
     }
   }
 
@@ -216,8 +215,7 @@ function CreateUnlockWizard() {
       return;
     }
 
-    setStep(2);
-    setLoading(true);
+    setSaving("actions");
     try {
       const id = await ensureCampaign();
       await updateCampaignActions(
@@ -232,11 +230,11 @@ function CreateUnlockWizard() {
           };
         })
       );
+      setStep(2);
     } catch (e) {
-      setStep(1);
       toast(actionErrorMessage(e, "Could not save steps"), "error");
     } finally {
-      setLoading(false);
+      setSaving(null);
     }
   }
 
@@ -245,7 +243,7 @@ function CreateUnlockWizard() {
       toast("Give your link a name", "error");
       return;
     }
-    setLoading(true);
+    setSaving("publish");
     try {
       const id = await ensureCampaign();
       const updated = await updateCampaignCustomization(id, {
@@ -275,7 +273,7 @@ function CreateUnlockWizard() {
     } catch (e) {
       toast(actionErrorMessage(e, isPublishedEdit ? "Could not save" : "Could not publish"), "error");
     } finally {
-      setLoading(false);
+      setSaving(null);
     }
   }
 
@@ -390,8 +388,8 @@ function CreateUnlockWizard() {
             />
           )}
 
-          <div className="mt-8 flex justify-end">
-            <RetroButton onClick={handleContentNext} loading={loading}>
+          <div className="wizard-footer">
+            <RetroButton onClick={handleContentNext} loading={saving === "content"} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
               Next
             </RetroButton>
           </div>
@@ -462,8 +460,9 @@ function CreateUnlockWizard() {
             type="button"
             variant="secondary"
             onClick={addAction}
-            disabled={actions.length >= actionLimit}
-            className="w-full mb-6"
+            disabled={actions.length >= actionLimit || saving === "actions"}
+            className="w-full mb-8"
+            size="lg"
           >
             <Plus size={16} />
             Add step
@@ -477,11 +476,11 @@ function CreateUnlockWizard() {
             />
           )}
 
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-            <RetroButton variant="ghost" onClick={() => setStep(0)}>
+          <div className="wizard-footer wizard-footer--split">
+            <RetroButton variant="ghost" onClick={() => setStep(0)} disabled={!!saving} size="lg" className="w-full sm:w-auto">
               Back
             </RetroButton>
-            <RetroButton onClick={handleActionsNext} loading={loading}>
+            <RetroButton onClick={handleActionsNext} loading={saving === "actions"} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
               Next
             </RetroButton>
           </div>
@@ -538,13 +537,13 @@ function CreateUnlockWizard() {
               />
               <div>
                 <p className="font-body text-xs font-semibold text-retro-text-dim mb-2">Page color</p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {UNLOCK_THEMES.map((t) => (
                     <button
                       key={t.id}
                       type="button"
                       onClick={() => setTheme(t.id)}
-                      className={`px-3 py-2 border-2 border-retro-ink text-xs font-bold ${t.swatch} ${
+                      className={`px-4 py-2.5 border-2 border-retro-ink text-xs font-bold rounded-lg ${t.swatch} ${
                         theme === t.id ? "brutal-shadow-sm ring-2 ring-retro-accent ring-offset-1" : ""
                       }`}
                     >
@@ -562,11 +561,11 @@ function CreateUnlockWizard() {
             />
           )}
 
-          <div className="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between">
-            <RetroButton variant="ghost" onClick={() => setStep(1)}>
+          <div className="wizard-footer wizard-footer--split">
+            <RetroButton variant="ghost" onClick={() => setStep(1)} disabled={!!saving} size="lg" className="w-full sm:w-auto">
               Back
             </RetroButton>
-            <RetroButton onClick={handleFinishStep} loading={loading}>
+            <RetroButton onClick={handleFinishStep} loading={saving === "publish"} size="lg" className="w-full sm:w-auto sm:min-w-[160px]">
               {isPublishedEdit ? "Save changes" : "Publish link"}
             </RetroButton>
           </div>

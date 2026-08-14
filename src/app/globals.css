@@ -3091,6 +3091,27 @@ body {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.wizard-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--retro-border);
+}
+
+.wizard-footer--split {
+  flex-direction: column-reverse;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .wizard-footer--split {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 .ll-trust {
   border-bottom: 1px solid var(--retro-border);
   background: var(--retro-surface);
