@@ -141,7 +141,7 @@ export function PlansSection() {
             <div className="mt-6 flex-1">
               <PlanFeatureList features={PLAN_FEATURES.FREE} finePrint={PLAN_FINE_PRINT.FREE} />
             </div>
-            <MarketingAuthLink href="/sign-up" className="block mt-8">
+            <MarketingAuthLink href="/sign-up" className="block mt-10">
               <RetroButton variant="secondary" className="w-full">
                 Get started
               </RetroButton>
@@ -161,7 +161,7 @@ export function PlansSection() {
             <div className="mt-6 flex-1">
               <PlanFeatureList features={PLAN_FEATURES.PRO} finePrint={PLAN_FINE_PRINT.PRO} />
             </div>
-            <Link href="/pricing" prefetch className="block mt-8">
+            <Link href="/pricing" prefetch className="block mt-10">
               <RetroButton className="w-full ll-btn-glow">View Pro plans</RetroButton>
             </Link>
           </article>

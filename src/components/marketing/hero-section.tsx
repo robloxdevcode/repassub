@@ -33,13 +33,13 @@ export function HeroSection() {
               Fans complete subscribe, join, or follow steps — then your file unlocks.
               No account needed for them.
             </p>
-            <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+            <div className="mt-9 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <MarketingAuthLink href="/sign-up" className="inline-block w-full sm:w-auto">
-                <RetroButton size="lg" className="w-full sm:min-w-[200px] ll-btn-glow">
+                <RetroButton size="lg" className="w-full sm:min-w-[220px] ll-btn-glow">
                   Get started free
                 </RetroButton>
               </MarketingAuthLink>
-              <RetroLink href="/#pricing" variant="ghost" size="lg" className="ll-hero-ghost w-full sm:w-auto">
+              <RetroLink href="/#pricing" variant="ghost" size="lg" className="ll-hero-ghost w-full sm:w-auto sm:min-w-[160px]">
                 See pricing
               </RetroLink>
             </div>
@@ -47,7 +47,7 @@ export function HeroSection() {
               Unlimited links · 4 steps on Free · No card
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-2 justify-center lg:justify-start">
+            <div className="mt-10 flex flex-wrap gap-3 justify-center lg:justify-start">
               {PLATFORMS.map(({ icon: Icon, label, color }) => (
                 <span key={label} className="ll-platform-chip">
                   <Icon size={14} style={{ color }} />

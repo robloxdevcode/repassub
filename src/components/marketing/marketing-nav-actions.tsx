@@ -10,17 +10,17 @@ export function MarketingNavActions() {
 
   if (isSignedIn) {
     return (
-      <>
+      <div className="flex items-center gap-3">
         <RetroLink href="/dashboard" size="sm">
           Dashboard
         </RetroLink>
         <ClerkUserMenu />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="flex items-center gap-3">
       <Link
         href="/sign-in"
         prefetch
@@ -31,6 +31,6 @@ export function MarketingNavActions() {
       <RetroLink href="/sign-up" size="sm">
         Get started
       </RetroLink>
-    </>
+    </div>
   );
 }

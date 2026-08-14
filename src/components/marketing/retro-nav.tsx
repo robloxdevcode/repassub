@@ -40,8 +40,8 @@ export function RetroNav() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="hidden sm:flex items-center gap-1.5">
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="hidden sm:flex items-center gap-2">
             <CurrencyToggle />
             <ThemeToggle />
           </div>

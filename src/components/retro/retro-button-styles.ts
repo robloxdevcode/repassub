@@ -28,9 +28,9 @@ const variants: Record<RetroButtonVariant, string> = {
 };
 
 const sizes: Record<RetroButtonSize, string> = {
-  sm: "px-4 py-2 text-sm",
-  md: "px-5 py-2.5 text-sm",
-  lg: "px-7 py-3 text-[15px]",
+  sm: "px-5 py-2.5 text-sm min-h-[40px]",
+  md: "px-6 py-3 text-sm min-h-[44px]",
+  lg: "px-8 py-3.5 text-base min-h-[50px]",
 };
 
 export function retroButtonClasses({
@@ -45,7 +45,7 @@ export function retroButtonClasses({
   loading?: boolean;
 }) {
   return cn(
-    "font-body inline-flex items-center justify-center gap-2 font-semibold rounded-xl border",
+    "font-body inline-flex items-center justify-center gap-2.5 font-semibold rounded-xl border",
     "transition-[color,background-color,transform,opacity,border-color,box-shadow] duration-75 ease-out",
     "active:scale-[0.98] select-none touch-manipulation",
     "disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100",
