@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { RetroButton } from "@/components/retro";
+import { RetroButton, RetroLink } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { createCheckoutSession } from "@/lib/actions/payments";
 import { useToast } from "@/components/retro";
@@ -114,11 +113,9 @@ export default function PricingPage() {
                     Upgrade to Pro
                   </RetroButton>
                 ) : (
-                  <Link href="/sign-up" prefetch className="block">
-                    <RetroButton className="w-full" variant="secondary">
-                      Start free
-                    </RetroButton>
-                  </Link>
+                  <RetroLink href="/sign-up" variant="secondary" className="w-full">
+                    Get started free
+                  </RetroLink>
                 )}
               </div>
             </article>

@@ -10,22 +10,33 @@ import { PLAN_FEATURES, PLAN_FINE_PRINT } from "@/lib/stripe";
 
 export { HeroSection } from "@/components/marketing/hero-section";
 
-export function StepsSection() {
+const OFFERS = [
+  {
+    title: "Grow while people unlock",
+    desc: "Pick actions like subscribe, join, or follow. Fans complete them to get your file.",
+  },
+  {
+    title: "See what's working",
+    desc: "Track views, unlocks, and conversion on every link you share.",
+  },
+  {
+    title: "Free unlimited links",
+    desc: "4 steps per link on Free. Pro adds 10 steps, branding, analytics, and no ads.",
+  },
+];
+
+export function OfferSection() {
   return (
     <section className="simple-section bg-retro-surface-2">
-      <div className="mx-auto max-w-3xl px-4 py-12 text-center">
-        <h2 className="simple-section-title mb-8">How it works</h2>
-        <ol className="text-left space-y-3 text-retro-text-dim">
-          <li>
-            <strong className="text-retro-text">1.</strong> Paste your file link
-          </li>
-          <li>
-            <strong className="text-retro-text">2.</strong> Add fan steps (follow, subscribe, join…)
-          </li>
-          <li>
-            <strong className="text-retro-text">3.</strong> Share one URL
-          </li>
-        </ol>
+      <div className="mx-auto max-w-5xl px-4 py-14">
+        <div className="grid md:grid-cols-3 gap-5">
+          {OFFERS.map((item) => (
+            <article key={item.title} className="simple-step-card">
+              <h3 className="font-bold text-base mb-2">{item.title}</h3>
+              <p className="text-sm text-retro-text-dim leading-relaxed">{item.desc}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -36,30 +47,36 @@ export function PlansSection() {
 
   return (
     <section id="pricing" className="simple-section scroll-mt-20">
-      <div className="mx-auto max-w-3xl px-4 py-12">
-        <h2 className="simple-section-title text-center mb-8">Plans</h2>
+      <div className="mx-auto max-w-3xl px-4 py-14">
+        <h2 className="simple-section-title text-center mb-2">Plans</h2>
+        <p className="text-center text-sm text-retro-text-dim mb-8">
+          Free = unlimited links + 4 steps · Pro = 10 steps + branding + no ads
+        </p>
         <div className="grid sm:grid-cols-2 gap-4">
           <article className="simple-plan-card">
-            <p className="font-bold">Free · {formatPrice(0)}</p>
+            <p className="font-bold text-lg">Free</p>
+            <p className="text-2xl font-bold mt-1">{formatPrice(0)}</p>
             <div className="mt-4">
               <PlanFeatureList features={PLAN_FEATURES.FREE} finePrint={PLAN_FINE_PRINT.FREE} />
             </div>
             <MarketingAuthLink href="/sign-up" className="block mt-6">
               <RetroButton variant="secondary" className="w-full">
-                Start free
+                Get started free
               </RetroButton>
             </MarketingAuthLink>
           </article>
           <article className="simple-plan-card simple-plan-card--popular">
-            <p className="font-bold text-retro-accent">
-              Pro · {formatPrice(prices.yearly)}/yr
+            <p className="font-bold text-lg text-retro-accent">Pro</p>
+            <p className="text-2xl font-bold mt-1">
+              {formatPrice(prices.yearly)}
+              <span className="text-sm font-normal text-retro-text-dim"> /yr</span>
             </p>
             <p className="text-xs text-retro-text-muted mt-1">{discountPercent}% off vs monthly</p>
             <div className="mt-4">
               <PlanFeatureList features={PLAN_FEATURES.PRO} finePrint={PLAN_FINE_PRINT.PRO} />
             </div>
             <Link href="/pricing" prefetch className="block mt-6">
-              <RetroButton className="w-full">Go Pro</RetroButton>
+              <RetroButton className="w-full">Upgrade to Pro</RetroButton>
             </Link>
           </article>
         </div>
@@ -71,7 +88,7 @@ export function PlansSection() {
 export function FaqSection() {
   return (
     <section id="faq" className="simple-section bg-retro-surface-2 scroll-mt-20">
-      <div className="mx-auto max-w-xl px-4 py-12">
+      <div className="mx-auto max-w-xl px-4 py-14">
         <h2 className="simple-section-title text-center mb-6">FAQ</h2>
         <div className="flex flex-col gap-2">
           {HOME_FAQS.map((item) => (
@@ -88,10 +105,16 @@ export function FaqSection() {
 
 export function CtaSection() {
   return (
-    <section className="simple-cta py-12 text-center">
+    <section className="simple-cta py-16 text-center px-4">
+      <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+        Ready to turn traffic into followers?
+      </h2>
+      <p className="text-white/85 mb-8 text-sm md:text-base">
+        Join creators who gate downloads and grow on every share.
+      </p>
       <MarketingAuthLink href="/sign-up" className="inline-block">
         <RetroButton size="lg" variant="white">
-          Create a link
+          Get started for free
         </RetroButton>
       </MarketingAuthLink>
     </section>

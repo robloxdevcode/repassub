@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { RetroButton } from "@/components/retro";
+import { RetroLink } from "@/components/retro";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 import { useMarketingSignedIn } from "@/components/marketing/marketing-auth-provider";
 
@@ -11,17 +10,17 @@ export function MarketingNavActions() {
   if (isSignedIn) {
     return (
       <>
-        <Link href="/dashboard">
-          <RetroButton size="sm" variant="primary">Dashboard</RetroButton>
-        </Link>
+        <RetroLink href="/dashboard" size="sm">
+          Dashboard
+        </RetroLink>
         <ClerkUserMenu />
       </>
     );
   }
 
   return (
-    <Link href="/sign-up">
-      <RetroButton size="sm" variant="primary">Start free</RetroButton>
-    </Link>
+    <RetroLink href="/sign-up" size="sm">
+      Start free
+    </RetroLink>
   );
 }

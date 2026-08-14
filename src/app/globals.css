@@ -1,53 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --retro-bg: #fafafa;
+  --retro-bg: #ffffff;
   --retro-surface: #ffffff;
-  --retro-surface-2: #f4f4f5;
-  --retro-surface-3: #e4e4e7;
-  --retro-ink: #18181b;
-  --retro-border: #e4e4e7;
-  --retro-accent: #0284c7;
-  --retro-accent-dim: #0369a1;
-  --retro-blue: #2563eb;
-  --retro-blue-dim: #1d4ed8;
-  --retro-yellow: #eab308;
-  --retro-yellow-dim: #ca8a04;
-  --retro-pink: #db2777;
-  --retro-cyan: #06b6d4;
-  --retro-success: #16a34a;
-  --retro-warning: #d97706;
-  --retro-error: #dc2626;
-  --retro-glow: #0ea5e9;
-  --retro-text: #18181b;
-  --retro-text-dim: #52525b;
-  --retro-text-muted: #a1a1aa;
-  --retro-text-on-dark: #fafafa;
+  --retro-surface-2: #f8f9fa;
+  --retro-surface-3: #f1f3f5;
+  --retro-ink: #111827;
+  --retro-border: #e9ecef;
+  --retro-accent: #ff4757;
+  --retro-accent-dim: #ee5a6f;
+  --retro-blue: #339af0;
+  --retro-blue-dim: #228be6;
+  --retro-yellow: #fab005;
+  --retro-yellow-dim: #f59f00;
+  --retro-pink: #f06595;
+  --retro-cyan: #22b8cf;
+  --retro-success: #40c057;
+  --retro-warning: #fd7e14;
+  --retro-error: #fa5252;
+  --retro-glow: #ff4757;
+  --retro-text: #111827;
+  --retro-text-dim: #495057;
+  --retro-text-muted: #868e96;
+  --retro-text-on-dark: #ffffff;
   --platform-youtube: #ff0000;
   --platform-discord: #5865f2;
   --platform-spotify: #1db954;
 }
 
 .dark {
-  --retro-bg: #09090b;
-  --retro-surface: #18181b;
-  --retro-surface-2: #27272a;
-  --retro-surface-3: #3f3f46;
-  --retro-ink: #fafafa;
-  --retro-border: #3f3f46;
-  --retro-text: #fafafa;
-  --retro-text-dim: #a1a1aa;
-  --retro-text-muted: #71717a;
-  --retro-text-on-dark: #fafafa;
-  --retro-accent: #38bdf8;
-  --retro-accent-dim: #0ea5e9;
-  --retro-blue: #3b82f6;
-  --retro-blue-dim: #2563eb;
-  --retro-yellow: #facc15;
-  --retro-yellow-dim: #eab308;
-  --retro-pink: #f472b6;
-  --retro-cyan: #22d3ee;
-  --retro-glow: #38bdf8;
+  --retro-bg: #0c0c0c;
+  --retro-surface: #141414;
+  --retro-surface-2: #1f1f1f;
+  --retro-surface-3: #2a2a2a;
+  --retro-ink: #f8f9fa;
+  --retro-border: #343434;
+  --retro-text: #f8f9fa;
+  --retro-text-dim: #ced4da;
+  --retro-text-muted: #868e96;
+  --retro-text-on-dark: #ffffff;
+  --retro-accent: #ff6b7a;
+  --retro-accent-dim: #ff4757;
+  --retro-blue: #4dabf7;
+  --retro-blue-dim: #339af0;
+  --retro-yellow: #fcc419;
+  --retro-yellow-dim: #fab005;
+  --retro-pink: #f783ac;
+  --retro-cyan: #3bc9db;
+  --retro-glow: #ff6b7a;
 }
 
 .dark .text-retro-ink {
@@ -189,7 +189,7 @@ body {
 .brutal-border { border: 1px solid var(--retro-border); }
 .brutal-shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 14px rgba(0, 0, 0, 0.06); }
 .brutal-shadow-sm { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); }
-.brutal-shadow-red { box-shadow: 0 4px 14px rgba(2, 132, 199, 0.18); }
+.brutal-shadow-red { box-shadow: 0 4px 14px rgba(255, 71, 87, 0.2); }
 .brutal-shadow-blue { box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2); }
 
 .retro-panel {
@@ -2393,8 +2393,8 @@ body {
   background: var(--retro-accent);
   color: white;
   border-color: transparent;
-  border-radius: 0.75rem;
-  box-shadow: none;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .sidebar-nav-create:hover {
@@ -2857,7 +2857,7 @@ body {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
+  border-radius: 9999px;
   font-size: 0.9375rem;
   font-weight: 600;
   background: var(--retro-surface-2);
