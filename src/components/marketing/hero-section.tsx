@@ -2,6 +2,7 @@
 
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { HeroLiveUnlock } from "@/components/marketing/hero-live-unlock";
+import { AnimatedDotBackground } from "@/components/marketing/animated-dot-background";
 import { RetroButton, RetroLink } from "@/components/retro";
 import { Play, MessageCircle, Music2, Share2 } from "lucide-react";
 
@@ -15,11 +16,11 @@ const PLATFORMS = [
 export function HeroSection() {
   return (
     <section className="ll-hero">
+      <AnimatedDotBackground variant="dark" connectLines />
       <div className="ll-hero-glow ll-hero-glow--1" aria-hidden />
       <div className="ll-hero-glow ll-hero-glow--2" aria-hidden />
-      <div className="ll-hero-grid" aria-hidden />
 
-      <div className="relative mx-auto max-w-6xl px-4 pt-16 pb-20 md:pt-24 md:pb-28">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-16 pb-20 md:pt-24 md:pb-28">
         <div className="grid lg:grid-cols-2 gap-14 lg:gap-10 items-center">
           <div className="text-center lg:text-left">
             <span className="ll-pill">Unlock links for creators</span>

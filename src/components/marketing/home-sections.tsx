@@ -11,6 +11,7 @@ import {
   Zap,
 } from "lucide-react";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
+import { AnimatedDotBackground } from "@/components/marketing/animated-dot-background";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { RetroButton } from "@/components/retro";
 import { useCurrency } from "@/components/providers/currency-provider";
@@ -88,8 +89,9 @@ export function TrustStrip() {
 
 export function FeaturesSection() {
   return (
-    <section className="ll-section">
-      <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
+    <section className="ll-section ll-section--dots">
+      <AnimatedDotBackground variant="light" connectLines density={0.75} />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 md:py-28">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <p className="ll-label">Features</p>
           <h2 className="ll-section-title mt-3">Everything to gate &amp; grow</h2>
@@ -115,11 +117,6 @@ export function FeaturesSection() {
       </div>
     </section>
   );
-}
-
-/** @deprecated Use FeaturesSection */
-export function OfferSection() {
-  return <FeaturesSection />;
 }
 
 export function PlansSection() {
@@ -201,8 +198,9 @@ export function FaqSection() {
 export function CtaSection() {
   return (
     <section className="ll-cta">
+      <AnimatedDotBackground variant="dark" connectLines density={0.85} />
       <div className="ll-hero-glow ll-hero-glow--1" aria-hidden />
-      <div className="relative mx-auto max-w-3xl px-4 py-20 md:py-24 text-center">
+      <div className="relative z-10 mx-auto max-w-3xl px-4 py-20 md:py-24 text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
           Ready to grow on every share?
         </h2>
