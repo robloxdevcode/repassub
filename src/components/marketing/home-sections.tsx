@@ -51,18 +51,7 @@ const USE_CASES = [
   },
 ];
 
-const PLATFORMS = [
-  "YouTube",
-  "Discord",
-  "Spotify",
-  "Instagram",
-  "TikTok",
-  "Twitter",
-  "Twitch",
-  "Telegram",
-  "SoundCloud",
-  "Patreon",
-];
+import { PlatformMarqueeItem, MARKETING_PLATFORMS } from "@/components/marketing/platform-brand-icon";
 
 export function HowItWorksSection() {
   return (
@@ -100,15 +89,14 @@ export function HowItWorksSection() {
 }
 
 export function PlatformMarquee() {
-  const items = [...PLATFORMS, ...PLATFORMS];
+  const items = [...MARKETING_PLATFORMS, ...MARKETING_PLATFORMS];
 
   return (
     <section className="ll-marquee-wrap" aria-label="Supported platforms">
+      <p className="ll-marquee-label">Works with 70+ platforms</p>
       <div className="ll-marquee-track">
-        {items.map((name, i) => (
-          <span key={`${name}-${i}`} className="ll-marquee-item">
-            {name}
-          </span>
+        {items.map(({ id, name }, i) => (
+          <PlatformMarqueeItem key={`${id}-${i}`} id={id} name={name} />
         ))}
       </div>
     </section>
