@@ -39,6 +39,48 @@ async function activateUserSubscription(
   });
 }
 
+async function persistStripeCustomerId(userId: string, customerId: string | null | undefined) {
+  if (!customerId) return;
+  await db.user.update({
+    where: { id: userId },
+    data: { stripeCustomerId: customerId },
+  });
+}
+
+async function resolveStripeCustomerId(user: {
+  id: string;
+  email: string | null;
+  stripeCustomerId: string | null;
+  subscriptions: { stripeSubscriptionId: string | null }[];
+}) {
+  if (user.stripeCustomerId) return user.stripeCustomerId;
+  if (!stripe) throw new Error("Stripe not configured");
+
+  const subscriptionId = user.subscriptions[0]?.stripeSubscriptionId;
+  if (subscriptionId) {
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const customerId =
+      typeof subscription.customer === "string"
+        ? subscription.customer
+        : subscription.customer?.id;
+    if (customerId) {
+      await persistStripeCustomerId(user.id, customerId);
+      return customerId;
+    }
+  }
+
+  if (user.email) {
+    const customers = await stripe.customers.list({ email: user.email, limit: 5 });
+    const match = customers.data.find((c) => c.metadata?.userId === user.id) ?? customers.data[0];
+    if (match) {
+      await persistStripeCustomerId(user.id, match.id);
+      return match.id;
+    }
+  }
+
+  throw new Error("No billing account");
+}
+
 export async function fulfillCheckoutSession(sessionId: string) {
   const user = await requireUser();
   if (!stripe) throw new Error("Stripe not configured");
@@ -83,6 +125,10 @@ export async function fulfillCheckoutSession(sessionId: string) {
   if (!subscriptionId) {
     throw new Error("Invalid checkout session");
   }
+
+  const customerId =
+    typeof session.customer === "string" ? session.customer : session.customer?.id;
+  await persistStripeCustomerId(user.id, customerId);
 
   await activateUserSubscription(user.id, plan, subscriptionId);
   revalidatePath("/dashboard");
@@ -225,12 +271,12 @@ export async function getPaymentData() {
 
 export async function createBillingPortal() {
   const user = await requireUser();
-  if (!user.stripeCustomerId) throw new Error("No billing account");
-
   if (!stripe) throw new Error("Stripe not configured");
 
+  const customerId = await resolveStripeCustomerId(user);
+
   const session = await stripe.billingPortal.sessions.create({
-    customer: user.stripeCustomerId,
+    customer: customerId,
     return_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing`,
   });
 

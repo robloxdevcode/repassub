@@ -27,6 +27,16 @@ export async function POST(req: Request) {
       const plan = session.metadata?.plan as "PRO" | "BUSINESS" | undefined;
 
       if (userId && plan && session.subscription) {
+        const customerId =
+          typeof session.customer === "string" ? session.customer : session.customer?.id;
+
+        if (customerId) {
+          await db.user.update({
+            where: { id: userId },
+            data: { stripeCustomerId: customerId },
+          });
+        }
+
         await db.subscription.upsert({
           where: { userId },
           create: {

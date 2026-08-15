@@ -57,8 +57,12 @@ export function BillingPageClient() {
     try {
       const { url } = await createBillingPortal();
       if (url) window.location.href = url;
-    } catch {
-      toast("No billing account yet. Upgrade to Pro first.", "error");
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message === "No billing account"
+          ? "We couldn't find your Stripe billing profile. Contact support if you paid for Pro."
+          : "Couldn't open billing portal. Try again in a moment.";
+      toast(message, "error");
     } finally {
       setLoading(false);
     }
