@@ -47,14 +47,61 @@ async function persistStripeCustomerId(userId: string, customerId: string | null
   });
 }
 
+async function reconcileStripeBillingState(user: {
+  id: string;
+  stripeCustomerId: string | null;
+  subscriptions: { stripeSubscriptionId: string | null; plan: string }[];
+}) {
+  if (!stripe) return;
+
+  if (user.stripeCustomerId) {
+    try {
+      const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      if (customer.deleted) throw new Error("deleted");
+    } catch {
+      await db.user.update({
+        where: { id: user.id },
+        data: { stripeCustomerId: null },
+      });
+    }
+  }
+
+  const subId = user.subscriptions[0]?.stripeSubscriptionId;
+  if (subId) {
+    try {
+      const sub = await stripe.subscriptions.retrieve(subId);
+      if (sub.status !== "active" && sub.status !== "trialing") {
+        throw new Error("inactive");
+      }
+    } catch {
+      await db.subscription.upsert({
+        where: { userId: user.id },
+        create: { userId: user.id, plan: "FREE", status: "ACTIVE" },
+        update: { plan: "FREE", status: "ACTIVE", stripeSubscriptionId: null },
+      });
+    }
+  }
+}
+
 async function resolveStripeCustomerId(user: {
   id: string;
   email: string | null;
   stripeCustomerId: string | null;
   subscriptions: { stripeSubscriptionId: string | null }[];
 }) {
-  if (user.stripeCustomerId) return user.stripeCustomerId;
   if (!stripe) throw new Error("Stripe not configured");
+
+  if (user.stripeCustomerId) {
+    try {
+      const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      if (!customer.deleted) return user.stripeCustomerId;
+    } catch {
+      await db.user.update({
+        where: { id: user.id },
+        data: { stripeCustomerId: null },
+      });
+    }
+  }
 
   const subscriptionId = user.subscriptions[0]?.stripeSubscriptionId;
   if (subscriptionId) {
@@ -279,6 +326,7 @@ export async function createConnectAccount() {
 
 export async function getBillingData() {
   const user = await requireUser();
+  await reconcileStripeBillingState(user);
   await ensureStripeBillingProfile();
   const refreshed = await requireUser();
   const plan = getUserPlan(refreshed.subscriptions?.[0]?.plan);

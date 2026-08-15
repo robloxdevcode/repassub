@@ -36,6 +36,33 @@ async function main() {
   console.log(`stripeCustomerId: ${user.stripeCustomerId ?? "(none)"}`);
   console.log(`stripeSubscriptionId: ${user.subscriptions[0]?.stripeSubscriptionId ?? "(none)"}`);
 
+  if (user.stripeCustomerId) {
+    try {
+      await stripe.customers.retrieve(user.stripeCustomerId);
+    } catch {
+      await db.user.update({
+        where: { id: user.id },
+        data: { stripeCustomerId: null },
+      });
+      user.stripeCustomerId = null;
+      console.log("Cleared invalid stripeCustomerId");
+    }
+  }
+
+  if (user.subscriptions[0]?.stripeSubscriptionId) {
+    try {
+      const sub = await stripe.subscriptions.retrieve(user.subscriptions[0].stripeSubscriptionId);
+      if (sub.status !== "active" && sub.status !== "trialing") throw new Error("inactive");
+    } catch {
+      await db.subscription.upsert({
+        where: { userId: user.id },
+        create: { userId: user.id, plan: "FREE", status: "ACTIVE" },
+        update: { plan: "FREE", status: "ACTIVE", stripeSubscriptionId: null },
+      });
+      console.log("Cleared invalid test subscription — set FREE");
+    }
+  }
+
   const customers = await stripe.customers.list({ email: user.email ?? email, limit: 10 });
   if (customers.data.length === 0) {
     console.error("No Stripe customer found for this email in current Stripe mode.");

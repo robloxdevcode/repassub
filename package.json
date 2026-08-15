@@ -13,6 +13,7 @@
     "db:seed": "dotenv -e .env.local -- npx tsx prisma/seed.ts",
     "db:promote-admin": "dotenv -e .env.local -- npx tsx scripts/promote-admin.ts",
     "db:downgrade-free": "dotenv -e .env.local -- npx tsx scripts/downgrade-user-to-free.ts",
+    "stripe:sync-billing": "dotenv -e .env.local -- npx tsx scripts/sync-stripe-billing-profile.ts",
     "db:upgrade-pro": "dotenv -e .env.local -- npx tsx scripts/upgrade-user-to-pro.ts",
     "stripe:setup": "dotenv -e .env.local -- npx tsx scripts/setup-stripe.ts",
     "stripe:setup:production": "dotenv -e .env.local -- npx tsx scripts/setup-stripe.ts -- --production-webhook",
