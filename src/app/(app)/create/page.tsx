@@ -85,6 +85,8 @@ function CreateUnlockWizard() {
   const [buttonText, setButtonText] = useState("Get download");
   const [theme, setTheme] = useState("default");
   const [logoUrl, setLogoUrl] = useState("");
+  const [backgroundMusicUrl, setBackgroundMusicUrl] = useState("");
+  const [backgroundVideoUrl, setBackgroundVideoUrl] = useState("");
 
   const isPro = isProPlan(plan);
   const isPublishedEdit = !!editId && campaignStatus === "PUBLISHED";
@@ -110,6 +112,8 @@ function CreateUnlockWizard() {
         setTheme(campaign.theme);
         setSlug(campaign.slug);
         setLogoUrl(campaign.logoUrl || "");
+        setBackgroundMusicUrl(campaign.backgroundMusicUrl || "");
+        setBackgroundVideoUrl(campaign.backgroundVideoUrl || "");
         if (campaign.content) {
           if (campaign.content.type === "FILE") {
             setContentType("URL");
@@ -255,6 +259,8 @@ function CreateUnlockWizard() {
               theme,
               logoUrl: logoUrl.trim() || null,
               slug: slug.trim() || undefined,
+              backgroundMusicUrl: backgroundMusicUrl.trim() || null,
+              backgroundVideoUrl: backgroundVideoUrl.trim() || null,
             }
           : {}),
       });
@@ -546,7 +552,7 @@ function CreateUnlockWizard() {
                       key={t.id}
                       type="button"
                       onClick={() => setTheme(t.id)}
-                      className={`px-4 py-2.5 border-2 border-retro-ink text-xs font-bold rounded-lg ${t.swatch} ${
+                      className={`px-4 py-2.5 border-2 border-retro-ink text-xs font-bold rounded-lg transition-transform hover:scale-[1.02] ${t.swatch} ${
                         theme === t.id ? "brutal-shadow-sm ring-2 ring-retro-accent ring-offset-1" : ""
                       }`}
                     >
@@ -555,6 +561,24 @@ function CreateUnlockWizard() {
                   ))}
                 </div>
               </div>
+              <RetroInput
+                label="Background music URL (optional)"
+                placeholder="https://...mp3 or direct audio link"
+                value={backgroundMusicUrl}
+                onChange={(e) => setBackgroundMusicUrl(e.target.value)}
+              />
+              <p className="text-xs text-retro-text-muted -mt-2">
+                Paste a direct link to an MP3 or audio file. Fans hear it when they start a step.
+              </p>
+              <RetroInput
+                label="Background video URL (optional)"
+                placeholder="https://...mp4 or direct video link"
+                value={backgroundVideoUrl}
+                onChange={(e) => setBackgroundVideoUrl(e.target.value)}
+              />
+              <p className="text-xs text-retro-text-muted -mt-2">
+                Paste a direct link to an MP4 or video file for a looping background on your unlock page.
+              </p>
             </div>
           ) : (
             <UpgradeNudge

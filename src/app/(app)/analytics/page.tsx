@@ -12,7 +12,7 @@ export default async function AnalyticsPage() {
     <div>
       <h1 className="font-body text-2xl font-bold mb-2">Stats</h1>
       <p className="text-sm text-retro-text-dim mb-8">
-        {isProAnalytics ? "Views, unlocks, and conversion for your links." : "Upgrade to Pro for full audience insights, conversion %, and charts."}
+        {isProAnalytics ? "Views, unlocks, and conversion for your links." : "Upgrade to Pro for conversion %, traffic sources, devices, and countries."}
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">

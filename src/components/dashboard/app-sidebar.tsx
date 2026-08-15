@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
-  LayoutDashboard, Lock, Plus, Settings, User, CreditCard, Menu, X, Shield, BarChart3, Users,
+  LayoutDashboard, Lock, Plus, Settings, User, CreditCard, Menu, X, Shield, BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
@@ -15,13 +15,12 @@ const mainNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/unlocks", label: "My links", icon: Lock },
   { href: "/analytics", label: "Stats", icon: BarChart3 },
-  { href: "/audience", label: "Audience", icon: Users },
   { href: "/profile", label: "Profile", icon: User },
   { href: "/billing", label: "Billing", icon: CreditCard },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
+export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boolean; plan?: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const onCreate = pathname.startsWith("/create");
@@ -97,7 +96,7 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
           </nav>
 
           <div className="border-t border-retro-border pt-4 mt-2">
-            <ClerkUserMenu />
+            <ClerkUserMenu plan={plan} />
           </div>
         </div>
       </aside>
@@ -107,11 +106,19 @@ export function AppSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   );
 }
 
-export function AppShell({ children, isAdmin = false }: { children: React.ReactNode; isAdmin?: boolean }) {
+export function AppShell({
+  children,
+  isAdmin = false,
+  plan = "FREE",
+}: {
+  children: React.ReactNode;
+  isAdmin?: boolean;
+  plan?: string;
+}) {
   return (
     <>
       <AppNavProgress />
-      <AppSidebar isAdmin={isAdmin} />
+      <AppSidebar isAdmin={isAdmin} plan={plan} />
       <div className="app-stage md:ml-60 min-h-screen">
         <main className="p-4 pt-16 md:p-8 md:pt-10">{children}</main>
       </div>

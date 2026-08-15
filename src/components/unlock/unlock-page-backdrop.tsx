@@ -62,7 +62,24 @@ const SHAPES: {
   { top: "48%", left: "12%", w: 14, h: 14, rotate: 30, tone: "bg-retro-yellow", delay: "1.7s", round: true },
 ];
 
-export function UnlockPageBackdrop() {
+export function UnlockPageBackdrop({ videoUrl }: { videoUrl?: string | null }) {
+  if (videoUrl) {
+    return (
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover opacity-35"
+          src={videoUrl}
+        />
+        <div className="absolute inset-0 bg-retro-bg/55" />
+        <div className="unlock-backdrop-grid absolute inset-0 opacity-[0.04]" />
+      </div>
+    );
+  }
+
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
       <div className="unlock-backdrop-stage absolute inset-0" />

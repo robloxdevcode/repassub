@@ -141,8 +141,10 @@ model Campaign {
   title       String
   description String?
   buttonText  String         @default("UNLOCK")
-  logoUrl     String?
-  theme       String         @default("default")
+  logoUrl              String?
+  theme                String         @default("default")
+  backgroundMusicUrl   String?
+  backgroundVideoUrl   String?
   status      CampaignStatus @default(DRAFT)
   publishedAt DateTime?
   createdAt   DateTime       @default(now())

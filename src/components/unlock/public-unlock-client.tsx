@@ -20,11 +20,11 @@ import { RetroButton, UnlockAnimation } from "@/components/retro";
 import { UnlockPageBackdrop } from "./unlock-page-backdrop";
 import { UnlockPageAd } from "./unlock-page-ad";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
-import { unlockThemeClass } from "@/lib/unlock-themes";
+import { unlockThemeClass, unlockThemeCtaVariant } from "@/lib/unlock-themes";
 import { cn } from "@/lib/utils";
 import { Check, Lock, Play, MessageCircle, Music2, UserPlus, ExternalLink, Loader2, ArrowUpRight, Copy } from "lucide-react";
 
-const VERIFY_SECONDS = 14;
+const VERIFY_SECONDS = 17;
 
 type ActionItem = {
   id: string;
@@ -49,6 +49,8 @@ type CampaignWithRelations = {
   buttonText: string;
   theme: string;
   logoUrl: string | null;
+  backgroundMusicUrl: string | null;
+  backgroundVideoUrl: string | null;
   content: ContentItem | null;
   actions: ActionItem[];
   user: { username: string; displayName: string | null; avatarUrl: string | null };
@@ -90,9 +92,9 @@ export function PublicUnlockClient({
   const [showAnimation, setShowAnimation] = useState(false);
   const [content, setContent] = useState<ContentItem | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
-  const [verifySecondsLeft, setVerifySecondsLeft] = useState(VERIFY_SECONDS);
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [musicStarted, setMusicStarted] = useState(false);
   const visitorId = getStoredVisitorId();
 
   function persistProgress(completedIds: string[], status: string) {
@@ -164,19 +166,16 @@ export function PublicUnlockClient({
 
   useEffect(() => {
     if (!verifyingId) return;
-    setVerifySecondsLeft(VERIFY_SECONDS);
     const timer = setTimeout(() => finishVerification(verifyingId), VERIFY_SECONDS * 1000);
     return () => clearTimeout(timer);
   }, [verifyingId, finishVerification]);
 
-  useEffect(() => {
-    if (!verifyingId) return;
-    setVerifySecondsLeft(VERIFY_SECONDS);
-    const interval = setInterval(() => {
-      setVerifySecondsLeft((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [verifyingId]);
+  function tryStartMusic() {
+    if (!campaign.backgroundMusicUrl || musicStarted) return;
+    const audio = document.getElementById("unlock-page-music") as HTMLAudioElement | null;
+    if (!audio) return;
+    audio.play().then(() => setMusicStarted(true)).catch(() => {});
+  }
 
   async function copyText(text: string) {
     try {
@@ -195,6 +194,7 @@ export function PublicUnlockClient({
     if (config?.url) window.open(config.url, "_blank", "noopener,noreferrer");
 
     setUnlockError(null);
+    tryStartMusic();
     setVerifyingId(action.id);
   }
 
@@ -231,7 +231,10 @@ export function PublicUnlockClient({
       </header>
 
       <div className="relative flex flex-1 items-stretch justify-center gap-4 px-3 py-4 sm:px-4 lg:gap-6">
-      <UnlockPageBackdrop />
+      <UnlockPageBackdrop videoUrl={isPro ? campaign.backgroundVideoUrl : null} />
+      {isPro && campaign.backgroundMusicUrl ? (
+        <audio id="unlock-page-music" loop preload="auto" src={campaign.backgroundMusicUrl} className="hidden" />
+      ) : null}
       {showAnimation && <UnlockAnimation onComplete={onAnimationComplete} />}
 
       {showAds && (
@@ -285,9 +288,7 @@ export function PublicUnlockClient({
                   return (
                     <div key={action.id} className="platform-btn platform-btn--verifying">
                       <Loader2 size={16} className="animate-spin shrink-0" />
-                      <span className="flex-1 text-left">
-                        Checking… ({verifySecondsLeft}s)
-                      </span>
+                      <span className="flex-1 text-left">Checking…</span>
                     </div>
                   );
                 }
@@ -336,7 +337,7 @@ export function PublicUnlockClient({
               size="lg"
               disabled={!allComplete}
               onClick={() => allComplete && setShowAnimation(true)}
-              variant={allComplete ? "primary" : "secondary"}
+              variant={allComplete ? unlockThemeCtaVariant(campaign.theme) : "secondary"}
             >
               {allComplete ? (
                 <>

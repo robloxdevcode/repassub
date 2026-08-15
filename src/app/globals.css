@@ -312,6 +312,28 @@ body {
 .unlock-theme-dark .text-retro-text-dim { color: rgba(255, 255, 255, 0.72); }
 .unlock-theme-dark .text-retro-text-muted { color: rgba(255, 255, 255, 0.5); }
 
+.unlock-theme-blue .platform-generic:hover {
+  background: var(--retro-blue);
+  color: #fff;
+  border-color: var(--retro-blue);
+}
+
+.unlock-theme-yellow .platform-generic:hover {
+  background: var(--retro-yellow);
+  color: var(--retro-ink);
+  border-color: var(--retro-yellow);
+}
+
+.unlock-theme-blue .platform-btn--verifying {
+  background: var(--retro-blue) !important;
+  color: #fff !important;
+}
+
+.unlock-theme-yellow .platform-btn--verifying {
+  background: var(--retro-yellow) !important;
+  color: var(--retro-ink) !important;
+}
+
 /* Unlock page backdrop */
 .unlock-backdrop-stage {
   background:

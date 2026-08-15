@@ -1,42 +1,14 @@
 import Link from "next/link";
 import { getDashboardStats } from "@/lib/actions/dashboard";
-import { fulfillCheckoutSession, syncProSubscriptionFromStripe } from "@/lib/actions/payments";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
-import { AppCard } from "@/components/dashboard/app-page-header";
-import { DashboardRefresh } from "@/components/dashboard/dashboard-refresh";
-import { ProWelcomeMessage, ProWelcomePendingMessage } from "@/components/dashboard/pro-welcome-message";
+import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { RetroLink } from "@/components/retro";
 import { formatNumber } from "@/lib/utils";
 import { getRequestSiteUrl } from "@/lib/site-url";
 import { ProPriceText } from "@/components/marketing/pro-price-text";
-import { Eye, Lock, Plus, Pencil } from "lucide-react";
+import { BarChart3, Eye, Lock, Pencil, Plus, CreditCard } from "lucide-react";
 
-export default async function DashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const sessionId = typeof params.session_id === "string" ? params.session_id : undefined;
-  let showProWelcome = params.pro_welcome === "1";
-  let showProPending = params.pro_pending === "1";
-
-  if (params.welcome === "pro" && sessionId) {
-    try {
-      await fulfillCheckoutSession(sessionId);
-      showProWelcome = true;
-      showProPending = false;
-    } catch {
-      const synced = await syncProSubscriptionFromStripe();
-      if (synced.synced) {
-        showProWelcome = true;
-        showProPending = false;
-      } else {
-        showProPending = true;
-      }
-    }
-  }
-
+export default async function DashboardPage() {
   const stats = await getDashboardStats();
   const siteUrl = await getRequestSiteUrl();
   const hasUnlocks = stats.campaignCount > 0 || stats.recentCampaigns.length > 0;
@@ -44,96 +16,101 @@ export default async function DashboardPage({
   const isPro = stats.plan === "PRO" || stats.plan === "BUSINESS";
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <DashboardRefresh />
+    <div className="max-w-4xl mx-auto">
+      <AppPageHeader
+        title={firstName ? `Welcome back, ${firstName}` : "Dashboard"}
+        subtitle={
+          hasUnlocks
+            ? "Overview of your unlock links and performance."
+            : "Create your first link in three steps: content, fan steps, publish."
+        }
+      />
 
-      {showProWelcome ? <ProWelcomeMessage /> : null}
-      {showProPending && !showProWelcome ? <ProWelcomePendingMessage /> : null}
-
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-body text-2xl md:text-3xl font-bold">
-            {firstName ? `Hey, ${firstName}` : "Dashboard"}
-          </h1>
-          <p className="mt-2 text-sm text-retro-text-dim max-w-md">
-            {hasUnlocks
-              ? "Your unlock links and stats."
-              : "Create a link in 3 steps: file, fan steps, publish."}
-          </p>
-          {isPro ? (
-            <p className="mt-2 text-xs font-semibold text-retro-success">
-              Pro plan · 10 steps per link · no ads
-            </p>
-          ) : (
-            <p className="mt-2 text-xs text-retro-text-muted">
-              Free plan · unlimited links · up to 4 steps per link
-            </p>
-          )}
-        </div>
-
-        <RetroLink href="/create" size="lg" className="inline-flex items-center gap-2 shrink-0">
-          <Plus size={16} />
+      <div className="flex flex-wrap items-center gap-2 mb-8">
+        <RetroLink href="/create" size="sm" className="inline-flex items-center gap-1.5">
+          <Plus size={14} />
           New link
         </RetroLink>
+        <Link
+          href="/analytics"
+          prefetch
+          className="inline-flex items-center gap-1.5 rounded-lg border border-retro-border px-3 py-2 text-xs font-semibold text-retro-text-dim hover:text-retro-text hover:bg-retro-surface-2 transition-colors"
+        >
+          <BarChart3 size={14} />
+          Stats
+        </Link>
+        {!isPro ? (
+          <Link
+            href="/billing"
+            prefetch
+            className="inline-flex items-center gap-1.5 rounded-lg border border-retro-border px-3 py-2 text-xs font-semibold text-retro-text-dim hover:text-retro-text hover:bg-retro-surface-2 transition-colors"
+          >
+            <CreditCard size={14} />
+            Upgrade
+          </Link>
+        ) : null}
       </div>
 
       {!hasUnlocks && (
-        <AppCard className="p-8 mb-8 text-center">
-          <h2 className="font-body text-xl font-bold mb-3">No links yet</h2>
-          <ol className="text-sm text-retro-text-dim text-left max-w-xs mx-auto space-y-2 mb-6">
-            <li><strong className="text-retro-ink">1.</strong> Paste what fans download</li>
-            <li><strong className="text-retro-ink">2.</strong> Add up to 4 fan steps (10 on Pro)</li>
-            <li><strong className="text-retro-ink">3.</strong> Share one link</li>
-          </ol>
-          <RetroLink href="/create">Create my first link</RetroLink>
+        <AppCard className="p-8 mb-8">
+          <div className="max-w-md mx-auto text-center">
+            <h2 className="font-body text-xl font-bold mb-2">Get started</h2>
+            <p className="text-sm text-retro-text-dim mb-6">
+              Gate a download behind subscribe, follow, or join steps — then share one link.
+            </p>
+            <ol className="text-sm text-retro-text-dim text-left space-y-2 mb-6">
+              <li><strong className="text-retro-ink">1.</strong> Add what fans unlock</li>
+              <li><strong className="text-retro-ink">2.</strong> Pick fan steps (up to {stats.actionLimit})</li>
+              <li><strong className="text-retro-ink">3.</strong> Publish and share</li>
+            </ol>
+            <RetroLink href="/create">Create my first link</RetroLink>
+          </div>
         </AppCard>
       )}
 
       {hasUnlocks && (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-            <AppCard className="p-4 text-center">
-              <Eye size={18} className="text-retro-blue mx-auto mb-2" />
-              <p className="text-2xl font-bold tabular-nums">{formatNumber(stats.analytics.views)}</p>
-              <p className="text-xs text-retro-text-dim mt-1">Views</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+            <AppCard className="p-5">
+              <div className="flex items-center gap-2 text-retro-text-dim mb-2">
+                <Eye size={15} />
+                <span className="text-xs font-semibold uppercase tracking-wide">Views</span>
+              </div>
+              <p className="text-3xl font-bold tabular-nums">{formatNumber(stats.analytics.views)}</p>
             </AppCard>
-            <AppCard className="p-4 text-center">
-              <Lock size={18} className="text-retro-success mx-auto mb-2" />
-              <p className="text-2xl font-bold tabular-nums">{formatNumber(stats.analytics.unlocked)}</p>
-              <p className="text-xs text-retro-text-dim mt-1">Unlocks</p>
+            <AppCard className="p-5">
+              <div className="flex items-center gap-2 text-retro-text-dim mb-2">
+                <Lock size={15} />
+                <span className="text-xs font-semibold uppercase tracking-wide">Unlocks</span>
+              </div>
+              <p className="text-3xl font-bold tabular-nums">{formatNumber(stats.analytics.unlocked)}</p>
             </AppCard>
-            <AppCard className="p-4 text-center col-span-2 sm:col-span-1">
-              {isPro ? (
-                <>
-                  <p className="text-2xl font-bold tabular-nums">{stats.analytics.conversion.toFixed(1)}%</p>
-                  <p className="text-xs text-retro-text-dim mt-1">Conversion</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-2xl font-bold tabular-nums">{stats.campaignCount}</p>
-                  <p className="text-xs text-retro-text-dim mt-1">Links</p>
-                </>
-              )}
+            <AppCard className="p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-retro-text-dim mb-2">Links</p>
+              <p className="text-3xl font-bold tabular-nums">{stats.campaignCount}</p>
+            </AppCard>
+            <AppCard className="p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-retro-text-dim mb-2">
+                {isPro ? "Conversion" : "Plan limit"}
+              </p>
+              <p className="text-3xl font-bold tabular-nums">
+                {isPro ? `${stats.analytics.conversion.toFixed(1)}%` : `${stats.actionLimit} steps`}
+              </p>
             </AppCard>
           </div>
 
-          {isPro && (
-            <p className="text-xs text-retro-text-dim mb-6 -mt-4">
-              <Link href="/analytics" prefetch className="text-retro-blue hover:underline">
-                Full stats
-              </Link>
-            </p>
-          )}
-
-          <AppCard className="p-6 mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-body text-lg font-bold">Recent links</h2>
-              <Link href="/unlocks" prefetch className="text-xs text-retro-blue hover:underline">
-                All links
+          <AppCard className="p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="font-body text-lg font-bold">Recent links</h2>
+                <p className="text-xs text-retro-text-dim mt-1">Latest published unlock pages</p>
+              </div>
+              <Link href="/unlocks" prefetch className="text-xs font-semibold text-retro-blue hover:underline">
+                View all
               </Link>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col divide-y divide-retro-border">
               {stats.recentCampaigns.map((campaign) => {
                 const url =
                   campaign.status === "PUBLISHED"
@@ -143,12 +120,13 @@ export default async function DashboardPage({
                 return (
                   <article
                     key={campaign.id}
-                    className="link-row flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                    className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="min-w-0">
-                      <h3 className="font-bold truncate">{campaign.title}</h3>
+                      <h3 className="font-semibold truncate">{campaign.title}</h3>
                       <p className="text-xs text-retro-text-dim mt-1">
-                        {campaign.actions.length} step{campaign.actions.length !== 1 ? "s" : ""}, {campaign._count.analyticsEvents} views
+                        {campaign.actions.length} step{campaign.actions.length !== 1 ? "s" : ""} ·{" "}
+                        {campaign._count.analyticsEvents} views
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2 shrink-0">
@@ -167,16 +145,16 @@ export default async function DashboardPage({
       )}
 
       {!isPro && (
-        <AppCard className="p-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <AppCard className="p-5 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" accent="yellow">
           <div>
-            <p className="font-body text-sm font-bold">Upgrade to Pro</p>
+            <p className="font-body text-sm font-bold">Linklock Pro</p>
             <p className="text-sm text-retro-text-dim mt-1">
-              10 steps per link, full branding, deep analytics, and no Linklock ads.{" "}
+              10 steps, custom themes, background music & video, full stats, no ads.{" "}
               <ProPriceText variant="monthly" />
             </p>
           </div>
-          <RetroLink href="/billing" className="w-full sm:w-auto">
-            Upgrade
+          <RetroLink href="/billing" className="w-full sm:w-auto shrink-0">
+            View plans
           </RetroLink>
         </AppCard>
       )}

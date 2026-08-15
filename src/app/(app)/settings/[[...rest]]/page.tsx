@@ -9,6 +9,7 @@ import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { PLAN_FEATURES, PLAN_FINE_PRINT } from "@/lib/stripe";
 import { getBillingData } from "@/lib/actions/payments";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
+import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
 import { RetroLoading } from "@/components/retro";
 
 const TABS = ["Account", "Plan"];
@@ -23,11 +24,24 @@ export default function SettingsPage() {
       .catch(() => setPlan("FREE"));
   }, []);
 
-  const isPro = plan === "PRO" || plan === "BUSINESS";
+  const isPro = isProPlanName(plan);
 
   return (
     <div className="mx-auto max-w-2xl">
-      <AppPageHeader title="Settings" subtitle="Account and plan." />
+      <AppPageHeader
+        title="Settings"
+        subtitle={
+          plan === null
+            ? "Account and plan."
+            : isPro
+              ? "You're on Linklock Pro."
+              : "You're on the Free plan."
+        }
+      />
+
+      {plan !== null ? (
+        <p className="mb-4 text-sm font-semibold text-retro-text-dim">{planDisplayName(plan)} plan</p>
+      ) : null}
 
       <div className="flex gap-1 mb-8 overflow-x-auto">
         {TABS.map((t) => (

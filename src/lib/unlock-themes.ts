@@ -1,3 +1,5 @@
+import type { RetroButtonVariant } from "@/components/retro/retro-button-styles";
+
 export const UNLOCK_THEMES = [
   { id: "default", label: "Classic", swatch: "bg-retro-surface border-retro-ink" },
   { id: "red", label: "Red", swatch: "bg-pop-red border-retro-ink" },
@@ -11,4 +13,11 @@ export type UnlockThemeId = (typeof UNLOCK_THEMES)[number]["id"];
 export function unlockThemeClass(theme?: string | null) {
   const id = UNLOCK_THEMES.some((t) => t.id === theme) ? theme : "default";
   return `unlock-theme-${id}`;
+}
+
+export function unlockThemeCtaVariant(theme?: string | null): RetroButtonVariant {
+  if (theme === "blue") return "blue";
+  if (theme === "yellow") return "yellow";
+  if (theme === "red") return "primary";
+  return "primary";
 }

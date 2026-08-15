@@ -167,6 +167,8 @@ export async function updateCampaignCustomization(
     theme?: string;
     logoUrl?: string | null;
     slug?: string;
+    backgroundMusicUrl?: string | null;
+    backgroundVideoUrl?: string | null;
   }
 ) {
   const user = await requireUser();
@@ -199,6 +201,8 @@ export async function updateCampaignCustomization(
       ...(data.buttonText !== undefined ? { buttonText: data.buttonText } : {}),
       ...(pro && data.theme !== undefined ? { theme: data.theme } : {}),
       ...(pro && data.logoUrl !== undefined ? { logoUrl: data.logoUrl } : {}),
+      ...(pro && data.backgroundMusicUrl !== undefined ? { backgroundMusicUrl: data.backgroundMusicUrl } : {}),
+      ...(pro && data.backgroundVideoUrl !== undefined ? { backgroundVideoUrl: data.backgroundVideoUrl } : {}),
       ...(slug !== undefined ? { slug } : {}),
     },
   });
@@ -212,6 +216,8 @@ export async function updateCampaignCustomization(
     buttonText: updated.buttonText,
     theme: updated.theme,
     logoUrl: updated.logoUrl,
+    backgroundMusicUrl: updated.backgroundMusicUrl,
+    backgroundVideoUrl: updated.backgroundVideoUrl,
   };
 }
 

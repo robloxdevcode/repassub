@@ -40,8 +40,8 @@ export const PLAN_FEATURES = {
   ],
   PRO: [
     "Up to 10 steps per link",
-    "Custom logo and colors",
-    "Audience and conversion analytics",
+    "Custom logo, colors, music & video",
+    "Traffic source, device & country stats",
     "No Linklock branding on pages",
   ],
 } as const;

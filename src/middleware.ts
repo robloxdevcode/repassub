@@ -34,6 +34,7 @@ const isAppRoute = createRouteMatcher([
   "/settings(.*)",
   "/profile(.*)",
   "/billing(.*)",
+  "/welcome/pro(.*)",
 ]);
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
@@ -75,7 +76,8 @@ export default clerkMiddleware(async (auth, req) => {
       pathname.startsWith("/audience") ||
       pathname.startsWith("/settings") ||
       pathname.startsWith("/profile") ||
-      pathname.startsWith("/billing")
+      pathname.startsWith("/billing") ||
+      pathname.startsWith("/welcome/pro")
     ) {
       await auth.protect();
     }

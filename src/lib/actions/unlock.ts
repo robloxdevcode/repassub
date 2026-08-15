@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { trackEvent } from "@/lib/analytics";
+import { getAnalyticsContext } from "@/lib/analytics-context";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
@@ -69,7 +70,7 @@ export async function getUnlockSession(campaignId: string, clientVisitorId?: str
     const session = await db.unlockSession.create({
       data: { campaignId, visitorId, status: "STARTED", completedActions: [] },
     });
-    await trackEvent({ campaignId, type: "START" });
+    await trackEvent({ campaignId, type: "START", ...(await getAnalyticsContext()) });
     return session;
   }
 
@@ -124,6 +125,7 @@ export async function completeAction(
     campaignId,
     type: "ACTION_COMPLETE",
     metadata: { actionId },
+    ...(await getAnalyticsContext()),
   });
 
   return { session: updated, allComplete };
@@ -144,7 +146,7 @@ export async function unlockContent(campaignId: string, clientVisitorId?: string
     data: { status: "UNLOCKED", unlockedAt: new Date() },
   });
 
-  await trackEvent({ campaignId, type: "UNLOCK" });
+  await trackEvent({ campaignId, type: "UNLOCK", ...(await getAnalyticsContext()) });
 
   const campaign = await db.campaign.findUnique({
     where: { id: campaignId },
@@ -155,7 +157,7 @@ export async function unlockContent(campaignId: string, clientVisitorId?: string
 }
 
 export async function trackCampaignView(campaignId: string) {
-  await trackEvent({ campaignId, type: "VIEW" });
+  await trackEvent({ campaignId, type: "VIEW", ...(await getAnalyticsContext()) });
 }
 
 export async function submitEmailAction(campaignId: string, email: string, name?: string) {
