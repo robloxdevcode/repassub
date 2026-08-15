@@ -62,10 +62,15 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
       const { url } = await createBillingPortal();
       if (url) window.location.href = url;
     } catch (error) {
-      const message =
-        error instanceof Error && error.message === "No billing account"
-          ? "We couldn't find your Stripe billing profile. Contact support if you paid for Pro."
-          : "Couldn't open billing portal. Try again in a moment.";
+      let message = "Couldn't open billing portal. Try again in a moment.";
+      if (error instanceof Error) {
+        if (error.message === "No billing account") {
+          message =
+            "We couldn't link your Stripe account yet. If you just paid, refresh and try again.";
+        } else if (error.message === "Billing portal not configured in Stripe") {
+          message = "Billing portal isn't set up in Stripe yet. Contact support.";
+        }
+      }
       toast(message, "error");
     } finally {
       setLoading(false);

@@ -58,20 +58,40 @@ async function resolveStripeCustomerId(user: {
 
   const subscriptionId = user.subscriptions[0]?.stripeSubscriptionId;
   if (subscriptionId) {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const customerId =
-      typeof subscription.customer === "string"
-        ? subscription.customer
-        : subscription.customer?.id;
-    if (customerId) {
-      await persistStripeCustomerId(user.id, customerId);
-      return customerId;
+    try {
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const customerId =
+        typeof subscription.customer === "string"
+          ? subscription.customer
+          : subscription.customer?.id;
+      if (customerId) {
+        await persistStripeCustomerId(user.id, customerId);
+        return customerId;
+      }
+    } catch {
+      // Stale test subscription id or deleted sub — fall through to email lookup.
     }
   }
 
   if (user.email) {
-    const customers = await stripe.customers.list({ email: user.email, limit: 5 });
-    const match = customers.data.find((c) => c.metadata?.userId === user.id) ?? customers.data[0];
+    const customers = await stripe.customers.list({ email: user.email, limit: 10 });
+
+    for (const customer of customers.data) {
+      const subs = await stripe.subscriptions.list({
+        customer: customer.id,
+        status: "active",
+        limit: 1,
+      });
+
+      if (subs.data[0]) {
+        await persistStripeCustomerId(user.id, customer.id);
+        await activateUserSubscription(user.id, "PRO", subs.data[0].id);
+        return customer.id;
+      }
+    }
+
+    const match =
+      customers.data.find((c) => c.metadata?.userId === user.id) ?? customers.data[0];
     if (match) {
       await persistStripeCustomerId(user.id, match.id);
       return match.id;
@@ -79,6 +99,20 @@ async function resolveStripeCustomerId(user: {
   }
 
   throw new Error("No billing account");
+}
+
+export async function ensureStripeBillingProfile() {
+  const user = await requireUser();
+  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  if (plan !== "PRO" && plan !== "BUSINESS") return { ok: false as const };
+  if (user.stripeCustomerId) return { ok: true as const };
+
+  try {
+    await resolveStripeCustomerId(user);
+    return { ok: true as const };
+  } catch {
+    return { ok: false as const };
+  }
 }
 
 export async function fulfillCheckoutSession(sessionId: string) {
@@ -245,8 +279,10 @@ export async function createConnectAccount() {
 
 export async function getBillingData() {
   const user = await requireUser();
-  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
-  return { plan, subscription: user.subscriptions[0] || null };
+  await ensureStripeBillingProfile();
+  const refreshed = await requireUser();
+  const plan = getUserPlan(refreshed.subscriptions?.[0]?.plan);
+  return { plan, subscription: refreshed.subscriptions[0] || null };
 }
 
 export async function getPaymentData() {
@@ -273,12 +309,24 @@ export async function createBillingPortal() {
   const user = await requireUser();
   if (!stripe) throw new Error("Stripe not configured");
 
-  const customerId = await resolveStripeCustomerId(user);
+  let customerId: string;
+  try {
+    customerId = await resolveStripeCustomerId(user);
+  } catch {
+    throw new Error("No billing account");
+  }
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: customerId,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing`,
-  });
-
-  return { url: session.url };
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing`,
+    });
+    return { url: session.url };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (message.includes("configuration")) {
+      throw new Error("Billing portal not configured in Stripe");
+    }
+    throw error;
+  }
 }
