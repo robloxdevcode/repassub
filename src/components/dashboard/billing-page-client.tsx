@@ -43,20 +43,14 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
   async function handleUpgrade() {
     setLoading(true);
     try {
-      const { url } = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
-      if (url) window.location.href = url;
-    } catch (error) {
-      let message = "Couldn't start checkout. Try again in a moment.";
-      if (error instanceof Error) {
-        if (error.message.includes("Stripe not configured")) {
-          message = "Stripe isn't configured on this server yet.";
-        } else if (error.message === "Already subscribed") {
-          message = "You're already on a paid plan.";
-        } else if (error.message.trim()) {
-          message = error.message;
-        }
+      const result = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
+      if (result.error) {
+        toast(result.error, "error");
+        return;
       }
-      toast(message, "error");
+      if (result.url) window.location.href = result.url;
+    } catch {
+      toast("Couldn't start checkout. Try again in a moment.", "error");
     } finally {
       setLoading(false);
     }
@@ -65,19 +59,14 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
   async function handlePortal() {
     setLoading(true);
     try {
-      const { url } = await createBillingPortal();
-      if (url) window.location.href = url;
-    } catch (error) {
-      let message = "Couldn't open billing portal. Try again in a moment.";
-      if (error instanceof Error) {
-        if (error.message === "No billing account") {
-          message =
-            "We couldn't link your Stripe account yet. If you just paid, refresh and try again.";
-        } else if (error.message === "Billing portal not configured in Stripe") {
-          message = "Billing portal isn't set up in Stripe yet. Contact support.";
-        }
+      const result = await createBillingPortal();
+      if (result.error) {
+        toast(result.error, "error");
+        return;
       }
-      toast(message, "error");
+      if (result.url) window.location.href = result.url;
+    } catch {
+      toast("Couldn't open billing portal. Try again in a moment.", "error");
     } finally {
       setLoading(false);
     }

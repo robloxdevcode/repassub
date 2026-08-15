@@ -11,8 +11,8 @@ import { PLAN_FEATURES, PLAN_FINE_PRINT, PLAN_TAGLINE } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 
 function checkoutErrorMessage(error: unknown) {
-  const message = error instanceof Error ? error.message : "";
-  if (message === "Unauthorized") {
+  const message = typeof error === "string" ? error : error instanceof Error ? error.message : "";
+  if (message === "Unauthorized" || message === "Sign in again to upgrade.") {
     return "Sign in first, then try Upgrade to Pro again.";
   }
   if (message === "Already subscribed") {
@@ -78,10 +78,15 @@ export default function PricingPage() {
 
     setLoading(true);
     try {
-      const { url } = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
-      if (url) window.location.href = url;
+      const result = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
+      if (result.error) {
+        toast(checkoutErrorMessage(result.error), "error");
+        return;
+      }
+      if (result.url) window.location.href = result.url;
     } catch (error) {
       toast(checkoutErrorMessage(error), "error");
+    } finally {
       setLoading(false);
     }
   }

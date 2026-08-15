@@ -1,11 +1,21 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/lib/auth";
+import { getCurrentUser, requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { stripe, getOrCreateStripeCustomer, getUserPlan } from "@/lib/stripe";
 import { DEFAULT_BILLING_CURRENCY, isBillingCurrency, type BillingCurrency } from "@/lib/currency";
-import { getRequestSiteUrl } from "@/lib/site-url";
+import { getPaymentsSiteUrl } from "@/lib/site-url";
+
+type ActionResult = { url?: string | null; error?: string };
+
+function actionError(message: string): ActionResult {
+  return { error: message };
+}
+
+function stripeErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Unexpected error";
+}
 
 function getStripePriceId(plan: "PRO", period: "monthly" | "yearly", currency: BillingCurrency) {
   const periodKey = period.toUpperCase();
@@ -149,6 +159,37 @@ async function resolveStripeCustomerId(user: {
   throw new Error("No billing account");
 }
 
+async function resolveCheckoutCustomerId(user: {
+  id: string;
+  email: string | null;
+  stripeCustomerId: string | null;
+}) {
+  if (!stripe) throw new Error("Stripe not configured");
+
+  let customerId = user.stripeCustomerId;
+  if (customerId) {
+    try {
+      const customer = await stripe.customers.retrieve(customerId);
+      if (customer.deleted) customerId = null;
+    } catch {
+      customerId = null;
+    }
+  }
+
+  if (!customerId) {
+    customerId = await getOrCreateStripeCustomer(user.id, user.email || "", null);
+  }
+
+  if (customerId !== user.stripeCustomerId) {
+    await db.user.update({
+      where: { id: user.id },
+      data: { stripeCustomerId: customerId },
+    });
+  }
+
+  return customerId;
+}
+
 export async function ensureStripeBillingProfile() {
   const user = await requireUser();
   const plan = getUserPlan(user.subscriptions?.[0]?.plan);
@@ -255,45 +296,38 @@ export async function createCheckoutSession(
   plan: "PRO",
   period: "monthly" | "yearly",
   currency: BillingCurrency = DEFAULT_BILLING_CURRENCY
-) {
-  const user = await requireUser();
-  const billingCurrency = isBillingCurrency(currency) ? currency : DEFAULT_BILLING_CURRENCY;
+): Promise<ActionResult> {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return actionError("Sign in again to upgrade.");
+    if (user.banned) return actionError("Account suspended");
 
-  const activePlan = user.subscriptions?.[0]?.plan;
-  if (activePlan === "PRO" || activePlan === "BUSINESS") {
-    throw new Error("Already subscribed");
-  }
+    const billingCurrency = isBillingCurrency(currency) ? currency : DEFAULT_BILLING_CURRENCY;
+    const activePlan = user.subscriptions?.[0]?.plan;
+    if (activePlan === "PRO" || activePlan === "BUSINESS") {
+      return actionError("Already subscribed");
+    }
 
-  const priceId = getStripePriceId(plan, period, billingCurrency);
-  if (!priceId) throw new Error("Stripe not configured");
+    const priceId = getStripePriceId(plan, period, billingCurrency);
+    if (!priceId || !stripe) return actionError("Stripe not configured");
 
-  if (!stripe) throw new Error("Stripe not configured");
+    await reconcileStripeBillingState(user);
+    const customerId = await resolveCheckoutCustomerId(user);
+    const siteUrl = getPaymentsSiteUrl();
 
-  const customerId = await getOrCreateStripeCustomer(
-    user.id,
-    user.email || "",
-    user.stripeCustomerId
-  );
-
-  if (!user.stripeCustomerId) {
-    await db.user.update({
-      where: { id: user.id },
-      data: { stripeCustomerId: customerId },
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${siteUrl}/welcome/pro?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/pricing?canceled=true`,
+      metadata: { userId: user.id, plan },
     });
+
+    return { url: session.url };
+  } catch (error) {
+    return actionError(stripeErrorMessage(error));
   }
-
-  const siteUrl = await getRequestSiteUrl();
-
-  const session = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: "subscription",
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${siteUrl}/welcome/pro?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${siteUrl}/pricing?canceled=true`,
-    metadata: { userId: user.id, plan },
-  });
-
-  return { url: session.url };
 }
 
 export async function createConnectAccount() {
@@ -317,7 +351,7 @@ export async function createConnectAccount() {
     data: { stripeConnectId: account.id },
   });
 
-  const siteUrl = await getRequestSiteUrl();
+  const siteUrl = getPaymentsSiteUrl();
 
   const accountLink = await stripe.accountLinks.create({
     account: account.id,
@@ -358,30 +392,35 @@ export async function getPaymentData() {
   return { payments, payouts, subscription, totalEarnings, pendingPayouts };
 }
 
-export async function createBillingPortal() {
-  const user = await requireUser();
-  if (!stripe) throw new Error("Stripe not configured");
-
-  let customerId: string;
+export async function createBillingPortal(): Promise<ActionResult> {
   try {
-    customerId = await resolveStripeCustomerId(user);
-  } catch {
-    throw new Error("No billing account");
-  }
+    const user = await getCurrentUser();
+    if (!user) return actionError("Sign in again to manage billing.");
+    if (!stripe) return actionError("Stripe not configured");
 
-  try {
-    const siteUrl = await getRequestSiteUrl();
-
-    const session = await stripe.billingPortal.sessions.create({
-      customer: customerId,
-      return_url: `${siteUrl}/billing`,
-    });
-    return { url: session.url };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "";
-    if (message.includes("configuration")) {
-      throw new Error("Billing portal not configured in Stripe");
+    let customerId: string;
+    try {
+      customerId = await resolveStripeCustomerId(user);
+    } catch {
+      return actionError("No billing account");
     }
-    throw error;
+
+    const siteUrl = getPaymentsSiteUrl();
+
+    try {
+      const session = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: `${siteUrl}/billing`,
+      });
+      return { url: session.url };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message.includes("configuration")) {
+        return actionError("Billing portal not configured in Stripe");
+      }
+      return actionError(message || "Couldn't open billing portal");
+    }
+  } catch (error) {
+    return actionError(stripeErrorMessage(error));
   }
 }

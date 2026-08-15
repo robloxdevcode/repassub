@@ -14,6 +14,11 @@ export function getConfiguredSiteUrl() {
   return configured ? normalizeSiteUrl(configured) : null;
 }
 
+/** Site URL for server actions (no request headers — safe in production). */
+export function getPaymentsSiteUrl() {
+  return getConfiguredSiteUrl() || "https://linklock.org";
+}
+
 /** Prefer the domain the user is actually on (linklock.org, not a wrong .vercel.app). */
 export async function getRequestSiteUrl() {
   const headerList = await headers();
