@@ -146,7 +146,7 @@ async function ensureBillingPortal(stripe: Stripe) {
   return config;
 }
 
-async function ensureProductionWebhook(stripe: Stripe) {
+async function ensureProductionWebhook(stripe: Stripe): Promise<string | null> {
   const endpoints = await stripe.webhookEndpoints.list({ limit: 100 });
   const existing = endpoints.data.find((e) => e.url === WEBHOOK_URL && e.status !== "disabled");
 
@@ -165,7 +165,7 @@ async function ensureProductionWebhook(stripe: Stripe) {
   });
 
   console.log(`Created production webhook: ${endpoint.id}`);
-  return endpoint.secret;
+  return endpoint.secret ?? null;
 }
 
 async function main() {
