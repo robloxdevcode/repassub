@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { stripe, getOrCreateStripeCustomer, getUserPlan } from "@/lib/stripe";
 import { DEFAULT_BILLING_CURRENCY, isBillingCurrency, type BillingCurrency } from "@/lib/currency";
+import { getRequestSiteUrl } from "@/lib/site-url";
 
 function getStripePriceId(plan: "PRO", period: "monthly" | "yearly", currency: BillingCurrency) {
   const periodKey = period.toUpperCase();
@@ -281,12 +282,14 @@ export async function createCheckoutSession(
     });
   }
 
+  const siteUrl = await getRequestSiteUrl();
+
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/welcome/pro?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
+    success_url: `${siteUrl}/welcome/pro?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${siteUrl}/pricing?canceled=true`,
     metadata: { userId: user.id, plan },
   });
 
@@ -314,10 +317,12 @@ export async function createConnectAccount() {
     data: { stripeConnectId: account.id },
   });
 
+  const siteUrl = await getRequestSiteUrl();
+
   const accountLink = await stripe.accountLinks.create({
     account: account.id,
-    refresh_url: `${process.env.NEXT_PUBLIC_APP_URL}/payments?refresh=true`,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/payments?success=true`,
+    refresh_url: `${siteUrl}/payments?refresh=true`,
+    return_url: `${siteUrl}/payments?success=true`,
     type: "account_onboarding",
   });
 
@@ -365,9 +370,11 @@ export async function createBillingPortal() {
   }
 
   try {
+    const siteUrl = await getRequestSiteUrl();
+
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing`,
+      return_url: `${siteUrl}/billing`,
     });
     return { url: session.url };
   } catch (error) {

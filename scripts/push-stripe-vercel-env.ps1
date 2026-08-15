@@ -5,6 +5,9 @@ $envFile = Join-Path (Join-Path $PSScriptRoot "..") ".env.local" | Resolve-Path
 $content = Get-Content $envFile -Raw
 
 $keys = @(
+  "SITE_URL",
+  "NEXT_PUBLIC_SITE_URL",
+  "NEXT_PUBLIC_APP_URL",
   "STRIPE_SECRET_KEY",
   "STRIPE_WEBHOOK_SECRET",
   "STRIPE_PRO_MONTHLY_PRICE_ID",

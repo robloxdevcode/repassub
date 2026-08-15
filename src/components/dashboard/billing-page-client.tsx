@@ -46,10 +46,16 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
       const { url } = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
       if (url) window.location.href = url;
     } catch (error) {
-      const message =
-        error instanceof Error && error.message.includes("Stripe not configured")
-          ? "Stripe isn’t configured on this server yet."
-          : "Couldn’t start checkout. Restart the dev server if you just added Stripe keys.";
+      let message = "Couldn't start checkout. Try again in a moment.";
+      if (error instanceof Error) {
+        if (error.message.includes("Stripe not configured")) {
+          message = "Stripe isn't configured on this server yet.";
+        } else if (error.message === "Already subscribed") {
+          message = "You're already on a paid plan.";
+        } else if (error.message.trim()) {
+          message = error.message;
+        }
+      }
       toast(message, "error");
     } finally {
       setLoading(false);
