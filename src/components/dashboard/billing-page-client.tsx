@@ -15,13 +15,17 @@ import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
 import { cn } from "@/lib/utils";
 
-export function BillingPageClient() {
+export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const { currency } = useCurrency();
   const [loading, setLoading] = useState(false);
-  const [plan, setPlan] = useState("FREE");
+  const [plan, setPlan] = useState(initialPlan);
   const [yearly, setYearly] = useState(true);
+
+  useEffect(() => {
+    setPlan(initialPlan);
+  }, [initialPlan]);
 
   useEffect(() => {
     getBillingData().then((data) => setPlan(data.plan)).catch(() => {});
