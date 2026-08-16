@@ -4299,10 +4299,11 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background:
-    radial-gradient(700px circle at var(--glow-x) var(--glow-y), rgba(99, 102, 241, 0.14), transparent 42%),
-    radial-gradient(500px circle at calc(var(--glow-x) + 120px) calc(var(--glow-y) + 80px), rgba(74, 222, 128, 0.06), transparent 40%);
-  transition: background 80ms ease-out;
+  background: radial-gradient(
+    520px circle at var(--glow-x) var(--glow-y),
+    rgba(99, 102, 241, 0.08),
+    transparent 45%
+  );
 }
 
 .ll-trust-strip {
@@ -4321,7 +4322,34 @@ body {
 }
 
 .ll-trust-neon {
-  color: var(--retro-neon);
+  color: var(--retro-accent);
+}
+
+.ll-hero-accent {
+  color: var(--retro-accent);
+}
+
+.ll-hero-kicker {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--retro-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.ll-platform-line {
+  position: relative;
+  z-index: 10;
+  border-top: 1px solid var(--retro-border);
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--retro-text-dim);
+}
+
+.ll-btn-playful {
+  border-radius: 9999px !important;
 }
 
 .ll-trust-marquee-wrap {
