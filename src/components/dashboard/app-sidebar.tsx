@@ -3,9 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import {
-  LayoutDashboard, Lock, Plus, Settings, User, CreditCard, Menu, X, Shield, BarChart3,
-} from "lucide-react";
+import { LayoutDashboard, Lock, Plus, Settings, Menu, X, Shield, BarChart3, User, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
@@ -15,8 +13,6 @@ const mainNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/unlocks", label: "My links", icon: Lock },
   { href: "/analytics", label: "Stats", icon: BarChart3 },
-  { href: "/profile", label: "Profile", icon: User },
-  { href: "/billing", label: "Billing", icon: CreditCard },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -28,7 +24,7 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-50 md:hidden ll-app-card p-2 touch-manipulation active:scale-95 transition-transform duration-75"
+        className="fixed left-4 top-4 z-50 md:hidden rounded-xl border border-retro-border bg-retro-surface p-2 touch-manipulation"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Close menu" : "Open menu"}
       >
@@ -41,25 +37,22 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-full flex-col p-4">
-          <Link href="/dashboard" prefetch className="mb-6 px-2 block" onClick={() => setOpen(false)}>
-            <LinklockLogo size={36} showWordmark wordmarkClassName="text-retro-text" />
+        <div className="flex h-full flex-col p-5">
+          <Link href="/dashboard" prefetch className="mb-8 px-1 block" onClick={() => setOpen(false)}>
+            <LinklockLogo size={32} showWordmark wordmarkClassName="text-retro-text" />
           </Link>
 
           <Link
             href="/create"
             prefetch
             onClick={() => setOpen(false)}
-            className={cn(
-              "sidebar-nav-item sidebar-nav-create mb-4 font-bold",
-              onCreate && "ring-2 ring-white/30"
-            )}
+            className={cn("sidebar-primary-cta", onCreate && "sidebar-primary-cta--active")}
           >
-            <Plus size={16} />
+            <Plus size={18} strokeWidth={2.5} />
             Create link
           </Link>
 
-          <nav className="flex flex-1 flex-col gap-1">
+          <nav className="mt-6 flex flex-1 flex-col gap-0.5">
             {mainNavItems.map((item) => {
               const active = pathname.startsWith(item.href);
               return (
@@ -68,12 +61,9 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
                   href={item.href}
                   prefetch
                   onClick={() => setOpen(false)}
-                  className={cn(
-                    "sidebar-nav-item rounded-lg",
-                    active ? "sidebar-nav-active" : "text-retro-text-dim hover:text-retro-text"
-                  )}
+                  className={cn("sidebar-nav-item", active && "sidebar-nav-active")}
                 >
-                  <item.icon size={16} />
+                  <item.icon size={17} strokeWidth={2} />
                   {item.label}
                 </Link>
               );
@@ -85,23 +75,23 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
                 prefetch
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "sidebar-nav-item mt-3 border border-retro-error/40 text-retro-error hover:bg-retro-error/10",
-                  pathname.startsWith("/admin") && "sidebar-nav-active bg-retro-error border-retro-error text-white"
+                  "sidebar-nav-item mt-4 text-retro-error",
+                  pathname.startsWith("/admin") && "sidebar-nav-active"
                 )}
               >
-                <Shield size={16} />
+                <Shield size={17} strokeWidth={2} />
                 Admin
               </Link>
             )}
           </nav>
 
-          <div className="border-t border-retro-border pt-4 mt-2">
+          <div className="border-t border-retro-border pt-4 mt-4">
             <ClerkUserMenu plan={plan} />
           </div>
         </div>
       </aside>
 
-      {open && <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed inset-0 z-30 bg-black/40 md:hidden" onClick={() => setOpen(false)} />}
     </>
   );
 }
@@ -120,7 +110,7 @@ export function AppShell({
       <AppNavProgress />
       <AppSidebar isAdmin={isAdmin} plan={plan} />
       <div className="app-stage md:ml-64 min-h-screen">
-        <main className="p-4 pt-16 md:p-8 md:pt-10">{children}</main>
+        <main className="p-4 pt-16 md:px-10 md:py-12 md:pt-12">{children}</main>
       </div>
     </>
   );

@@ -16,8 +16,8 @@ export function AppPageHeader({
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="text-xs font-medium text-retro-text-muted mb-2">{eyebrow}</p>
-        <h1 className="font-body text-2xl md:text-3xl font-bold tracking-tight text-retro-text">{title}</h1>
-        {subtitle ? <p className="mt-2 text-sm text-retro-text-dim">{subtitle}</p> : null}
+        <h1 className="font-body text-2xl md:text-[1.75rem] font-bold tracking-tight text-retro-text">{title}</h1>
+        {subtitle ? <p className="mt-1.5 text-sm text-retro-text-dim">{subtitle}</p> : null}
       </div>
       {action ? (
         <RetroLink href={action.href} size="lg" variant="primary" className="w-full sm:w-auto shrink-0 ll-btn-glow">
