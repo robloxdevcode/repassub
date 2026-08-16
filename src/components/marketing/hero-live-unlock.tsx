@@ -5,11 +5,7 @@ import { Check, Download, Lock } from "lucide-react";
 import { burstConfetti } from "@/lib/confetti";
 import { cn } from "@/lib/utils";
 
-const ACTIONS = [
-  "Subscribe on YouTube",
-  "Join Discord server",
-  "Follow on Instagram",
-];
+const ACTIONS = ["Subscribe", "Join community", "Follow"];
 
 export function HeroLiveUnlock({
   className,
@@ -55,20 +51,18 @@ export function HeroLiveUnlock({
     <div
       ref={cardRef}
       className={cn("ll-demo-card ll-demo-card--interactive w-full", className)}
-      aria-label="Interactive unlock preview — tap each step"
+      aria-label="Interactive preview"
     >
       <div className={pad}>
         <div className="flex items-start justify-between gap-4 mb-2">
           <div>
-            <h3 className="ll-demo-title text-lg font-bold leading-tight">Workout plan</h3>
-            <p className="ll-demo-muted text-xs mt-1">Complete the steps to unlock</p>
+            <h3 className="ll-demo-title text-lg font-semibold leading-tight">Workout plan</h3>
+            <p className="ll-demo-muted text-xs mt-1">Complete each step to unlock</p>
           </div>
-          <span className="ll-demo-live">Live</span>
+        <span className="ll-demo-live ll-demo-live--neutral">Preview</span>
         </div>
 
-        <p className="text-[11px] text-indigo-600/80 font-medium mb-4">Tap each step to try it</p>
-
-        <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col gap-2.5 mb-6">
           {ACTIONS.map((label, i) => {
             const done = completed.has(i);
             return (
@@ -97,7 +91,7 @@ export function HeroLiveUnlock({
             {progress}/{total}
           </span>
         </div>
-        <div className="ll-progress mb-6">
+        <div className="ll-progress mb-5">
           <div
             className="ll-progress-fill"
             style={{ width: `${(progress / total) * 100}%` }}
@@ -115,7 +109,7 @@ export function HeroLiveUnlock({
           )}
         >
           {unlocked ? <Download size={16} /> : <Lock size={16} />}
-          {unlocked ? "Unlocked!" : allDone ? "Unlock download" : "Complete all steps"}
+          {unlocked ? "Unlocked" : allDone ? "Unlock content" : "Complete all steps"}
         </button>
       </div>
     </div>

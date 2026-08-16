@@ -27,8 +27,8 @@ export function RetroFooter() {
           <div className="lg:col-span-2">
             <LinklockLogo size={36} showWordmark wordmarkClassName="text-retro-text font-bold" />
             <p className="mt-4 text-sm text-retro-text-dim leading-relaxed max-w-xs">
-              Unlock links for creators. Gate downloads, grow your audience.
-            </p>
+            Gate downloads and links behind actions. Analytics included.
+          </p>
           </div>
           {Object.entries(links).map(([group, items]) => (
             <div key={group}>

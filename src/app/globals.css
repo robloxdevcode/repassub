@@ -2741,6 +2741,62 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.ll-hero--business {
+  background: #ffffff;
+  color: var(--retro-text);
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.ll-hero-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(180deg, black 0%, transparent 92%);
+  pointer-events: none;
+}
+
+.ll-hero-title--light {
+  color: var(--retro-text);
+  font-size: clamp(2.125rem, 4.5vw, 3.125rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+.ll-demo-wrap--light::before,
+.ll-demo-wrap--light::after {
+  display: none;
+}
+
+.ll-highlights {
+  background: var(--retro-bg);
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.ll-highlight-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-accent);
+}
+
+.ll-platform-count--business {
+  background: var(--retro-surface);
+}
+
+.ll-landing-cta {
+  border-top: 1px solid var(--retro-border);
+  background: var(--retro-bg);
+}
+
 .ll-hero--mesh {
   background:
     radial-gradient(ellipse 90% 70% at 15% 0%, rgba(99, 102, 241, 0.35), transparent 55%),
@@ -3522,6 +3578,16 @@ body {
   background: rgba(64, 192, 87, 0.18);
   color: #69db7c;
   border-color: rgba(105, 219, 124, 0.35);
+}
+
+.ll-demo-live--neutral {
+  background: var(--retro-surface-2);
+  color: var(--retro-text-muted);
+  border-color: var(--retro-border);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  font-size: 0.6875rem;
 }
 
 .ll-action-row {
