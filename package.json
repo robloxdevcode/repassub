@@ -17,6 +17,8 @@
     "db:upgrade-pro": "dotenv -e .env.local -- npx tsx scripts/upgrade-user-to-pro.ts",
     "stripe:setup": "dotenv -e .env.local -- npx tsx scripts/setup-stripe.ts",
     "stripe:setup:production": "dotenv -e .env.local -- npx tsx scripts/setup-stripe.ts -- --production-webhook",
+    "stripe:audit:live": "dotenv -e .env.local -- npx tsx scripts/audit-stripe-live.ts",
+    "stripe:verify-webhook:production": "dotenv -e .env.local -- npx tsx scripts/verify-production-stripe-webhook.ts",
     "stripe:webhook": "powershell -ExecutionPolicy Bypass -File scripts/stripe-local-webhook.ps1",
     "stripe:verify-webhook": "dotenv -e .env.local -- npx tsx scripts/verify-stripe-webhook.ts",
     "stripe:vercel-env": "powershell -ExecutionPolicy Bypass -File scripts/push-stripe-vercel-env.ps1",

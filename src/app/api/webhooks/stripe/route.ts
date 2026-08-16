@@ -62,10 +62,13 @@ export async function POST(req: Request) {
       });
       if (dbSub) {
         const sub = subscription as Stripe.Subscription & { current_period_end?: number };
+        const isActive = subscription.status === "active" || subscription.status === "trialing";
         await db.subscription.update({
           where: { id: dbSub.id },
           data: {
-            status: subscription.status === "active" ? "ACTIVE" : "CANCELED",
+            plan: isActive ? dbSub.plan : "FREE",
+            status: isActive ? "ACTIVE" : "CANCELED",
+            stripeSubscriptionId: isActive ? subscription.id : null,
             currentPeriodEnd: sub.current_period_end
               ? new Date(sub.current_period_end * 1000)
               : null,

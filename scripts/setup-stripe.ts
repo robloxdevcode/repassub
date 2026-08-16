@@ -225,8 +225,9 @@ async function main() {
   }
 
   console.log("\n--- Add to Vercel (Production) ---");
-  for (const [key, value] of Object.entries(envUpdates)) {
-    console.log(`${key}=${value}`);
+  console.log("Run: npm run stripe:vercel-env");
+  for (const key of Object.keys(envUpdates)) {
+    console.log(`  ${key}=<set>`);
   }
 
   console.log("\n--- Local webhook (run in a second terminal) ---");
