@@ -1,28 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --retro-bg: #f8fafc;
-  --retro-surface: #ffffff;
-  --retro-surface-2: #f1f5f9;
-  --retro-surface-3: #e2e8f0;
-  --retro-ink: #0f172a;
-  --retro-border: #e2e8f0;
+  --retro-bg: #07070d;
+  --retro-surface: #0d0d16;
+  --retro-surface-2: #12121c;
+  --retro-surface-3: #1a1a28;
+  --retro-ink: #e8eaf0;
+  --retro-border: #252538;
   --retro-accent: #6366f1;
-  --retro-accent-dim: #4f46e5;
-  --retro-blue: #2563eb;
-  --retro-blue-dim: #1d4ed8;
-  --retro-yellow: #eab308;
-  --retro-yellow-dim: #ca8a04;
-  --retro-pink: #ec4899;
-  --retro-cyan: #06b6d4;
-  --retro-lime: #84cc16;
-  --retro-success: #16a34a;
-  --retro-warning: #ea580c;
-  --retro-error: #dc2626;
-  --retro-glow: #c7d2fe;
-  --retro-text: #0f172a;
-  --retro-text-dim: #475569;
-  --retro-text-muted: #94a3b8;
+  --retro-accent-dim: #818cf8;
+  --retro-neon: #4ade80;
+  --retro-blue: #60a5fa;
+  --retro-blue-dim: #3b82f6;
+  --retro-yellow: #facc15;
+  --retro-yellow-dim: #eab308;
+  --retro-pink: #f472b6;
+  --retro-cyan: #22d3ee;
+  --retro-lime: #a3e635;
+  --retro-success: #4ade80;
+  --retro-warning: #fb923c;
+  --retro-error: #f87171;
+  --retro-glow: #6366f1;
+  --retro-text: #e8eaf0;
+  --retro-text-dim: #9ca3af;
+  --retro-text-muted: #6b7280;
   --retro-text-on-dark: #ffffff;
   --platform-youtube: #ff0000;
   --platform-discord: #5865f2;
@@ -2706,8 +2707,8 @@ body {
 /* -- Linklock design system -- */
 
 .ll-nav {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(13, 13, 22, 0.82);
+  backdrop-filter: blur(16px) saturate(160%);
   border-bottom: 1px solid var(--retro-border);
 }
 
@@ -2777,12 +2778,6 @@ body {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
-.ll-testimonials {
-  background: var(--retro-surface);
-  border-top: 1px solid var(--retro-border);
-  border-bottom: 1px solid var(--retro-border);
-}
-
 .ll-testimonial-card {
   min-height: 100%;
 }
@@ -2800,7 +2795,7 @@ body {
 }
 
 .ll-hero--business {
-  background: var(--retro-bg);
+  background: transparent;
   color: var(--retro-text);
   border-bottom: 1px solid var(--retro-border);
 }
@@ -2809,8 +2804,8 @@ body {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(99, 102, 241, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
+    linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: linear-gradient(180deg, black 0%, transparent 92%);
   pointer-events: none;
@@ -2830,8 +2825,24 @@ body {
 }
 
 .ll-highlights {
-  background: var(--retro-bg);
+  background: transparent;
   border-bottom: 1px solid var(--retro-border);
+}
+
+.ll-testimonials {
+  background: transparent;
+  border-top: 1px solid var(--retro-border);
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.ll-landing-cta {
+  border-top: 1px solid var(--retro-border);
+  background: transparent;
+}
+
+.ll-footer {
+  border-top: 1px solid var(--retro-border);
+  background: rgba(13, 13, 22, 0.6);
 }
 
 .ll-highlight-icon {
@@ -4271,4 +4282,171 @@ body {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: var(--retro-text-dim);
+}
+
+/* —— Gamer shell + landing glow —— */
+
+.ll-page-glow {
+  position: relative;
+  background: var(--retro-bg);
+  --glow-x: 50%;
+  --glow-y: 40%;
+}
+
+.ll-page-glow::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(700px circle at var(--glow-x) var(--glow-y), rgba(99, 102, 241, 0.14), transparent 42%),
+    radial-gradient(500px circle at calc(var(--glow-x) + 120px) calc(var(--glow-y) + 80px), rgba(74, 222, 128, 0.06), transparent 40%);
+  transition: background 80ms ease-out;
+}
+
+.ll-trust-strip {
+  position: relative;
+  z-index: 10;
+  border-top: 1px solid var(--retro-border);
+  border-bottom: 1px solid var(--retro-border);
+  background: rgba(13, 13, 22, 0.5);
+}
+
+.ll-trust-strip-text {
+  font-size: clamp(1.125rem, 2.5vw, 1.625rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--retro-text);
+}
+
+.ll-trust-neon {
+  color: var(--retro-neon);
+}
+
+.ll-trust-marquee-wrap {
+  overflow: hidden;
+  padding: 0.75rem 0 1.25rem;
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+.ll-trust-marquee-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: ll-trust-marquee 45s linear infinite;
+}
+
+.ll-trust-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+}
+
+@keyframes ll-trust-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* —— Profile customization —— */
+
+.profile-preview {
+  min-height: 12rem;
+  background: linear-gradient(135deg, #12121c 0%, #1a1a2e 100%);
+  background-size: cover;
+  background-position: center;
+  padding: 1.5rem;
+}
+
+.profile-preview--neon {
+  box-shadow: inset 0 -1px 0 rgba(99, 102, 241, 0.4);
+}
+
+.profile-preview--midnight {
+  box-shadow: inset 0 -1px 0 rgba(59, 130, 246, 0.35);
+}
+
+.profile-preview--vapor {
+  box-shadow: inset 0 -1px 0 rgba(244, 114, 182, 0.35);
+}
+
+.profile-preview--arcade {
+  box-shadow: inset 0 -1px 0 rgba(74, 222, 128, 0.45);
+}
+
+.profile-preview-inner {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.profile-preview-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.profile-badge--earned {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.35);
+  color: var(--retro-neon);
+}
+
+.profile-badge--toggle {
+  cursor: pointer;
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-text-dim);
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+.profile-badge--toggle-on {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--retro-accent);
+  color: var(--retro-accent);
+}
+
+.profile-style-option {
+  text-align: left;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-lg);
+  background: var(--retro-surface-2);
+  transition: border-color 150ms ease, background 150ms ease;
+  cursor: pointer;
+}
+
+.profile-style-option:hover {
+  border-color: #3f3f5c;
+}
+
+.profile-style-option--active {
+  border-color: var(--retro-accent);
+  background: rgba(99, 102, 241, 0.1);
 }

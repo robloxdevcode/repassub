@@ -2,16 +2,16 @@ import {
   BusinessHighlights,
   HeroSection,
   LandingCtaBar,
-  PlatformCountStrip,
   TestimonialsSection,
 } from "@/components/marketing/hero-section";
+import { TrustSocialStrip } from "@/components/marketing/trust-social-strip";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Linklock — Unlock pages for gated content",
+  title: "Linklock — Control access & grow your audience",
   description:
-    "Share one link. Visitors complete your steps, then your content unlocks. Free to start with dashboard analytics.",
+    "Gate content behind social steps. See fan emails from everyone who completes your link. Built for creators.",
   path: "/",
 });
 
@@ -20,7 +20,7 @@ export default function HomePage() {
     <>
       <HomeStructuredData />
       <HeroSection />
-      <PlatformCountStrip />
+      <TrustSocialStrip />
       <BusinessHighlights />
       <TestimonialsSection />
       <LandingCtaBar />

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, Lock, Plus, Settings, Menu, X, Shield, BarChart3, CreditCard } from "lucide-react";
+import { LayoutDashboard, Lock, Plus, Settings, Menu, X, Shield, BarChart3, CreditCard, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
@@ -14,6 +14,7 @@ const mainNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/unlocks", label: "My links", icon: Lock },
   { href: "/analytics", label: "Stats", icon: BarChart3 },
+  { href: "/profile", label: "Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

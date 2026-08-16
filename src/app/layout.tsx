@@ -64,7 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               colorPrimary: "#6366f1",
 
-              colorBackground: "#ffffff",
+              colorBackground: "#0d0d16",
 
               borderRadius: "0.625rem",
 
