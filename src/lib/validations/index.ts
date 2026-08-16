@@ -49,14 +49,6 @@ export const updateProfileSchema = z.object({
     .max(30)
     .regex(/^[a-z0-9_]+$/)
     .optional(),
-  profileSettings: z
-    .object({
-      style: z.enum(["neon", "midnight", "vapor", "arcade"]),
-      bgUrl: z.union([z.string().url(), z.null()]),
-      socials: z.record(z.string(), z.string()).optional(),
-      awardedBadges: z.array(z.string()).optional(),
-    })
-    .optional(),
 });
 
 export function isValidUrl(url: string): boolean {

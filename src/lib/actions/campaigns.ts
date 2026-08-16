@@ -312,12 +312,6 @@ export async function updateProfile(data: {
   bio?: string;
   username?: string;
   avatarUrl?: string | null;
-  profileSettings?: {
-    style: "neon" | "midnight" | "vapor" | "arcade";
-    bgUrl: string | null;
-    socials?: Record<string, string | undefined>;
-    awardedBadges?: string[];
-  };
 }) {
   const user = await requireUser();
   const parsed = updateProfileSchema.parse(data);

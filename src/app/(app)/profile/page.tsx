@@ -8,7 +8,8 @@ import { getDashboardStats } from "@/lib/actions/dashboard";
 import { ProfileAvatarField } from "@/components/dashboard/profile-avatar-field";
 import { ProfileCustomization } from "@/components/dashboard/profile-customization";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
-import { parseProfileSettings, type ProfileSettings } from "@/lib/profile-settings";
+import { loadProfileSettings, saveProfileSettings } from "@/lib/profile-settings-storage";
+import type { ProfileSettings } from "@/lib/profile-settings";
 import { isProPlanName } from "@/components/dashboard/plan-badge";
 
 export default function ProfilePage() {
@@ -20,14 +21,13 @@ export default function ProfilePage() {
     displayName: string | null;
     bio: string | null;
     avatarUrl: string | null;
-    profileSettings: unknown;
     createdAt: Date;
   } | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [profileSettings, setProfileSettings] = useState<ProfileSettings>(() => parseProfileSettings(null));
+  const [profileSettings, setProfileSettings] = useState<ProfileSettings | null>(null);
   const [milestoneStats, setMilestoneStats] = useState({
     publishedLinks: 0,
     totalUnlocks: 0,
@@ -43,7 +43,7 @@ export default function ProfilePage() {
         setBio(s.user.bio || "");
         setUsername(s.user.username);
         setAvatarUrl(s.user.avatarUrl);
-        setProfileSettings(parseProfileSettings(s.user.profileSettings));
+        setProfileSettings(loadProfileSettings(s.user.username));
         setMilestoneStats({
           publishedLinks: s.campaignCount,
           totalUnlocks: s.analytics.unlocked,
@@ -70,11 +70,9 @@ export default function ProfilePage() {
   async function handleSaveCustomization(settings: ProfileSettings) {
     setCustomSaving(true);
     try {
-      await updateProfile({ profileSettings: settings });
+      saveProfileSettings(username, settings);
       setProfileSettings(settings);
-      toast("Profile look saved", "success");
-    } catch (e) {
-      toast(e instanceof Error ? e.message : "Could not save customization", "error");
+      toast("Profile look saved on this device", "success");
     } finally {
       setCustomSaving(false);
     }
@@ -89,7 +87,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (!user) {
+  if (!user || !profileSettings) {
     return (
       <div className="mx-auto max-w-2xl">
         <AppPageHeader title="Profile" subtitle="Customize how you show up to your fans." />

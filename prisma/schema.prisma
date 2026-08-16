@@ -111,7 +111,6 @@ model User {
   displayName      String?
   bio              String?
   avatarUrl        String?
-  profileSettings  Json?
   email            String?
   role             UserRole @default(USER)
   stripeCustomerId String?
