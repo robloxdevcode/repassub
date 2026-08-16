@@ -1,11 +1,4 @@
-import { HeroSection } from "@/components/marketing/hero-section";
-import {
-  HowItWorksSection,
-  PlatformMarquee,
-  PlansSection,
-  FaqSection,
-  CtaSection,
-} from "@/components/marketing/home-sections";
+import { HeroSection, PlatformCountStrip } from "@/components/marketing/hero-section";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -21,11 +14,7 @@ export default function HomePage() {
     <>
       <HomeStructuredData />
       <HeroSection />
-      <HowItWorksSection />
-      <PlatformMarquee />
-      <PlansSection />
-      <FaqSection />
-      <CtaSection />
+      <PlatformCountStrip />
     </>
   );
 }

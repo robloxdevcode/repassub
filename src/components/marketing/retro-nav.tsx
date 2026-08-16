@@ -10,8 +10,7 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/features", label: "Features" },
-  { href: "/#pricing", label: "Pricing" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 export function RetroNav() {
