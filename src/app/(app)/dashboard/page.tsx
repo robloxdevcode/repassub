@@ -1,12 +1,32 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { getDashboardStats } from "@/lib/actions/dashboard";
+import { fulfillCheckoutSession, syncProSubscriptionFromStripe } from "@/lib/actions/payments";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
+import { DashboardStatusBanner } from "@/components/dashboard/dashboard-status-banner";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { formatNumber } from "@/lib/utils";
 import { getRequestSiteUrl } from "@/lib/site-url";
 import { ChevronRight, Eye, Lock, Link2 } from "lucide-react";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const sessionId = typeof params.session_id === "string" ? params.session_id : undefined;
+
+  if (sessionId) {
+    try {
+      await fulfillCheckoutSession(sessionId);
+    } catch {
+      await syncProSubscriptionFromStripe();
+    }
+    redirect("/dashboard?upgraded=1");
+  }
+
   const stats = await getDashboardStats();
   const siteUrl = await getRequestSiteUrl();
   const hasUnlocks = stats.campaignCount > 0 || stats.recentCampaigns.length > 0;
@@ -14,25 +34,33 @@ export default async function DashboardPage() {
   const isPro = stats.plan === "PRO" || stats.plan === "BUSINESS";
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <>
+      <Suspense fallback={null}>
+        <DashboardStatusBanner />
+      </Suspense>
+      <div className="max-w-3xl mx-auto">
       <AppPageHeader
-        title={firstName ? `Hi, ${firstName}` : "Home"}
+        eyebrow="Your hub"
+        title={firstName ? `Hey ${firstName} 👋` : "Hey there 👋"}
         subtitle={
           hasUnlocks
-            ? "Views and unlocks from your beat packs, mods & file drops."
-            : "Gate a download behind YouTube subscribe, Discord join, or a follow — then share one link."
+            ? "Here's how your links are doing — views, unlocks, the good stuff."
+            : "Make fans subscribe, join, or follow — then drop the file. One link, done."
         }
       />
 
       {!hasUnlocks && (
         <section className="dash-empty mb-10">
+          <span className="ll-sticker ll-sticker--pink ll-float-sticker absolute top-4 right-4 sm:right-8" aria-hidden>
+            easy
+          </span>
           <div className="dash-empty-icon" aria-hidden>
             <Link2 size={28} />
           </div>
-          <h2 className="text-lg font-semibold text-retro-text">No links yet</h2>
+          <h2 className="font-display text-xl text-retro-text">No links yet — let&apos;s fix that</h2>
           <p className="mt-2 text-sm text-retro-text-dim max-w-sm mx-auto leading-relaxed">
-            Drop your file, pick fan steps (subscribe, join, follow), share one link. Hit{" "}
-            <span className="font-medium text-retro-text">Create link</span> in the sidebar.
+            Upload your pack, pick a few fan steps, share one link. Smash{" "}
+            <span className="font-bold text-retro-text">Create link</span> in the sidebar.
           </p>
         </section>
       )}
@@ -72,7 +100,10 @@ export default async function DashboardPage() {
 
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-retro-text">Recent links</h2>
+              <h2 className="ll-section-label">
+                Recent links
+                <span className="ll-sticker ll-sticker--cyan !text-[0.6rem] !py-0.5 !rotate-2">fresh</span>
+              </h2>
               <Link
                 href="/unlocks"
                 prefetch
@@ -114,13 +145,16 @@ export default async function DashboardPage() {
       )}
 
       {!isPro && hasUnlocks && (
-        <p className="mt-10 text-center text-sm text-retro-text-muted">
-          Want more steps and no ads?{" "}
-          <Link href="/billing" prefetch className="font-medium text-retro-accent hover:underline">
-            Upgrade to Pro
-          </Link>
-        </p>
+        <div className="dash-upsell">
+          <p className="text-sm text-retro-text">
+            More steps, your branding, no ads?{" "}
+            <Link href="/billing" prefetch className="font-display font-bold text-retro-accent hover:underline">
+              Go Pro
+            </Link>
+          </p>
+        </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

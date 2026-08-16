@@ -37,7 +37,7 @@ export function LinklockLogo({
       {showWordmark ? (
         <span
           className={cn(
-            "font-body font-bold tracking-tight text-retro-text",
+            "font-display font-bold tracking-tight text-retro-text",
             wordmarkSize,
             wordmarkClassName
           )}

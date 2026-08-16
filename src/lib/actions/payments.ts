@@ -319,8 +319,8 @@ export async function createCheckoutSession(
       customer: customerId,
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${siteUrl}/welcome/pro?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/pricing?canceled=true`,
+      success_url: `${siteUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}/billing?checkout=canceled`,
       metadata: { userId: user.id, plan },
     });
 
@@ -410,7 +410,7 @@ export async function createBillingPortal(): Promise<ActionResult> {
     try {
       const session = await stripe.billingPortal.sessions.create({
         customer: customerId,
-        return_url: `${siteUrl}/billing`,
+        return_url: `${siteUrl}/dashboard?billing=updated`,
       });
       return { url: session.url };
     } catch (error) {

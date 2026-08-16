@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { RetroButton } from "@/components/retro";
 import { useToast } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
@@ -15,7 +14,6 @@ import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badg
 import { cn } from "@/lib/utils";
 
 export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
-  const searchParams = useSearchParams();
   const { toast } = useToast();
   const { currency } = useCurrency();
   const [loading, setLoading] = useState(false);
@@ -29,15 +27,6 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
   useEffect(() => {
     getBillingData().then((data) => setPlan(data.plan)).catch(() => {});
   }, []);
-
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      const sessionId = searchParams.get("session_id");
-      if (sessionId) {
-        window.location.replace(`/welcome/pro?session_id=${encodeURIComponent(sessionId)}`);
-      }
-    }
-  }, [searchParams]);
 
   async function handleUpgrade() {
     setLoading(true);
@@ -149,10 +138,7 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
         <PlanFeatureList features={features} finePrint={isPro ? PLAN_FINE_PRINT.PRO : PLAN_FINE_PRINT.FREE} />
         {!isPro && (
           <p className="mt-4 text-sm text-retro-text-dim">
-            Not sure yet?{" "}
-            <Link href="/pricing" className="font-medium text-retro-accent hover:underline">
-              Compare Free vs Pro
-            </Link>
+            Everything on Free vs Pro is listed above — upgrade when you&apos;re ready.
           </p>
         )}
         <p className="mt-6 text-xs text-retro-text-muted leading-relaxed">

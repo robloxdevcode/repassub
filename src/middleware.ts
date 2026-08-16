@@ -25,6 +25,18 @@ const isPublicRoute = createRouteMatcher([
 
 const isAuthRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 
+const isMarketingRoute = createRouteMatcher([
+  "/",
+  "/features(.*)",
+  "/how-it-works(.*)",
+  "/pricing(.*)",
+  "/examples(.*)",
+  "/creators(.*)",
+  "/use-cases(.*)",
+  "/docs(.*)",
+  "/blog(.*)",
+]);
+
 const isAppRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/unlocks(.*)",
@@ -49,7 +61,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   const { userId } = await auth();
 
-  if (pathname === "/" && userId) {
+  if (userId && isMarketingRoute(req)) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 

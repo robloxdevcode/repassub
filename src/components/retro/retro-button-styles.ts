@@ -12,19 +12,22 @@ export type RetroButtonVariant =
 
 export type RetroButtonSize = "sm" | "md" | "lg";
 
+const brutalLift =
+  "border-2 border-retro-ink shadow-[3px_3px_0_0_#18181b] hover:-translate-y-0.5 hover:translate-x-0.5 hover:shadow-[4px_5px_0_0_#18181b] hover:-rotate-1 active:translate-y-0 active:rotate-0 active:scale-[0.98]";
+
 const variants: Record<RetroButtonVariant, string> = {
-  primary:
-    "bg-[#4f46e5] text-white border-transparent hover:bg-[#4338ca] shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_12px_rgba(79,70,229,0.25)]",
-  secondary:
-    "bg-retro-surface text-retro-text border-retro-border hover:border-retro-text-muted hover:bg-retro-surface-2 shadow-sm",
-  blue: "bg-gradient-to-b from-[#4dabf7] to-[#228be6] text-white border-transparent hover:opacity-95 shadow-sm",
-  yellow: "bg-retro-yellow text-retro-ink border-transparent hover:opacity-90",
-  white:
-    "bg-white text-retro-text border-transparent hover:bg-neutral-50 shadow-[0_4px_20px_rgba(0,0,0,0.15)]",
+  primary: cn("bg-retro-accent text-white border-retro-ink", brutalLift),
+  secondary: cn(
+    "bg-retro-surface text-retro-text border-retro-ink hover:bg-retro-surface-2",
+    brutalLift
+  ),
+  blue: cn("bg-retro-blue text-white border-retro-ink hover:opacity-95", brutalLift),
+  yellow: cn("bg-retro-yellow text-retro-ink border-retro-ink hover:opacity-95", brutalLift),
+  white: cn("bg-white text-retro-text border-retro-ink hover:bg-neutral-50", brutalLift),
   ghost:
-    "bg-transparent border-transparent text-retro-text-dim hover:text-retro-text hover:bg-retro-surface-2 shadow-none",
-  success: "bg-retro-success/10 text-retro-success border-retro-border",
-  danger: "bg-retro-error text-white border-transparent hover:opacity-90",
+    "bg-transparent border-transparent text-retro-text-dim hover:text-retro-text hover:bg-retro-surface-2 shadow-none border-0",
+  success: cn("bg-retro-success/15 text-retro-success border-retro-ink", brutalLift),
+  danger: cn("bg-retro-error text-white border-retro-ink hover:opacity-90", brutalLift),
 };
 
 const sizes: Record<RetroButtonSize, string> = {
@@ -45,10 +48,10 @@ export function retroButtonClasses({
   loading?: boolean;
 }) {
   return cn(
-    "font-body inline-flex items-center justify-center gap-2.5 font-semibold rounded-[var(--ui-radius)] border",
-    "transition-[color,background-color,transform,opacity,border-color,box-shadow] duration-75 ease-out",
+    "font-display inline-flex items-center justify-center gap-2.5 font-bold rounded-[var(--ui-radius)] border",
+    "transition-[color,background-color,transform,opacity,border-color,box-shadow] duration-150 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
     "active:scale-[0.98] select-none touch-manipulation",
-    "disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100",
+    "disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 disabled:translate-x-0 disabled:translate-y-0",
     loading && "opacity-90",
     variants[variant],
     sizes[size],
