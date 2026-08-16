@@ -1,5 +1,7 @@
-# Push Stripe env vars from .env.local to Vercel Production.
+# Push Stripe env vars from .env.local to Vercel Production (linklock.org project).
 # Usage: powershell -ExecutionPolicy Bypass -File scripts/push-stripe-vercel-env.ps1
+
+$vercelProject = if ($env:VERCEL_PROJECT) { $env:VERCEL_PROJECT } else { "linklock" }
 
 $envFile = Join-Path (Join-Path $PSScriptRoot "..") ".env.local" | Resolve-Path
 $content = Get-Content $envFile -Raw
@@ -27,16 +29,16 @@ foreach ($key in $keys) {
     $value = $Matches[1].Trim()
     if (-not $value) { continue }
 
-    Write-Host "Setting $key on Vercel (production)..." -ForegroundColor Cyan
+    Write-Host "Setting $key on Vercel project '$vercelProject' (production)..." -ForegroundColor Cyan
     $prev = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    npx.cmd vercel env add $key production --value $value --force --yes --sensitive 2>&1 | Out-Host
+    npx.cmd vercel env add $key production --project $vercelProject --value $value --force --yes --sensitive 2>&1 | Out-Host
     $ErrorActionPreference = $prev
   }
 }
 
 Write-Host ""
-Write-Host "Done. Redeploy production for changes to take effect:" -ForegroundColor Green
-Write-Host "  npx vercel --prod"
+Write-Host "Done. Redeploy the linklock project for changes to take effect:" -ForegroundColor Green
+Write-Host "  npx vercel --prod --project linklock"
 
 Pop-Location
