@@ -11,10 +11,10 @@ import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 import { isProPlanName } from "@/components/dashboard/plan-badge";
 
 const mainNavItems = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard, iconTone: "sidebar-nav-icon--yellow" },
-  { href: "/unlocks", label: "My links", icon: Lock, iconTone: "sidebar-nav-icon--pink" },
-  { href: "/analytics", label: "Stats", icon: BarChart3, iconTone: "sidebar-nav-icon--blue" },
-  { href: "/settings", label: "Settings", icon: Settings, iconTone: "sidebar-nav-icon--lime" },
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { href: "/unlocks", label: "My links", icon: Lock },
+  { href: "/analytics", label: "Stats", icon: BarChart3 },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boolean; plan?: string }) {
@@ -41,28 +41,21 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
         )}
       >
         <div className="flex h-full flex-col p-5">
-          <Link href="/dashboard" prefetch className="mb-2 px-1 block" onClick={() => setOpen(false)}>
-            <LinklockLogo size={44} showWordmark wordmarkClassName="text-retro-text" />
+          <Link href="/dashboard" prefetch className="mb-6 px-1 block" onClick={() => setOpen(false)}>
+            <LinklockLogo size={40} showWordmark wordmarkClassName="text-retro-text" />
           </Link>
-          <p className="px-1 mb-4 text-xs text-retro-text-muted leading-relaxed">
-            Drop files. Gate the link. Grow your audience.
-          </p>
-          <span className="ll-sticker ll-sticker--lime mb-6 ml-1 inline-block">let&apos;s go</span>
 
           <Link
             href="/create"
             prefetch
             onClick={() => setOpen(false)}
-            className={cn("sidebar-primary-cta relative", onCreate && "sidebar-primary-cta--active")}
+            className={cn("sidebar-primary-cta", onCreate && "sidebar-primary-cta--active")}
           >
-            <Plus size={18} strokeWidth={2.5} />
+            <Plus size={18} strokeWidth={2} />
             Create link
-            <span className="ll-sticker ll-sticker--pink absolute -top-2.5 -right-2 !py-0.5 !px-1.5 !text-[0.6rem] !rotate-6 !shadow-[1px_1px_0_#18181b]">
-              new
-            </span>
           </Link>
 
-          <nav className="mt-5 flex flex-1 flex-col gap-0.5">
+          <nav className="mt-6 flex flex-1 flex-col gap-0.5">
             {mainNavItems.map((item) => {
               const active = pathname.startsWith(item.href);
               return (
@@ -73,9 +66,7 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
                   onClick={() => setOpen(false)}
                   className={cn("sidebar-nav-item", active && "sidebar-nav-active")}
                 >
-                  <span className={cn("sidebar-nav-icon", item.iconTone)}>
-                    <item.icon size={15} strokeWidth={2.5} />
-                  </span>
+                  <item.icon size={17} strokeWidth={2} />
                   {item.label}
                 </Link>
               );
@@ -107,10 +98,10 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
               <CreditCard size={16} className="shrink-0 text-retro-text-muted" />
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-medium text-retro-text">
-                  {isPro ? "Pro plan" : "Free plan"}
+                  {isPro ? "Pro" : "Free plan"}
                 </span>
                 <span className="block text-xs text-retro-text-muted truncate">
-                  {isPro ? "Manage or cancel" : "Upgrade for branding & stats"}
+                  {isPro ? "Manage subscription" : "Upgrade for more steps"}
                 </span>
               </span>
             </Link>
@@ -138,10 +129,7 @@ export function AppShell({
       <AppNavProgress />
       <AppSidebar isAdmin={isAdmin} plan={plan} />
       <div className="app-stage md:ml-64 min-h-screen">
-        <div className="app-deco app-deco--1" aria-hidden />
-        <div className="app-deco app-deco--2" aria-hidden />
-        <div className="app-deco app-deco--3" aria-hidden />
-        <main className="p-4 pt-16 md:px-10 md:py-12 md:pt-12">{children}</main>
+        <main className="p-4 pt-16 md:px-10 md:py-10 md:pt-10">{children}</main>
       </div>
     </>
   );

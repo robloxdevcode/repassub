@@ -67,11 +67,10 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
     <div className="max-w-2xl">
       <AppPageHeader
         title="Plan & billing"
-        eyebrow="For creators"
         subtitle={
           isPro
-            ? "You're on Pro — custom branding on unlock pages, more steps, full stats, no ads."
-            : "Free works great to start. Pro adds your branding, 10 steps per link, and advanced stats."
+            ? "Manage your Pro subscription, payment method, and invoices."
+            : "Free includes the basics. Pro adds branding, more steps, and full stats."
         }
       />
 
