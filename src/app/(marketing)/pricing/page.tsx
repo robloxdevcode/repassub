@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { RetroButton, RetroLink } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
+import { CurrencyToggle } from "@/components/marketing/currency-toggle";
 import { getBillingData, createCheckoutSession } from "@/lib/actions/payments";
 import { useToast } from "@/components/retro";
 import { useCurrency } from "@/components/providers/currency-provider";
@@ -95,11 +96,16 @@ export default function PricingPage() {
     <div>
       <section className="ll-page-hero border-b border-retro-border">
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
-          <p className="ll-label">Pricing</p>
-          <h1 className="ll-section-title mt-3">Plans</h1>
-          <p className="mt-4 text-retro-text-dim max-w-lg">
-            Free: unlimited links, 4 steps. Pro: 10 steps, branding, no ads.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+            <div>
+              <p className="ll-label">Pricing</p>
+              <h1 className="ll-section-title mt-3">Plans</h1>
+              <p className="mt-4 text-retro-text-dim max-w-lg">
+                Free: unlimited links, 4 steps. Pro: 10 steps, branding, no ads.
+              </p>
+            </div>
+            <CurrencyToggle className="self-start" />
+          </div>
         </div>
       </section>
 

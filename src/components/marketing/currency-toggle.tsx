@@ -1,33 +1,33 @@
-"use client";
-
-import { ChevronDown } from "lucide-react";
-import { BILLING_CURRENCIES, useCurrency } from "@/components/providers/currency-provider";
-import { cn } from "@/lib/utils";
-import type { BillingCurrency } from "@/lib/currency";
-
-export function CurrencyToggle({ className }: { className?: string }) {
-  const { currency, setCurrency } = useCurrency();
-
-  return (
-    <label className={cn("relative shrink-0", className)}>
-      <span className="sr-only">Display currency</span>
-      <select
-        value={currency}
-        onChange={(e) => setCurrency(e.target.value as BillingCurrency)}
-        aria-label="Display currency"
-        className="h-8 sm:h-9 appearance-none cursor-pointer border-2 border-retro-ink bg-retro-surface pl-2 pr-7 sm:pl-2.5 sm:pr-8 font-body text-[10px] sm:text-xs font-semibold text-retro-text brutal-shadow-sm transition-colors hover:bg-retro-surface-2 focus:outline-none focus:ring-2 focus:ring-retro-blue focus:ring-offset-1 max-w-[88px] sm:max-w-none"
-      >
-        {BILLING_CURRENCIES.map((item) => (
-          <option key={item.code} value={item.code}>
-            {item.short}
-          </option>
-        ))}
-      </select>
-      <ChevronDown
-        size={14}
-        aria-hidden
-        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-retro-text-dim"
-      />
-    </label>
-  );
-}
+"use client";
+
+import { ChevronDown } from "lucide-react";
+import { BILLING_CURRENCIES, useCurrency } from "@/components/providers/currency-provider";
+import { cn } from "@/lib/utils";
+import type { BillingCurrency } from "@/lib/currency";
+
+export function CurrencyToggle({ className }: { className?: string }) {
+  const { currency, setCurrency } = useCurrency();
+
+  return (
+    <label className={cn("relative shrink-0", className)}>
+      <span className="sr-only">Display currency</span>
+      <select
+        value={currency}
+        onChange={(e) => setCurrency(e.target.value as BillingCurrency)}
+        aria-label="Display currency"
+        className="ll-currency-select"
+      >
+        {BILLING_CURRENCIES.map((item) => (
+          <option key={item.code} value={item.code}>
+            {item.short}
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        size={14}
+        aria-hidden
+        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-retro-text-muted"
+      />
+    </label>
+  );
+}

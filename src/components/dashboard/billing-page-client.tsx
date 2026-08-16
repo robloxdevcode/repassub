@@ -8,6 +8,7 @@ import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { getBillingData, createBillingPortal, createCheckoutSession } from "@/lib/actions/payments";
 import { PLAN_FEATURES, PLAN_FINE_PRINT } from "@/lib/stripe";
 import { ProPriceText } from "@/components/marketing/pro-price-text";
+import { CurrencyToggle } from "@/components/marketing/currency-toggle";
 import { useCurrency } from "@/components/providers/currency-provider";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
@@ -65,14 +66,18 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
 
   return (
     <div className="max-w-2xl">
-      <AppPageHeader
-        title="Plan & billing"
-        subtitle={
-          isPro
-            ? "Manage your Pro subscription, payment method, and invoices."
-            : "Free includes the basics. Pro adds branding, more steps, and full stats."
-        }
-      />
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <AppPageHeader
+          className="mb-0 flex-1"
+          title="Plan & billing"
+          subtitle={
+            isPro
+              ? "Manage your Pro subscription, payment method, and invoices."
+              : "Free includes the basics. Pro adds branding, more steps, and full stats."
+          }
+        />
+        <CurrencyToggle className="shrink-0 sm:mb-0.5" />
+      </div>
 
       <AppCard className="p-6 md:p-8 mb-6">
         <p className="text-sm text-retro-text-muted mb-1">Your plan</p>

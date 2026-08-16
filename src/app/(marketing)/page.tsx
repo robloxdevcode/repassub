@@ -1,11 +1,17 @@
-import { HeroSection, PlatformCountStrip } from "@/components/marketing/hero-section";
+import {
+  BusinessHighlights,
+  HeroSection,
+  LandingCtaBar,
+  PlatformCountStrip,
+  TestimonialsSection,
+} from "@/components/marketing/hero-section";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Unlock Links for Creators",
+  title: "Linklock — Unlock pages for gated content",
   description:
-    "Gate downloads behind subscribe, follow, or join steps. Built for YouTube, TikTok, Instagram, and Discord creators.",
+    "Share one link. Visitors complete your steps, then your content unlocks. Free to start with dashboard analytics.",
   path: "/",
 });
 
@@ -15,6 +21,9 @@ export default function HomePage() {
       <HomeStructuredData />
       <HeroSection />
       <PlatformCountStrip />
+      <BusinessHighlights />
+      <TestimonialsSection />
+      <LandingCtaBar />
     </>
   );
 }

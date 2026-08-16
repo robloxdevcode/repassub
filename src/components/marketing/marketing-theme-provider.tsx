@@ -1,58 +1,72 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
 
-const STORAGE_KEY = "linklock-marketing-theme";
+
+import { createContext, useContext } from "react";
+
+
 
 type Theme = "light" | "dark";
 
+
+
 type MarketingThemeContextValue = {
+
   theme: Theme;
+
   toggleTheme: () => void;
+
   setTheme: (theme: Theme) => void;
+
 };
+
+
 
 const MarketingThemeContext = createContext<MarketingThemeContextValue | null>(null);
 
+
+
+/** Marketing pages use the same light palette as the dashboard. */
+
 export function MarketingThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "dark" || stored === "light") {
-      const t = setTimeout(() => setThemeState(stored), 0);
-      return () => clearTimeout(t);
-    }
-  }, []);
+  const value: MarketingThemeContextValue = {
 
-  function setTheme(next: Theme) {
-    setThemeState(next);
-    localStorage.setItem(STORAGE_KEY, next);
-  }
+    theme: "light",
 
-  function toggleTheme() {
-    setThemeState((current) => {
-      const next = current === "light" ? "dark" : "light";
-      localStorage.setItem(STORAGE_KEY, next);
-      return next;
-    });
-  }
+    toggleTheme: () => {},
+
+    setTheme: () => {},
+
+  };
+
+
 
   return (
-    <MarketingThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      <div
-        className={`min-h-screen flex flex-col flex-1 bg-retro-bg text-retro-text ${theme === "dark" ? "dark" : ""}`}
-      >
-        {children}
-      </div>
+
+    <MarketingThemeContext.Provider value={value}>
+
+      <div className="min-h-screen flex flex-col flex-1 bg-retro-bg text-retro-text">{children}</div>
+
     </MarketingThemeContext.Provider>
+
   );
+
 }
 
+
+
 export function useMarketingTheme() {
+
   const context = useContext(MarketingThemeContext);
+
   if (!context) {
+
     throw new Error("useMarketingTheme must be used within MarketingThemeProvider");
+
   }
+
   return context;
+
 }
+

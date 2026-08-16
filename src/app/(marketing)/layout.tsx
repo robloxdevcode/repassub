@@ -10,11 +10,9 @@ export default async function MarketingLayout({ children }: { children: React.Re
   return (
     <MarketingAuthProvider initialSignedIn={!!userId}>
       <MarketingThemeProvider>
-        <div className="min-h-screen flex flex-col bg-retro-bg">
-          <RetroNav />
-          <main className="flex-1 overflow-x-clip">{children}</main>
-          <RetroFooter />
-        </div>
+        <RetroNav />
+        <main className="flex-1 overflow-x-clip">{children}</main>
+        <RetroFooter />
       </MarketingThemeProvider>
     </MarketingAuthProvider>
   );
