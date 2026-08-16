@@ -1,18 +1,19 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Check, Download, Lock } from "lucide-react";
-import { burstConfetti } from "@/lib/confetti";
+import { Check, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const ACTIONS = ["Subscribe", "Join community", "Follow"];
+const ACTIONS = ["Subscribe", "Join", "Follow"];
 
 export function HeroLiveUnlock({
   className,
   size = "md",
+  calm = false,
 }: {
   className?: string;
   size?: "md" | "lg";
+  calm?: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [completed, setCompleted] = useState<Set<number>>(() => new Set());
@@ -20,7 +21,7 @@ export function HeroLiveUnlock({
   const total = ACTIONS.length;
   const progress = unlocked ? total : completed.size;
   const allDone = completed.size >= total;
-  const pad = size === "lg" ? "p-7" : "p-6";
+  const pad = size === "lg" ? "p-6 md:p-7" : "p-6";
 
   function toggleStep(index: number) {
     if (unlocked) return;
@@ -35,34 +36,29 @@ export function HeroLiveUnlock({
   function handleUnlock() {
     if (!allDone || unlocked) return;
     setUnlocked(true);
-    const rect = cardRef.current?.getBoundingClientRect();
-    burstConfetti(
-      rect
-        ? { x: rect.left + rect.width / 2, y: rect.top + rect.height * 0.55 }
-        : undefined
-    );
     window.setTimeout(() => {
       setUnlocked(false);
       setCompleted(new Set());
-    }, 3500);
+    }, 2800);
   }
 
   return (
     <div
       ref={cardRef}
-      className={cn("ll-demo-card ll-demo-card--interactive w-full", className)}
-      aria-label="Interactive preview"
+      className={cn(
+        calm ? "ll-calm-demo-card" : "ll-demo-card ll-demo-card--interactive",
+        "w-full",
+        className
+      )}
+      aria-label="Product preview"
     >
       <div className={pad}>
-        <div className="flex items-start justify-between gap-4 mb-2">
-          <div>
-            <h3 className="ll-demo-title text-lg font-semibold leading-tight">Workout plan</h3>
-            <p className="ll-demo-muted text-xs mt-1">Complete each step to unlock</p>
-          </div>
-        <span className="ll-demo-live ll-demo-live--neutral">Preview</span>
+        <div className="mb-5">
+          <p className="text-xs font-medium text-retro-text-muted uppercase tracking-wide">Preview</p>
+          <h3 className="mt-1 text-lg font-semibold text-retro-text tracking-tight">Workout plan</h3>
         </div>
 
-        <div className="flex flex-col gap-2.5 mb-6">
+        <div className="flex flex-col gap-2 mb-5">
           {ACTIONS.map((label, i) => {
             const done = completed.has(i);
             return (
@@ -72,30 +68,28 @@ export function HeroLiveUnlock({
                 disabled={unlocked}
                 onClick={() => toggleStep(i)}
                 className={cn(
-                  "ll-action-row ll-action-row--clickable text-left w-full",
-                  done && "ll-action-row--done"
+                  "ll-calm-step",
+                  done && "ll-calm-step--done",
+                  unlocked && "pointer-events-none"
                 )}
               >
-                <span className={cn("ll-action-check", done && "ll-action-check--done")}>
-                  {done ? <Check size={13} strokeWidth={2.5} /> : i + 1}
+                <span className={cn("ll-calm-step-check", done && "ll-calm-step-check--done")}>
+                  {done ? <Check size={12} strokeWidth={2.5} /> : i + 1}
                 </span>
-                <span className="ll-demo-row-text text-sm font-medium">{label}</span>
+                <span className="text-sm text-retro-text">{label}</span>
               </button>
             );
           })}
         </div>
 
-        <div className="flex justify-between text-xs ll-demo-muted mb-2.5">
+        <div className="flex justify-between text-xs text-retro-text-muted mb-2">
           <span>Progress</span>
-          <span className="ll-demo-stat font-semibold tabular-nums">
+          <span className="tabular-nums font-medium text-retro-text-dim">
             {progress}/{total}
           </span>
         </div>
-        <div className="ll-progress mb-5">
-          <div
-            className="ll-progress-fill"
-            style={{ width: `${(progress / total) * 100}%` }}
-          />
+        <div className="ll-calm-progress mb-5">
+          <div className="ll-calm-progress-fill" style={{ width: `${(progress / total) * 100}%` }} />
         </div>
 
         <button
@@ -103,13 +97,13 @@ export function HeroLiveUnlock({
           onClick={handleUnlock}
           disabled={!allDone || unlocked}
           className={cn(
-            "ll-unlock-btn ll-unlock-btn--interactive w-full",
-            allDone && !unlocked && "ll-unlock-btn--active",
-            unlocked && "ll-unlock-btn--ready"
+            "ll-calm-unlock w-full",
+            allDone && !unlocked && "ll-calm-unlock--ready",
+            unlocked && "ll-calm-unlock--success"
           )}
         >
-          {unlocked ? <Download size={16} /> : <Lock size={16} />}
-          {unlocked ? "Unlocked" : allDone ? "Unlock content" : "Complete all steps"}
+          <Lock size={15} />
+          {unlocked ? "Unlocked" : allDone ? "Unlock content" : "Complete the steps above"}
         </button>
       </div>
     </div>

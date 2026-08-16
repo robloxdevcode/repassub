@@ -4180,3 +4180,198 @@ body {
 .ll-section-label {
   display: none !important;
 }
+
+/* —— Calm marketing shell —— */
+
+.ll-marketing {
+  --retro-bg: #f8fafc;
+  --retro-surface: #ffffff;
+  --retro-surface-2: #f1f5f9;
+  --retro-border: #e2e8f0;
+  --retro-accent: #334155;
+  --retro-accent-dim: #1e293b;
+  --retro-text: #0f172a;
+  --retro-text-dim: #64748b;
+  --retro-text-muted: #94a3b8;
+  --ui-radius-lg: 0.75rem;
+  background: var(--retro-bg);
+  color: var(--retro-text);
+}
+
+.ll-calm-nav {
+  background: rgba(248, 250, 252, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.ll-calm-landing {
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%);
+}
+
+.ll-calm-hero {
+  min-height: calc(100vh - 14rem);
+}
+
+.ll-calm-title {
+  font-size: clamp(1.875rem, 4.5vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--retro-text);
+}
+
+.ll-calm-lead {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--retro-text-dim);
+  max-width: 32rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ll-calm-trust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--retro-text-muted);
+}
+
+.ll-calm-trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ll-calm-trust li:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.75rem;
+  color: var(--retro-border);
+}
+
+.ll-calm-cta {
+  background: #334155 !important;
+  box-shadow: none !important;
+  font-weight: 500 !important;
+}
+
+.ll-calm-cta:hover {
+  background: #1e293b !important;
+}
+
+.ll-calm-demo-card {
+  background: #ffffff;
+  border: 1px solid var(--retro-border);
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 12px 40px rgba(15, 23, 42, 0.06);
+}
+
+.ll-calm-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  text-align: left;
+  border: 1px solid var(--retro-border);
+  border-radius: 0.625rem;
+  background: var(--retro-surface);
+  transition: background 150ms ease, border-color 150ms ease;
+  cursor: pointer;
+}
+
+.ll-calm-step:hover:not(:disabled) {
+  background: var(--retro-surface-2);
+  border-color: #cbd5e1;
+}
+
+.ll-calm-step--done {
+  opacity: 0.72;
+  background: var(--retro-surface-2);
+}
+
+.ll-calm-step-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 9999px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--retro-text-muted);
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+  flex-shrink: 0;
+}
+
+.ll-calm-step-check--done {
+  background: #334155;
+  border-color: #334155;
+  color: #fff;
+}
+
+.ll-calm-progress {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--retro-surface-2);
+  overflow: hidden;
+}
+
+.ll-calm-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: #64748b;
+  transition: width 0.35s ease;
+}
+
+.ll-calm-unlock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8125rem 1rem;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--retro-text-muted);
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+  cursor: not-allowed;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.ll-calm-unlock--ready {
+  cursor: pointer;
+  color: #fff;
+  background: #334155;
+  border-color: #334155;
+}
+
+.ll-calm-unlock--ready:hover {
+  background: #1e293b;
+}
+
+.ll-calm-unlock--success {
+  cursor: default;
+  color: #fff;
+  background: #059669;
+  border-color: #059669;
+}
+
+.ll-calm-footnote {
+  font-size: 0.875rem;
+  color: var(--retro-text-muted);
+}
+
+.ll-calm-footer {
+  border-top: 1px solid var(--retro-border);
+  background: #ffffff;
+}
