@@ -15,18 +15,18 @@ export { HeroSection } from "@/components/marketing/hero-section";
 const STEPS = [
   {
     num: "01",
-    title: "Drop your file",
-    desc: "MP3, ZIP, PDF, or a URL — whatever fans are grabbing.",
+    title: "Add your content",
+    desc: "Upload a file or paste a link — whatever you're sharing with fans.",
   },
   {
     num: "02",
-    title: "Set the steps",
-    desc: "Subscribe, join Discord, follow — up to 4 on Free, 10 on Pro.",
+    title: "Pick fan actions",
+    desc: "YouTube subscribe, Discord join, Instagram follow — up to 4 on Free, 10 on Pro.",
   },
   {
     num: "03",
     title: "Share one link",
-    desc: "Post it anywhere. Fans unlock without making an account.",
+    desc: "Post it in your bio, video, or story. Fans unlock without signing up.",
   },
 ];
 
@@ -238,17 +238,12 @@ export function CtaSection() {
           <p className="mt-3 text-white/55 text-center text-sm max-w-md mx-auto">
             Join creators using Linklock to grow on YouTube, TikTok, Instagram, and Discord.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="mt-8 flex justify-center">
             <MarketingAuthLink href="/sign-up" className="inline-block">
               <RetroButton size="lg" variant="white" className="w-full sm:min-w-[200px] ll-btn-glow">
                 Get started free
               </RetroButton>
             </MarketingAuthLink>
-            <Link href="/how-it-works" prefetch className="inline-block">
-              <RetroButton size="lg" variant="ghost" className="ll-hero-ghost w-full sm:min-w-[200px]">
-                How it works
-              </RetroButton>
-            </Link>
           </div>
         </div>
       </div>

@@ -321,7 +321,6 @@ export const SITEMAP_ROUTES: {
   { path: "/how-it-works", priority: 0.85, changeFrequency: "monthly" },
   { path: "/features", priority: 0.85, changeFrequency: "monthly" },
   { path: "/creators", priority: 0.8, changeFrequency: "monthly" },
-  { path: "/examples", priority: 0.75, changeFrequency: "monthly" },
   { path: "/use-cases", priority: 0.75, changeFrequency: "monthly" },
   { path: "/support", priority: 0.7, changeFrequency: "monthly" },
   { path: "/docs", priority: 0.65, changeFrequency: "monthly" },
