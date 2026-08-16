@@ -233,15 +233,15 @@ export function CtaSection() {
         <div className="ll-cta-box">
           <Download size={28} className="text-retro-accent mb-4 mx-auto" />
           <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight text-center">
-            Make your first unlock link
+            Ready to turn traffic into followers?
           </h2>
-          <p className="mt-3 text-white/55 text-center text-sm">
-            Free · unlimited links · no card
+          <p className="mt-3 text-white/55 text-center text-sm max-w-md mx-auto">
+            Join creators using Linklock to grow on YouTube, TikTok, Instagram, and Discord.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <MarketingAuthLink href="/sign-up" className="inline-block">
-              <RetroButton size="lg" variant="white" className="w-full sm:min-w-[200px]">
-                Create a link
+              <RetroButton size="lg" variant="white" className="w-full sm:min-w-[200px] ll-btn-glow">
+                Get started free
               </RetroButton>
             </MarketingAuthLink>
             <Link href="/how-it-works" prefetch className="inline-block">

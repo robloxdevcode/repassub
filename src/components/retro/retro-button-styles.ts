@@ -14,7 +14,7 @@ export type RetroButtonSize = "sm" | "md" | "lg";
 
 const variants: Record<RetroButtonVariant, string> = {
   primary:
-    "bg-retro-ink text-white border-transparent hover:bg-neutral-800 shadow-sm",
+    "bg-retro-accent text-white border-transparent hover:bg-retro-accent-dim shadow-[0_2px_8px_rgba(99,102,241,0.25)] hover:shadow-[0_4px_14px_rgba(99,102,241,0.35)]",
   secondary:
     "bg-retro-surface text-retro-text border border-retro-border hover:bg-retro-surface-2 shadow-sm",
   blue: "bg-retro-blue text-white border-transparent hover:opacity-90 shadow-sm",
@@ -44,7 +44,7 @@ export function retroButtonClasses({
   loading?: boolean;
 }) {
   return cn(
-    "font-body inline-flex items-center justify-center gap-2 font-medium rounded-[var(--ui-radius)] border",
+    "font-body inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--ui-radius-lg)] border",
     "transition-[color,background-color,opacity,border-color,box-shadow] duration-150 ease-out",
     "active:scale-[0.99] select-none touch-manipulation",
     "disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100",

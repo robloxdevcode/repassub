@@ -7,8 +7,8 @@
   --retro-surface-3: #ebebeb;
   --retro-ink: #171717;
   --retro-border: #e5e5e5;
-  --retro-accent: #171717;
-  --retro-accent-dim: #404040;
+  --retro-accent: #6366f1;
+  --retro-accent-dim: #4f46e5;
   --retro-blue: #2563eb;
   --retro-blue-dim: #1d4ed8;
   --retro-yellow: #eab308;
@@ -2405,15 +2405,17 @@ body {
   width: 100%;
   padding: 0.6875rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   color: white;
-  background: var(--retro-ink);
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   border-radius: var(--ui-radius);
-  transition: background 150ms ease-out, opacity 150ms ease-out;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  transition: opacity 150ms ease-out, box-shadow 150ms ease-out;
 }
 
 .sidebar-primary-cta:hover {
-  background: #262626;
+  opacity: 0.95;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
 }
 
 .sidebar-primary-cta--active {
@@ -2734,9 +2736,9 @@ body {
 .ll-hero {
   position: relative;
   overflow: hidden;
-  background: var(--retro-bg);
-  color: var(--retro-text);
-  border-bottom: 1px solid var(--retro-border);
+  background: linear-gradient(180deg, #0a0a0f 0%, #111118 55%, #0d0d12 100%);
+  color: #fafafa;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .ll-dot-canvas {
@@ -2766,21 +2768,36 @@ body {
   pointer-events: none;
 }
 
-.ll-hero-glow--1,
+.ll-hero-glow--1 {
+  width: 600px;
+  height: 400px;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(99, 102, 241, 0.28);
+}
+
 .ll-hero-glow--2 {
-  display: none;
+  width: 320px;
+  height: 320px;
+  bottom: -5%;
+  right: -5%;
+  background: rgba(139, 92, 246, 0.18);
 }
 
 .ll-hero-title {
-  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: -0.03em;
-  color: var(--retro-text);
+  color: #fafafa;
 }
 
 .ll-gradient-text {
-  color: var(--retro-text);
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 50%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .ll-pill {
@@ -2850,23 +2867,85 @@ body {
 }
 
 .ll-btn-glow {
-  box-shadow: 3px 3px 0 #18181b !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
+}
+
+.ll-trust-strip {
+  background: var(--retro-surface);
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.ll-mock-panel {
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.ll-mock-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--retro-text-muted);
+}
+
+.ll-mock-stat {
+  padding: 0.75rem;
+  border-radius: 0.625rem;
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+  text-align: center;
+}
+
+.ll-mock-progress {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--retro-surface-2);
+  overflow: hidden;
+}
+
+.ll-mock-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+}
+
+.ll-testimonial {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.5rem;
+  border: 1px solid var(--retro-border);
+  border-radius: 1rem;
+  background: var(--retro-surface);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+@media (hover: hover) {
+  .ll-testimonial:hover {
+    border-color: color-mix(in srgb, var(--retro-accent) 30%, var(--retro-border));
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .ll-brand-tag {
   display: inline-block;
-  padding: 0.25rem 0.625rem;
+  padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: var(--retro-text-muted);
-  background: var(--retro-surface);
-  border: 1px solid var(--retro-border);
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
 
 .ll-brand-tag--dark {
   color: var(--retro-text-muted);
+  background: var(--retro-surface);
+  border-color: var(--retro-border);
 }
 
 .ll-url-bar {
@@ -2874,20 +2953,20 @@ body {
   align-items: center;
   gap: 0.625rem;
   padding: 0.625rem 0.875rem;
-  border-radius: var(--ui-radius);
-  background: var(--retro-surface);
-  border: 1px solid var(--retro-border);
+  border-radius: 0.625rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.8125rem;
-  color: var(--retro-text-muted);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .ll-url-bar-icon {
   display: flex;
-  color: var(--retro-text-muted);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .ll-url-bar-text strong {
-  color: var(--retro-text);
+  color: #c7d2fe;
   font-weight: 600;
 }
 
@@ -3251,7 +3330,7 @@ body {
 
 .ll-plan-card--pro {
   border-color: var(--retro-accent);
-  box-shadow: 0 0 0 1px var(--retro-accent), 0 12px 40px rgba(240, 62, 62, 0.12);
+  box-shadow: 0 0 0 1px var(--retro-accent), 0 12px 40px rgba(99, 102, 241, 0.12);
   position: relative;
 }
 
@@ -3973,12 +4052,11 @@ body {
   border-color: var(--retro-text-muted);
 }
 
-/* Legacy playful classes — kept inert for older markup */
+/* Legacy playful classes — inert */
 .ll-sticker,
 .ll-float-sticker,
 .app-deco,
 .dash-upsell,
 .ll-section-label {
-  all: unset;
-  display: none;
+  display: none !important;
 }
