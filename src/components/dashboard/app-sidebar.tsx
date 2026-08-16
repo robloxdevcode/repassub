@@ -27,7 +27,7 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-50 md:hidden rounded-[var(--ui-radius)] border border-retro-border bg-retro-surface p-2 touch-manipulation"
+        className="fixed left-4 top-4 z-50 md:hidden rounded-[var(--ui-radius-lg)] border border-retro-border bg-retro-surface p-2.5 shadow-sm touch-manipulation"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Close menu" : "Open menu"}
       >

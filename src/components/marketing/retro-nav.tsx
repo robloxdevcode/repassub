@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/marketing/theme-toggle";
+import { CurrencyToggle } from "@/components/marketing/currency-toggle";
 import { MarketingNavActions } from "@/components/marketing/marketing-nav-actions";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/features", label: "Features" },
-  { href: "/#how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
 ];
 
@@ -16,21 +17,21 @@ export function RetroNav() {
   const pathname = usePathname();
 
   return (
-    <header className="ll-calm-nav sticky top-0 z-50">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 h-14">
-        <Link href="/" prefetch className="flex items-center shrink-0 min-w-0">
-          <LinklockLogo size={36} showWordmark wordmarkClassName="hidden sm:inline text-retro-text" />
+    <header className="ll-nav sticky top-0 z-50">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 h-16">
+          <Link href="/" prefetch className="flex items-center gap-2 shrink-0 min-w-0">
+          <LinklockLogo size={44} showWordmark wordmarkClassName="hidden sm:inline text-retro-text" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-1">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               prefetch
               className={cn(
-                "text-sm text-retro-text-muted hover:text-retro-text transition-colors",
-                pathname === link.href && "text-retro-text font-medium"
+                "ll-nav-link",
+                pathname === link.href && "ll-nav-link--active"
               )}
             >
               {link.label}
@@ -38,7 +39,13 @@ export function RetroNav() {
           ))}
         </nav>
 
-        <MarketingNavActions />
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="hidden sm:flex items-center gap-2">
+            <CurrencyToggle />
+            <ThemeToggle />
+          </div>
+          <MarketingNavActions />
+        </div>
       </div>
     </header>
   );

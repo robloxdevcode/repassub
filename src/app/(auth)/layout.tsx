@@ -5,5 +5,9 @@ export const metadata: Metadata = {
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <div className="auth-shell">
+      <div className="auth-shell-inner">{children}</div>
+    </div>
+  );
 }
