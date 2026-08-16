@@ -16,16 +16,14 @@ export function HeroSection() {
       <div className="relative z-10 mx-auto max-w-6xl px-4 pt-14 pb-16 md:pt-20 md:pb-24">
         <div className="grid lg:grid-cols-[1fr_400px] gap-12 lg:gap-16 items-center">
           <div className="text-center lg:text-left">
-            <p className="ll-brand-tag">LINKLOCK</p>
+            <p className="ll-brand-tag">Grow your audience</p>
             <h1 className="ll-hero-title mt-4">
-              One link.
+              Control access to your content
               <br />
-              They follow.
-              <br />
-              <span className="ll-gradient-text">They download.</span>
+              <span className="ll-gradient-text">and grow your audience</span>
             </h1>
-            <p className="mt-6 text-lg text-white/60 leading-relaxed max-w-md mx-auto lg:mx-0">
-              Paste your file, pick what fans must do first — subscribe, join, follow — then share a single link.
+            <p className="mt-6 text-lg text-white/70 leading-relaxed max-w-lg mx-auto lg:mx-0">
+              Create links that unlock only after an action — subscribe, join, or follow. No account required for viewers.
             </p>
 
             <div className="ll-url-bar mt-8 mx-auto lg:mx-0 max-w-md">
@@ -41,7 +39,7 @@ export function HeroSection() {
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <MarketingAuthLink href="/sign-up" className="inline-block w-full sm:w-auto">
                 <RetroButton size="lg" className="w-full sm:min-w-[220px] ll-btn-glow">
-                  Create a link
+                  Create my first link
                 </RetroButton>
               </MarketingAuthLink>
               <RetroLink

@@ -14,7 +14,7 @@ export type RetroButtonSize = "sm" | "md" | "lg";
 
 const variants: Record<RetroButtonVariant, string> = {
   primary:
-    "bg-gradient-to-b from-[#ff5252] to-[#e03131] text-white border-transparent hover:from-[#ff6b6b] hover:to-[#f03e3e] shadow-[0_1px_2px_rgba(0,0,0,0.1),0_4px_12px_rgba(240,62,62,0.25)]",
+    "bg-[#4f46e5] text-white border-transparent hover:bg-[#4338ca] shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_12px_rgba(79,70,229,0.25)]",
   secondary:
     "bg-retro-surface text-retro-text border-retro-border hover:border-retro-text-muted hover:bg-retro-surface-2 shadow-sm",
   blue: "bg-gradient-to-b from-[#4dabf7] to-[#228be6] text-white border-transparent hover:opacity-95 shadow-sm",

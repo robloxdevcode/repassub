@@ -37,7 +37,7 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
 
       <aside
         className={cn(
-          "app-sidebar fixed inset-y-0 left-0 z-40 w-60 text-retro-text border-r border-retro-border transition-transform duration-150 md:translate-x-0",
+          "app-sidebar fixed inset-y-0 left-0 z-40 w-64 text-retro-text border-r border-retro-border transition-transform duration-150 md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -119,7 +119,7 @@ export function AppShell({
     <>
       <AppNavProgress />
       <AppSidebar isAdmin={isAdmin} plan={plan} />
-      <div className="app-stage md:ml-60 min-h-screen">
+      <div className="app-stage md:ml-64 min-h-screen">
         <main className="p-4 pt-16 md:p-8 md:pt-10">{children}</main>
       </div>
     </>

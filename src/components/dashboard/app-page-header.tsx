@@ -5,16 +5,18 @@ export function AppPageHeader({
   title,
   subtitle,
   action,
+  eyebrow = "Dashboard",
 }: {
   title: string;
   subtitle?: string;
   action?: { href: string; label: string };
+  eyebrow?: string;
 }) {
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p className="text-xs font-semibold text-retro-accent mb-2 tracking-wide uppercase">Linklock</p>
-        <h1 className="font-body text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+        <p className="text-xs font-medium text-retro-text-muted mb-2">{eyebrow}</p>
+        <h1 className="font-body text-2xl md:text-3xl font-bold tracking-tight text-retro-text">{title}</h1>
         {subtitle ? <p className="mt-2 text-sm text-retro-text-dim">{subtitle}</p> : null}
       </div>
       {action ? (

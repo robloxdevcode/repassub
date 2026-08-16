@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
-import { Press_Start_2P, Space_Grotesk } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { RetroToastProvider } from "@/components/retro";
 import { CurrencyProvider } from "@/components/providers/currency-provider";
 import { buildRootMetadata } from "@/lib/seo";
 import "./globals.css";
 
-const pressStart = Press_Start_2P({
-  weight: "400",
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-press-start",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  variable: "--font-plus-jakarta",
 });
 
 const ADSENSE_SRC =
@@ -24,7 +18,7 @@ export const metadata: Metadata = buildRootMetadata();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${pressStart.variable} ${spaceGrotesk.variable} h-full`}>
+    <html lang="en" className={`${plusJakarta.variable} h-full`}>
       <head>
         <script async src={ADSENSE_SRC} crossOrigin="anonymous" />
       </head>
@@ -36,8 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           signUpFallbackRedirectUrl="/dashboard"
           appearance={{
             variables: {
-              colorPrimary: "#f03e3e",
+              colorPrimary: "#4f46e5",
               colorBackground: "#ffffff",
+              borderRadius: "0.75rem",
+              fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif",
             },
           }}
         >
