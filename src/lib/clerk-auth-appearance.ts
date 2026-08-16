@@ -4,9 +4,9 @@ export const clerkAuthAppearance = {
 
     colorPrimary: "#6366f1",
 
-    colorBackground: "#0d0d16",
+    colorBackground: "#ffffff",
 
-    colorInputBackground: "#12121c",
+    colorInputBackground: "#f8fafc",
 
     borderRadius: "0.75rem",
 
