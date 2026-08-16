@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, Lock, Plus, Settings, Menu, X, Shield, BarChart3, User, CreditCard } from "lucide-react";
+import { LayoutDashboard, Lock, Plus, Settings, Menu, X, Shield, BarChart3, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
+import { isProPlanName } from "@/components/dashboard/plan-badge";
 
 const mainNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -20,11 +21,13 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const onCreate = pathname.startsWith("/create");
+  const onBilling = pathname.startsWith("/billing");
+  const isPro = isProPlanName(plan);
 
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-50 md:hidden rounded-xl border border-retro-border bg-retro-surface p-2 touch-manipulation"
+        className="fixed left-4 top-4 z-50 md:hidden rounded-[var(--ui-radius)] border border-retro-border bg-retro-surface p-2 touch-manipulation"
         onClick={() => setOpen(!open)}
         aria-label={open ? "Close menu" : "Open menu"}
       >
@@ -38,9 +41,12 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
         )}
       >
         <div className="flex h-full flex-col p-5">
-          <Link href="/dashboard" prefetch className="mb-8 px-1 block" onClick={() => setOpen(false)}>
-            <LinklockLogo size={32} showWordmark wordmarkClassName="text-retro-text" />
+          <Link href="/dashboard" prefetch className="mb-2 px-1 block" onClick={() => setOpen(false)}>
+            <LinklockLogo size={44} showWordmark wordmarkClassName="text-retro-text" />
           </Link>
+          <p className="px-1 mb-6 text-xs text-retro-text-muted leading-relaxed">
+            Gate files behind subscribe, follow & join steps.
+          </p>
 
           <Link
             href="/create"
@@ -52,7 +58,7 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
             Create link
           </Link>
 
-          <nav className="mt-6 flex flex-1 flex-col gap-0.5">
+          <nav className="mt-5 flex flex-1 flex-col gap-0.5">
             {mainNavItems.map((item) => {
               const active = pathname.startsWith(item.href);
               return (
@@ -85,7 +91,23 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
             )}
           </nav>
 
-          <div className="border-t border-retro-border pt-4 mt-4">
+          <div className="mt-auto space-y-3 pt-4 border-t border-retro-border">
+            <Link
+              href="/billing"
+              prefetch
+              onClick={() => setOpen(false)}
+              className={cn("sidebar-billing-row", onBilling && "sidebar-billing-row--active")}
+            >
+              <CreditCard size={16} className="shrink-0 text-retro-text-muted" />
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-medium text-retro-text">
+                  {isPro ? "Pro plan" : "Free plan"}
+                </span>
+                <span className="block text-xs text-retro-text-muted truncate">
+                  {isPro ? "Manage or cancel" : "Upgrade for branding & stats"}
+                </span>
+              </span>
+            </Link>
             <ClerkUserMenu plan={plan} />
           </div>
         </div>

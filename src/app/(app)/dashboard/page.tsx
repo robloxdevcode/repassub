@@ -19,8 +19,8 @@ export default async function DashboardPage() {
         title={firstName ? `Hi, ${firstName}` : "Home"}
         subtitle={
           hasUnlocks
-            ? "Your links at a glance."
-            : "Create a link in the sidebar to get started."
+            ? "Views and unlocks from your beat packs, mods & file drops."
+            : "Gate a download behind YouTube subscribe, Discord join, or a follow — then share one link."
         }
       />
 
@@ -31,7 +31,7 @@ export default async function DashboardPage() {
           </div>
           <h2 className="text-lg font-semibold text-retro-text">No links yet</h2>
           <p className="mt-2 text-sm text-retro-text-dim max-w-sm mx-auto leading-relaxed">
-            Add your file, choose fan steps like subscribe or join, then share one link. Use{" "}
+            Drop your file, pick fan steps (subscribe, join, follow), share one link. Hit{" "}
             <span className="font-medium text-retro-text">Create link</span> in the sidebar.
           </p>
         </section>

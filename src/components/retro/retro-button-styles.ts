@@ -45,7 +45,7 @@ export function retroButtonClasses({
   loading?: boolean;
 }) {
   return cn(
-    "font-body inline-flex items-center justify-center gap-2.5 font-semibold rounded-xl border",
+    "font-body inline-flex items-center justify-center gap-2.5 font-semibold rounded-[var(--ui-radius)] border",
     "transition-[color,background-color,transform,opacity,border-color,box-shadow] duration-75 ease-out",
     "active:scale-[0.98] select-none touch-manipulation",
     "disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100",

@@ -26,6 +26,10 @@
   --platform-youtube: #ff0000;
   --platform-discord: #5865f2;
   --platform-spotify: #1db954;
+  --ui-radius-sm: 0.75rem;
+  --ui-radius: 1rem;
+  --ui-radius-lg: 1.25rem;
+  --ui-radius-xl: 1.5rem;
 }
 
 .dark {
@@ -197,7 +201,7 @@ body {
 .retro-panel {
   background: var(--retro-surface);
   border: 1px solid var(--retro-border);
-  border-radius: 1rem;
+  border-radius: var(--ui-radius-lg);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
@@ -2403,7 +2407,7 @@ body {
   font-weight: 600;
   color: white;
   background: var(--retro-accent);
-  border-radius: 0.75rem;
+  border-radius: var(--ui-radius);
   transition: background 75ms ease-out, transform 75ms ease-out;
 }
 
@@ -2428,7 +2432,7 @@ body {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--retro-text-dim);
-  border-radius: 0.625rem;
+  border-radius: var(--ui-radius-sm);
   transition: background 75ms ease-out, color 75ms ease-out;
 }
 
@@ -2467,7 +2471,7 @@ body {
 .ll-app-card {
   background: var(--retro-surface);
   border: 1px solid var(--retro-border);
-  border-radius: 1rem;
+  border-radius: var(--ui-radius-lg);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.03);
 }
 
@@ -2507,15 +2511,16 @@ body {
 .app-card-accent-green { border-left: 4px solid var(--retro-success); }
 
 .stat-card {
-  border: 2px solid var(--retro-ink);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-lg);
   padding: 1.25rem 1rem;
   text-align: center;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .stat-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 var(--retro-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .stat-card-blue { background: linear-gradient(180deg, #d6e8ff 0%, #eef5ff 100%); }
@@ -2523,7 +2528,8 @@ body {
 .stat-card-yellow { background: linear-gradient(180deg, #fff4a8 0%, #fffce8 100%); }
 
 .link-row {
-  border: 2px solid var(--retro-ink);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius);
   background: var(--retro-surface-2);
   padding: 1rem;
   transition: border-color 75ms ease-out;
@@ -2534,9 +2540,9 @@ body {
 }
 
 .empty-state {
-  background: linear-gradient(135deg, var(--retro-yellow) 0%, #fff4b8 100%);
-  border: 3px solid var(--retro-ink);
-  box-shadow: 6px 6px 0 var(--retro-ink);
+  background: var(--retro-surface);
+  border: 1px dashed var(--retro-border);
+  border-radius: var(--ui-radius-lg);
   text-align: center;
   padding: 2rem 1.5rem;
 }
@@ -3728,7 +3734,7 @@ body {
   display: inline-flex;
   background: var(--retro-surface-2);
   border: 1px solid var(--retro-border);
-  border-radius: 9999px;
+  border-radius: var(--ui-radius-xl);
   padding: 0.25rem;
 }
 
@@ -3859,7 +3865,7 @@ body {
   text-align: center;
   padding: 3rem 1.5rem;
   border: 1px dashed var(--retro-border);
-  border-radius: 1rem;
+  border-radius: var(--ui-radius-lg);
   background: var(--retro-surface);
 }
 
@@ -3870,7 +3876,7 @@ body {
   width: 3.5rem;
   height: 3.5rem;
   margin-bottom: 1rem;
-  border-radius: 1rem;
+  border-radius: var(--ui-radius);
   background: var(--retro-surface-2);
   color: var(--retro-accent);
 }
@@ -3881,7 +3887,7 @@ body {
   gap: 1px;
   background: var(--retro-border);
   border: 1px solid var(--retro-border);
-  border-radius: 1rem;
+  border-radius: var(--ui-radius-lg);
   overflow: hidden;
   transition: border-color 75ms ease-out;
 }
@@ -3937,7 +3943,7 @@ body {
 
 .dash-link-list {
   border: 1px solid var(--retro-border);
-  border-radius: 1rem;
+  border-radius: var(--ui-radius-lg);
   background: var(--retro-surface);
   overflow: hidden;
 }
@@ -3955,7 +3961,7 @@ body {
 }
 
 .dash-link-main {
-  border-radius: 0.5rem;
+  border-radius: var(--ui-radius-sm);
   padding: 0.25rem 0.5rem;
   margin: -0.25rem -0.5rem;
   transition: background 75ms ease-out;
@@ -3963,4 +3969,25 @@ body {
 
 .dash-link-main:hover {
   background: var(--retro-surface-2);
+}
+
+.sidebar-billing-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius);
+  background: var(--retro-surface-2);
+  transition: border-color 75ms ease-out, background 75ms ease-out;
+}
+
+.sidebar-billing-row:hover {
+  border-color: color-mix(in srgb, var(--retro-accent) 30%, var(--retro-border));
+  background: var(--retro-surface);
+}
+
+.sidebar-billing-row--active {
+  border-color: color-mix(in srgb, var(--retro-accent) 45%, var(--retro-border));
+  background: color-mix(in srgb, var(--retro-accent) 8%, var(--retro-surface));
 }

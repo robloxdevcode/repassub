@@ -1,12 +1,12 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
-import { CreditCard, User } from "lucide-react";
-import { PlanBadge, planDisplayName } from "@/components/dashboard/plan-badge";
+import { User } from "lucide-react";
 
-export function ClerkUserMenu({ plan = "FREE" }: { plan?: string }) {
+export function ClerkUserMenu({ plan: _plan = "FREE" }: { plan?: string }) {
+
   return (
-    <div className="flex items-center gap-3 min-w-0">
+    <div className="flex items-center gap-3 min-w-0 px-1">
       <UserButton
         appearance={{
           elements: {
@@ -17,16 +17,9 @@ export function ClerkUserMenu({ plan = "FREE" }: { plan?: string }) {
       >
         <UserButton.MenuItems>
           <UserButton.Link label="Profile" labelIcon={<User size={14} />} href="/profile" />
-          <UserButton.Link
-            label={`${planDisplayName(plan)} plan`}
-            labelIcon={<CreditCard size={14} />}
-            href="/billing"
-          />
         </UserButton.MenuItems>
       </UserButton>
-      <div className="min-w-0">
-        <PlanBadge plan={plan} />
-      </div>
+      <p className="text-xs text-retro-text-muted truncate">Account & profile</p>
     </div>
   );
 }

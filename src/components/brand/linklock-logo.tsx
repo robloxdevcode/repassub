@@ -21,9 +21,11 @@ export function LinklockLogo({
 }: LinklockLogoProps) {
   const height = size;
   const width = Math.round(size * LOGO_ASPECT);
+  const wordmarkSize =
+    size >= 44 ? "text-xl" : size >= 36 ? "text-lg" : "text-base";
 
   return (
-    <span className={cn("inline-flex items-center gap-3", className)}>
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
       <Image
         src="/logo.png"
         alt="Linklock"
@@ -33,7 +35,15 @@ export function LinklockLogo({
         priority
       />
       {showWordmark ? (
-        <span className={cn("font-display text-[10px] tracking-wide", wordmarkClassName)}>LINKLOCK</span>
+        <span
+          className={cn(
+            "font-body font-bold tracking-tight text-retro-text",
+            wordmarkSize,
+            wordmarkClassName
+          )}
+        >
+          Linklock
+        </span>
       ) : null}
     </span>
   );
