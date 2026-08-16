@@ -28,7 +28,7 @@ export function MarketingNavActions() {
       >
         Log in
       </Link>
-      <RetroLink href="/sign-up" size="sm" className="ll-calm-cta !min-h-0 !py-2 !px-4 !text-sm">
+      <RetroLink href="/sign-up" size="sm" className="ll-landing-pill ll-landing-pill--nav !min-h-0 !py-2 !px-4 !text-sm">
         Get started
       </RetroLink>
     </div>
