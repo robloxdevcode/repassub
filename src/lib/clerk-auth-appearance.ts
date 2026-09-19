@@ -1,27 +1,26 @@
 export const clerkAuthAppearance = {
   variables: {
-    colorPrimary: "#f97316",
+    colorPrimary: "#43e660",
     colorBackground: "#ffffff",
-    colorInputBackground: "#fffaf5",
-    colorText: "#1c1917",
-    colorTextSecondary: "#57534e",
+    colorInputBackground: "#f7f7f5",
+    colorText: "#1a1a1a",
+    colorTextSecondary: "#676767",
     borderRadius: "0.75rem",
   },
   elements: {
     rootBox: "mx-auto w-full max-w-md",
-    card: "bg-white border border-[#e7e5e4] shadow-lg rounded-2xl font-body",
-    headerTitle: "font-body text-lg font-bold text-[#1c1917]",
-    headerSubtitle: "font-body text-sm text-[#57534e]",
-    formButtonPrimary:
-      "bg-gradient-to-r from-[#fb923c] to-[#ea580c] hover:brightness-105 text-white font-bold rounded-full",
-    formFieldInput:
-      "bg-[#fffaf5] border border-[#e7e5e4] text-[#1c1917] font-body rounded-xl text-base",
-    formFieldLabel: "font-body text-sm font-semibold text-[#1c1917]",
-    footerActionLink: "text-[#22c55e] font-semibold underline",
-    identityPreviewText: "font-body text-sm text-[#1c1917]",
-    socialButtonsBlockButton:
-      "border border-[#e7e5e4] bg-white hover:bg-[#fff4eb] font-body rounded-xl",
-    dividerLine: "bg-[#e7e5e4]",
-    dividerText: "text-[#78716c]",
+    card: "bg-white border border-[#e8e8e8] shadow-sm rounded-xl font-body",
+    headerTitle: "font-body text-lg font-semibold text-[#1a1a1a]",
+    headerSubtitle: "font-body text-sm text-[#676767]",
+    formButtonPrimary: "bg-[#43e660] hover:bg-[#3dd656] text-[#1a1a1a] font-semibold rounded-lg",
+    formFieldInput: "bg-[#f7f7f5] border border-[#e8e8e8] text-[#1a1a1a] font-body rounded-lg",
+    formFieldLabel: "font-body text-sm font-medium text-[#1a1a1a]",
+    formFieldErrorText: "font-body text-sm text-retro-error font-medium",
+    alertText: "font-body text-sm text-retro-error",
+    footerActionLink: "text-[#1a1a1a] font-semibold underline",
+    identityPreviewText: "font-body text-sm text-[#1a1a1a]",
+    formFieldSuccessText: "font-body text-sm text-[#22C55E]",
+    captcha: "my-4 flex justify-center",
+    captchaWidget: "mx-auto",
   },
-};
+} as const;

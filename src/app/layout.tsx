@@ -14,7 +14,6 @@ import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
 import { getClerkProviderProps } from "@/lib/clerk-config";
 
 import "./globals.css";
-import "./linklock-v2.css";
 
 const inter = Inter({
   subsets: ["latin"],

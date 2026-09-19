@@ -259,14 +259,14 @@ export function PublicUnlockClient({
 
   return (
     <div className="unlock-v2 relative min-h-screen flex flex-col">
-      <header className="sticky top-0 z-20 border-b border-retro-border bg-retro-surface/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-20 border-b border-retro-border bg-retro-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
-          <Link href="/" className="shrink-0 pro-focus rounded-md">
-            <LinklockLogo size={32} showWordmark wordmarkClassName="hidden sm:inline text-retro-text" />
+          <Link href="/" className="shrink-0">
+            <LinklockLogo size={32} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink" />
           </Link>
-          <Link href="/sign-up">
+          <Link href="/">
             <RetroButton size="sm" variant="primary">
-              Get started
+              Create your link!
             </RetroButton>
           </Link>
         </div>

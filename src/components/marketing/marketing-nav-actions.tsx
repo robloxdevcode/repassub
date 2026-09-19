@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { RetroLink } from "@/components/retro";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 import { useMarketingSignedIn } from "@/components/marketing/marketing-auth-provider";
 
@@ -9,23 +10,27 @@ export function MarketingNavActions() {
 
   if (isSignedIn) {
     return (
-      <div className="flex items-center gap-3 shrink-0">
-        <Link href="/dashboard" className="rk-btn rk-btn--secondary rk-btn--sm">
+      <div className="flex items-center gap-4 shrink-0">
+        <RetroLink href="/dashboard" size="sm">
           Dashboard
-        </Link>
+        </RetroLink>
         <ClerkUserMenu />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-2 shrink-0">
-      <Link href="/sign-in" className="rk-nav-link hidden sm:inline-flex">
-        Sign in
+    <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+      <Link
+        href="/sign-in"
+        prefetch
+        className="ll-nav-auth-link"
+      >
+        Log in
       </Link>
-      <Link href="/sign-up" className="rk-btn rk-btn--primary rk-btn--sm shrink-0">
+      <RetroLink href="/sign-up" size="sm" className="shrink-0">
         Get started
-      </Link>
+      </RetroLink>
     </div>
   );
 }
