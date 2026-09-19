@@ -13,6 +13,13 @@ enum UserRole {
   ADMIN
 }
 
+enum StaffRole {
+  NONE
+  MODERATOR
+  SUPPORT
+  ANALYST
+}
+
 enum CampaignStatus {
   DRAFT
   PUBLISHED
@@ -113,6 +120,7 @@ model User {
   avatarUrl        String?
   email            String?
   role             UserRole @default(USER)
+  staffRole        StaffRole @default(NONE)
   stripeCustomerId String?
   stripeConnectId  String?
   banned           Boolean  @default(false)

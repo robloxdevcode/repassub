@@ -42,7 +42,7 @@ const mainNavItems = [
 
 
 
-export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boolean; plan?: string }) {
+export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdminPanel?: boolean; plan?: string }) {
 
   const pathname = usePathname();
 
@@ -201,7 +201,7 @@ export function AppSidebar({ isAdmin = false, plan = "FREE" }: { isAdmin?: boole
 
 
 
-            {isAdmin && (
+            {showAdminPanel && (
 
               <Link
 
@@ -291,7 +291,7 @@ export function AppShell({
 
   children,
 
-  isAdmin = false,
+  showAdminPanel = false,
 
   plan = "FREE",
 
@@ -299,7 +299,7 @@ export function AppShell({
 
   children: React.ReactNode;
 
-  isAdmin?: boolean;
+  showAdminPanel?: boolean;
 
   plan?: string;
 
@@ -311,7 +311,7 @@ export function AppShell({
 
       <AppNavProgress />
 
-      <AppSidebar isAdmin={isAdmin} plan={plan} />
+      <AppSidebar showAdminPanel={showAdminPanel} plan={plan} />
 
       <div className="app-stage dash-pro-stage md:ml-[17.5rem] min-h-screen">
         <main className="dash-pro-main">{children}</main>

@@ -1,54 +1,85 @@
+import { Suspense } from "react";
 import { getAdminUsers } from "@/lib/actions/dashboard";
 import { AdminBanButton } from "@/components/admin/admin-ban-button";
-import { UserRole } from "@prisma/client";
+import { AdminSearchBar } from "@/components/admin/admin-search";
+import { AdminTable } from "@/components/admin/admin-shell";
+import { STAFF_ROLE_LABELS } from "@/lib/admin-access";
+import { UserRole, StaffRole } from "@prisma/client";
+import { getCurrentUser, requireAdminPanel } from "@/lib/auth";
+import { canModerateUsers } from "@/lib/admin-access";
 
-export default async function AdminUsersPage() {
-  const users = await getAdminUsers();
+interface Props {
+  searchParams: Promise<{ q?: string }>;
+}
+
+export default async function AdminUsersPage({ searchParams }: Props) {
+  await requireAdminPanel();
+  const user = await getCurrentUser();
+  const canModerate = user ? canModerateUsers(user) : false;
+  const { q } = await searchParams;
+  const users = await getAdminUsers(q);
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-2">User management</h2>
-      <p className="text-sm text-retro-text-muted mb-8 max-w-2xl">
-        Ban a user to suspend their account and take all published links offline. Unban restores
-        access — they will need to publish links again.
-      </p>
-      <div className="retro-panel overflow-hidden">
-        <table className="w-full text-sm">
+    <div className="admin-v2-section">
+      <div className="admin-v2-section-head">
+        <div>
+          <h2 className="admin-v2-h2">People</h2>
+          <p className="admin-v2-muted">Search creators, view status, suspend accounts.</p>
+        </div>
+        <Suspense fallback={null}>
+          <AdminSearchBar />
+        </Suspense>
+      </div>
+
+      <AdminTable>
+        <table className="admin-v2-table">
           <thead>
-            <tr className="border-b-2 border-retro-border-dim">
-              {["Username", "Email", "Role", "Links", "Status", "Action"].map((col) => (
-                <th key={col} className="px-4 py-3 text-left text-xs font-semibold text-retro-text-dim">
-                  {col}
-                </th>
+            <tr>
+              {["User", "Email", "Access", "Links", "Status", "Action"].map((col) => (
+                <th key={col}>{col}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border-b border-retro-border-dim/30">
-                <td className="px-4 py-3 font-medium">{user.username}</td>
-                <td className="px-4 py-3 font-mono text-xs">{user.email || "—"}</td>
-                <td className="px-4 py-3 text-xs">
-                  {user.role === UserRole.ADMIN ? "Admin" : "Creator"}
-                </td>
-                <td className="px-4 py-3">{user._count.campaigns}</td>
-                <td className="px-4 py-3">
-                  <span className={user.banned ? "text-retro-error font-medium" : "text-retro-success"}>
-                    {user.banned ? "Suspended" : "Active"}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <AdminBanButton
-                    userId={user.id}
-                    banned={user.banned}
-                    username={user.username}
-                  />
+            {users.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="admin-v2-empty">
+                  No users match your search.
                 </td>
               </tr>
-            ))}
+            ) : (
+              users.map((u) => (
+                <tr key={u.id}>
+                  <td>
+                    <span className="admin-v2-strong">{u.username}</span>
+                  </td>
+                  <td className="admin-v2-mono">{u.email || "—"}</td>
+                  <td>
+                    {u.role === UserRole.ADMIN
+                      ? "Admin"
+                      : u.staffRole !== StaffRole.NONE
+                        ? STAFF_ROLE_LABELS[u.staffRole]
+                        : "Creator"}
+                  </td>
+                  <td>{u._count.campaigns}</td>
+                  <td>
+                    <span className={u.banned ? "admin-v2-badge admin-v2-badge--bad" : "admin-v2-badge admin-v2-badge--ok"}>
+                      {u.banned ? "Suspended" : "Active"}
+                    </span>
+                  </td>
+                  <td>
+                    {canModerate ? (
+                      <AdminBanButton userId={u.id} banned={u.banned} username={u.username} />
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-      </div>
+      </AdminTable>
     </div>
   );
 }

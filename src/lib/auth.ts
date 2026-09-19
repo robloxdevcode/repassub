@@ -5,6 +5,7 @@ import { UserRole } from "@prisma/client";
 import { hasDatabaseUrl } from "./env";
 import { db } from "./db";
 import { applyLifetimeProGrant, ensureLifetimeProInDb, hasLifetimePro } from "./plan-grants";
+import { canModerateUsers, hasAdminPanelAccess } from "./admin-access";
 
 const userInclude = {
   subscriptions: {
@@ -85,6 +86,18 @@ export async function requireUser() {
 export async function requireAdmin() {
   const user = await requireUser();
   if (user.role !== UserRole.ADMIN) throw new Error("Forbidden");
+  return user;
+}
+
+export async function requireAdminPanel() {
+  const user = await requireUser();
+  if (!hasAdminPanelAccess(user)) throw new Error("Forbidden");
+  return user;
+}
+
+export async function requireModerator() {
+  const user = await requireUser();
+  if (!canModerateUsers(user)) throw new Error("Forbidden");
   return user;
 }
 

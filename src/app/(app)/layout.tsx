@@ -3,7 +3,7 @@ import { DatabaseSetupRequired } from "@/components/dashboard/database-setup-req
 import { isDatabaseConfigError, hasDatabaseUrl } from "@/lib/env";
 import { getCurrentUser } from "@/lib/auth";
 import { getUserPlan } from "@/lib/stripe";
-import { UserRole } from "@prisma/client";
+import { hasAdminPanelAccess } from "@/lib/admin-access";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -18,13 +18,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     return <DatabaseSetupRequired />;
   }
 
-  let isAdmin = false;
+  let showAdminPanel = false;
   let plan = "FREE";
 
   try {
     const user = await getCurrentUser();
     if (user?.banned) redirect("/suspended");
-    isAdmin = user?.role === UserRole.ADMIN;
+    showAdminPanel = user ? hasAdminPanelAccess(user) : false;
     plan = getUserPlan(user?.subscriptions?.[0]?.plan);
   } catch (error) {
     if (isDatabaseConfigError(error)) {
@@ -33,5 +33,5 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     throw error;
   }
 
-  return <AppShell isAdmin={isAdmin} plan={plan}>{children}</AppShell>;
+  return <AppShell showAdminPanel={showAdminPanel} plan={plan}>{children}</AppShell>;
 }

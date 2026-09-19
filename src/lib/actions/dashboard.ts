@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser, requireAdmin } from "@/lib/auth";
+import { requireUser, requireAdmin, requireAdminPanel, requireModerator } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getUserAnalytics, getAnalyticsBreakdown, getBasicCampaignBreakdown, campaignViewCountSelect } from "@/lib/analytics";
 import { getActionLimit, getUserPlan, hasAdvancedAnalytics } from "@/lib/stripe";
@@ -72,7 +72,7 @@ export async function getAudienceData() {
 }
 
 export async function getAdminStats() {
-  await requireAdmin();
+  await requireAdminPanel();
 
   const [userCount, campaignCount, reportCount, revenue, bannedCount] = await Promise.all([
     db.user.count(),
@@ -85,18 +85,50 @@ export async function getAdminStats() {
   return { userCount, campaignCount, reportCount, revenue: revenue._sum.amount || 0, bannedCount };
 }
 
-export async function getAdminUsers() {
-  await requireAdmin();
+export async function getAdminUsers(search?: string) {
+  await requireAdminPanel();
+  const q = search?.trim();
   return db.user.findMany({
+    where: q
+      ? {
+          OR: [
+            { username: { contains: q, mode: "insensitive" } },
+            { email: { contains: q, mode: "insensitive" } },
+            { displayName: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
     orderBy: { createdAt: "desc" },
     include: { _count: { select: { campaigns: true } } },
-    take: 50,
+    take: 100,
+  });
+}
+
+export async function getAdminLinks(search?: string) {
+  await requireAdminPanel();
+  const q = search?.trim();
+  return db.campaign.findMany({
+    where: q
+      ? {
+          OR: [
+            { title: { contains: q, mode: "insensitive" } },
+            { slug: { contains: q, mode: "insensitive" } },
+            { user: { username: { contains: q, mode: "insensitive" } } },
+          ],
+        }
+      : undefined,
+    include: {
+      user: { select: { username: true, staffRole: true, role: true } },
+      _count: { select: campaignViewCountSelect },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 100,
   });
 }
 
 export async function banUser(userId: string, banned: boolean): Promise<AdminBanResult> {
   try {
-    const admin = await requireAdmin();
+    const admin = await requireModerator();
     const trimmedId = userId?.trim();
     if (!trimmedId) {
       return { ok: false, message: "Missing user id" };

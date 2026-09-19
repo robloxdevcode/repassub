@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { ReportStatus, ReportTargetType } from "@prisma/client";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdminPanel, requireModerator } from "@/lib/auth";
 import { banUser } from "@/lib/actions/dashboard";
 import { db } from "@/lib/db";
 
 export async function getAdminReports() {
-  await requireAdmin();
+  await requireAdminPanel();
   return db.report.findMany({
     include: {
       reporter: { select: { username: true } },
@@ -18,7 +18,7 @@ export async function getAdminReports() {
 }
 
 export async function updateReportStatus(reportId: string, status: ReportStatus) {
-  await requireAdmin();
+  await requireModerator();
   await db.report.update({
     where: { id: reportId },
     data: { status },
@@ -27,7 +27,7 @@ export async function updateReportStatus(reportId: string, status: ReportStatus)
 }
 
 export async function suspendFromReport(reportId: string) {
-  await requireAdmin();
+  await requireModerator();
 
   const report = await db.report.findUnique({ where: { id: reportId } });
   if (!report) throw new Error("Report not found");

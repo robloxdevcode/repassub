@@ -258,8 +258,8 @@ export function PublicUnlockClient({
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col">
-      <header className="sticky top-0 z-20 border-b-[3px] border-retro-ink bg-retro-surface">
+    <div className="unlock-v2 relative min-h-screen flex flex-col">
+      <header className="sticky top-0 z-20 border-b border-retro-border bg-retro-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
           <Link href="/" className="shrink-0">
             <LinklockLogo size={32} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink" />

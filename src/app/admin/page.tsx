@@ -1,25 +1,31 @@
-import { getAdminStats } from "@/lib/actions/dashboard";
-import { HudStatCard } from "@/components/retro";
-import { formatNumber, formatCurrency } from "@/lib/utils";
-
-export default async function AdminPage() {
-  const stats = await getAdminStats();
-
-  return (
-    <div>
-      <h2 className="text-xl font-bold mb-2">Platform overview</h2>
-      <p className="text-sm text-retro-text-muted mb-8 max-w-2xl">
-        Internal stats for moderating Linklock. Revenue is total successful subscription payments
-        recorded in the database.
-      </p>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <HudStatCard label="Total users" value={formatNumber(stats.userCount)} />
-        <HudStatCard label="Published links" value={formatNumber(stats.campaignCount)} />
-        <HudStatCard label="Open reports" value={formatNumber(stats.reportCount)} />
-        <HudStatCard label="Total revenue" value={formatCurrency(stats.revenue)} />
-        <HudStatCard label="Suspended users" value={formatNumber(stats.bannedCount)} />
-      </div>
-    </div>
-  );
-}
-
+import { getAdminStats } from "@/lib/actions/dashboard";
+import { formatNumber, formatCurrency } from "@/lib/utils";
+
+export default async function AdminPage() {
+  const stats = await getAdminStats();
+
+  const items = [
+    { label: "Total users", value: formatNumber(stats.userCount) },
+    { label: "Published links", value: formatNumber(stats.campaignCount) },
+    { label: "Open reports", value: formatNumber(stats.reportCount) },
+    { label: "Total revenue", value: formatCurrency(stats.revenue) },
+    { label: "Suspended users", value: formatNumber(stats.bannedCount) },
+  ];
+
+  return (
+    <div className="admin-v2-section">
+      <h2 className="admin-v2-h2">Overview</h2>
+      <p className="admin-v2-muted mb-6 max-w-2xl">
+        Platform snapshot. Use People and Links to drill into accounts and live unlock pages.
+      </p>
+      <div className="admin-v2-stat-grid">
+        {items.map((item) => (
+          <div key={item.label} className="admin-v2-stat">
+            <p className="admin-v2-stat-value">{item.value}</p>
+            <p className="admin-v2-stat-label">{item.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
