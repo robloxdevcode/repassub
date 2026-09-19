@@ -82,7 +82,7 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
 
       <aside
         className={cn(
-          "app-sidebar dash-pro-sidebar fixed inset-y-0 left-0 z-40 w-[17.5rem] transition-transform duration-200 md:translate-x-0",
+          "app-sidebar dash-pro-sidebar fixed inset-y-0 left-0 z-40 w-[17.5rem] border-r border-retro-border bg-retro-surface transition-transform duration-200 md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >

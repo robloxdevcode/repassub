@@ -1,0 +1,146 @@
+/* Dashboard — synced with Linklock v2 dark + lime (loads after globals) */
+
+.app-stage.dash-pro-stage,
+.dash-pro-stage {
+  background: var(--retro-bg);
+}
+
+.dash-pro-sidebar,
+.dash-pro-sidebar.app-sidebar {
+  background: var(--retro-surface) !important;
+  border-right: 1px solid var(--retro-border) !important;
+  box-shadow: none !important;
+}
+
+.dash-pro-sidebar .sidebar-primary-cta {
+  background: var(--retro-accent) !important;
+  color: #0a0a0a !important;
+  border: 1px solid var(--retro-accent-dim) !important;
+  box-shadow: 0 4px 20px var(--retro-glow) !important;
+  font-weight: 700 !important;
+}
+
+.dash-pro-sidebar .sidebar-primary-cta:hover {
+  background: var(--retro-accent-dim) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px var(--retro-glow) !important;
+}
+
+.dash-pro-sidebar .sidebar-nav-active {
+  background: var(--retro-glow) !important;
+  color: var(--retro-accent) !important;
+  font-weight: 700 !important;
+  box-shadow: inset 3px 0 0 var(--retro-accent) !important;
+}
+
+.dash-pro-sidebar .sidebar-nav-item {
+  color: var(--retro-text-dim);
+}
+
+.dash-pro-sidebar .sidebar-nav-item:hover {
+  background: var(--retro-surface-2);
+  color: var(--retro-text);
+}
+
+.dash-pro-sidebar .sidebar-billing-row {
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+}
+
+.dash-pro-sidebar .sidebar-billing-row:hover {
+  border-color: var(--retro-accent);
+}
+
+.dash-pro-main {
+  padding-top: 4.5rem;
+}
+
+@media (min-width: 768px) {
+  .dash-pro-main {
+    padding-top: 2.5rem;
+  }
+}
+
+.dash-pro-action {
+  background: var(--retro-accent) !important;
+  color: #0a0a0a !important;
+  font-weight: 700;
+  border-radius: var(--ui-radius-lg);
+  box-shadow: 0 4px 16px var(--retro-glow);
+}
+
+.dash-pro-action:hover {
+  background: var(--retro-accent-dim) !important;
+  box-shadow: 0 6px 22px var(--retro-glow) !important;
+}
+
+.dash-pro-metric,
+.dash-pro-panel,
+.dash-pro-card,
+.dash-pro-empty {
+  background: var(--retro-surface) !important;
+  border-color: var(--retro-border) !important;
+}
+
+.dash-pro-metric:hover {
+  border-color: var(--retro-accent) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dash-pro-panel-head a:hover {
+  color: var(--retro-accent) !important;
+}
+
+.dash-pro-link-row:hover {
+  background: var(--retro-surface-2) !important;
+}
+
+.dash-pro-status--live {
+  color: var(--retro-success) !important;
+}
+
+.dash-pro-empty-icon {
+  background: var(--retro-glow) !important;
+  color: var(--retro-accent) !important;
+}
+
+.dash-pro-upsell {
+  background: var(--retro-surface-2) !important;
+  border-color: var(--retro-border) !important;
+  color: var(--retro-text-dim);
+}
+
+.dash-pro-upsell a,
+.dash-pro-upsell-icon,
+.dash-pro-text-btn,
+.dash-pro-referral-stat {
+  color: var(--retro-accent) !important;
+}
+
+.empty-state {
+  background: var(--retro-surface);
+  border: 1px dashed var(--retro-border);
+  color: var(--retro-text);
+}
+
+.app-stage .ll-app-card,
+.app-stage .retro-panel {
+  background: var(--retro-surface);
+  border-color: var(--retro-border);
+  color: var(--retro-text);
+}
+
+.app-stage button.fixed.md\:hidden {
+  background: var(--retro-surface);
+  border-color: var(--retro-border);
+  color: var(--retro-text);
+}
+
+.app-nav-progress {
+  background: var(--retro-border);
+}
+
+.app-nav-progress > div,
+.app-nav-progress [data-progress] {
+  background: var(--retro-accent);
+}
