@@ -1,26 +1,27 @@
 export const clerkAuthAppearance = {
   variables: {
-    colorPrimary: "#2563eb",
+    colorPrimary: "#f97316",
     colorBackground: "#ffffff",
-    colorInputBackground: "#fafafa",
-    colorText: "#18181b",
-    colorTextSecondary: "#52525b",
-    borderRadius: "0.625rem",
+    colorInputBackground: "#fffaf5",
+    colorText: "#1c1917",
+    colorTextSecondary: "#57534e",
+    borderRadius: "0.75rem",
   },
   elements: {
     rootBox: "mx-auto w-full max-w-md",
-    card: "bg-white border border-[#d4d4d8] shadow-sm rounded-xl font-body",
-    headerTitle: "font-body text-lg font-semibold text-[#18181b]",
-    headerSubtitle: "font-body text-sm text-[#52525b]",
-    formButtonPrimary: "bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-lg",
-    formFieldInput: "bg-[#fafafa] border border-[#d4d4d8] text-[#18181b] font-body rounded-lg text-base",
-    formFieldLabel: "font-body text-sm font-medium text-[#18181b]",
-    formFieldErrorText: "font-body text-sm text-retro-error font-medium",
-    alertText: "font-body text-sm text-retro-error",
-    footerActionLink: "text-[#2563eb] font-semibold underline",
-    identityPreviewText: "font-body text-sm text-[#18181b]",
-    formFieldSuccessText: "font-body text-sm text-[#22C55E]",
-    captcha: "my-4 flex justify-center",
-    captchaWidget: "mx-auto",
+    card: "bg-white border border-[#e7e5e4] shadow-lg rounded-2xl font-body",
+    headerTitle: "font-body text-lg font-bold text-[#1c1917]",
+    headerSubtitle: "font-body text-sm text-[#57534e]",
+    formButtonPrimary:
+      "bg-gradient-to-r from-[#fb923c] to-[#ea580c] hover:brightness-105 text-white font-bold rounded-full",
+    formFieldInput:
+      "bg-[#fffaf5] border border-[#e7e5e4] text-[#1c1917] font-body rounded-xl text-base",
+    formFieldLabel: "font-body text-sm font-semibold text-[#1c1917]",
+    footerActionLink: "text-[#22c55e] font-semibold underline",
+    identityPreviewText: "font-body text-sm text-[#1c1917]",
+    socialButtonsBlockButton:
+      "border border-[#e7e5e4] bg-white hover:bg-[#fff4eb] font-body rounded-xl",
+    dividerLine: "bg-[#e7e5e4]",
+    dividerText: "text-[#78716c]",
   },
-} as const;
+};

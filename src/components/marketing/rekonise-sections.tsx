@@ -135,8 +135,11 @@ function AnalyticsMock() {
         {bars.map((h, i) => (
           <div
             key={i}
-            className="flex-1 rounded-sm bg-indigo-500/80 transition-all"
-            style={{ height: `${h}%` }}
+            className="flex-1 rounded-sm transition-all"
+            style={{
+              height: `${h}%`,
+              background: i % 2 === 0 ? "var(--retro-accent)" : "var(--retro-neon)",
+            }}
           />
         ))}
       </div>

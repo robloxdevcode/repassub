@@ -18,7 +18,7 @@ export function burstConfetti(origin?: { x: number; y: number }) {
 
   const ox = origin?.x ?? canvas.width / 2;
   const oy = origin?.y ?? canvas.height / 2;
-  const colors = ["#2563eb", "#1d4ed8", "#3b82f6", "#15803d", "#0ea5e9"];
+  const colors = ["#f97316", "#fb923c", "#22c55e", "#4ade80", "#fdba74"];
 
   const particles = Array.from({ length: 120 }, () => ({
     x: ox,
