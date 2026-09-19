@@ -38,7 +38,9 @@ export function AdminShell({
           </nav>
         </div>
         {!canModerate ? (
-          <p className="admin-v2-banner">Read-only staff access — contact a moderator for actions.</p>
+          <p className="admin-v2-banner">
+            Read-only staff access (Tester) — contact Admin or Owner for moderation actions.
+          </p>
         ) : null}
       </header>
       <main className="admin-v2-main">{children}</main>

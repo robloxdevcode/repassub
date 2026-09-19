@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { StaffRole, UserRole } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { canManageStaff } from "@/lib/admin-access";
+import { canManageStaff, canAssignStaffRole } from "@/lib/admin-access";
 
 export type StaffActionResult = { ok: true } | { ok: false; message: string };
 
@@ -12,7 +12,11 @@ export async function setUserStaffRole(userId: string, staffRole: StaffRole): Pr
   try {
     const actor = await requireUser();
     if (!canManageStaff(actor)) {
-      return { ok: false, message: "Only the primary admin can assign staff roles" };
+      return { ok: false, message: "Only Owner or the primary admin can assign staff roles" };
+    }
+
+    if (!canAssignStaffRole(actor, staffRole)) {
+      return { ok: false, message: "You cannot assign the Owner role" };
     }
 
     const trimmedId = userId?.trim();

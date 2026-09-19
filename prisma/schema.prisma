@@ -15,9 +15,10 @@ enum UserRole {
 
 enum StaffRole {
   NONE
-  MODERATOR
+  TESTER
   SUPPORT
-  ANALYST
+  ADMIN
+  OWNER
 }
 
 enum CampaignStatus {
