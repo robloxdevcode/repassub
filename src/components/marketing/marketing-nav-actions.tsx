@@ -3,18 +3,14 @@
 import Link from "next/link";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 import { useMarketingSignedIn } from "@/components/marketing/marketing-auth-provider";
-import { cn } from "@/lib/utils";
 
-export function MarketingNavActions({ onHome = false }: { onHome?: boolean }) {
+export function MarketingNavActions() {
   const isSignedIn = useMarketingSignedIn();
 
   if (isSignedIn) {
     return (
       <div className="flex items-center gap-3 shrink-0">
-        <Link
-          href="/dashboard"
-          className={cn("lm-btn lm-btn--nav lm-focus-ring", onHome && "lm-btn--nav-home")}
-        >
+        <Link href="/dashboard" className="pro-btn pro-btn--secondary pro-btn--sm">
           Dashboard
         </Link>
         <ClerkUserMenu />
@@ -23,11 +19,13 @@ export function MarketingNavActions({ onHome = false }: { onHome?: boolean }) {
   }
 
   return (
-    <Link
-      href="/sign-up"
-      className={cn("lm-btn lm-btn--nav lm-focus-ring shrink-0", onHome && "lm-btn--nav-home")}
-    >
-      Get started
-    </Link>
+    <div className="flex items-center gap-2 shrink-0">
+      <Link href="/sign-in" className="pro-nav-link pro-focus hidden sm:inline-flex">
+        Sign in
+      </Link>
+      <Link href="/sign-up" className="pro-btn pro-btn--primary pro-btn--sm shrink-0">
+        Get started
+      </Link>
+    </div>
   );
 }

@@ -30,7 +30,7 @@ export function DatabaseSetupRequired() {
         )}
         <Link
           href="/"
-          className="inline-flex items-center justify-center min-h-[40px] px-4 rounded-full bg-retro-accent text-[#0a0a0a] text-sm font-semibold"
+          className="inline-flex items-center justify-center min-h-[40px] px-4 rounded-lg bg-retro-accent text-white text-sm font-semibold"
         >
           Back to home
         </Link>
