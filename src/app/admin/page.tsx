@@ -1,5 +1,4 @@
 import { getAdminStats } from "@/lib/actions/dashboard";
-import { AdminPageTitle, AdminStatCard } from "@/components/admin/admin-ui";
 import { formatNumber, formatCurrency } from "@/lib/utils";
 
 export default async function AdminPage() {
@@ -14,14 +13,17 @@ export default async function AdminPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-6">
-      <AdminPageTitle
-        title="Overview"
-        description="Platform snapshot. Use People and Links to drill into accounts and live unlock pages."
-      />
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+    <div className="admin-v2-section">
+      <h2 className="admin-v2-h2">Overview</h2>
+      <p className="admin-v2-muted mb-6 max-w-2xl">
+        Platform snapshot. Use People and Links to drill into accounts and live unlock pages.
+      </p>
+      <div className="admin-v2-stat-grid">
         {items.map((item) => (
-          <AdminStatCard key={item.label} label={item.label} value={item.value} />
+          <div key={item.label} className="admin-v2-stat">
+            <p className="admin-v2-stat-value">{item.value}</p>
+            <p className="admin-v2-stat-label">{item.label}</p>
+          </div>
         ))}
       </div>
     </div>

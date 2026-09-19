@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { AdminNav } from "@/components/admin/admin-ui";
-import { cn } from "@/lib/utils";
 
 export function AdminShell({
   children,
@@ -20,22 +19,22 @@ export function AdminShell({
   ];
 
   return (
-    <div className="min-h-screen bg-[#fffaf5] text-stone-900">
-      <header className="border-b-2 border-stone-200 bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5">
+    <div className="admin-v2 min-h-screen">
+      <header className="admin-v2-header">
+        <div className="admin-v2-header-inner">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-orange-600">Linklock</p>
-            <h1 className="text-2xl font-extrabold tracking-tight text-stone-900">Control center</h1>
+            <p className="admin-v2-kicker">Linklock</p>
+            <h1 className="admin-v2-title">Control center</h1>
           </div>
           <AdminNav links={links} />
         </div>
         {!canModerate ? (
-          <p className="mx-4 mb-4 max-w-6xl rounded-xl border-2 border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900 md:mx-8">
-            Read-only staff (Tester) — contact Admin or Owner to ban users or resolve reports.
+          <p className="admin-v2-banner">
+            Read-only staff (Tester) — contact Admin or Owner for moderation actions.
           </p>
         ) : null}
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">{children}</main>
+      <main className="admin-v2-main">{children}</main>
     </div>
   );
 }
@@ -47,9 +46,5 @@ export function AdminTable({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <div className={cn("overflow-x-auto rounded-xl border-2 border-stone-200 bg-white shadow-sm", className)}>
-      {children}
-    </div>
-  );
+  return <div className={`admin-v2-table-wrap ${className ?? ""}`.trim()}>{children}</div>;
 }
