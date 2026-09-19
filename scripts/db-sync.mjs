@@ -7,7 +7,11 @@ if (process.env.DATABASE_URL?.trim()) {
   } catch {
     console.warn("[db-sync] staff-role-data-fix skipped or failed — continuing");
   }
-  execSync("npx prisma db push --skip-generate", { stdio: "inherit" });
+
+  // Enum changes (e.g. StaffRole) require accepting Postgres enum value removal.
+  execSync("npx prisma db push --skip-generate --accept-data-loss", {
+    stdio: "inherit",
+  });
 } else {
   console.warn("[db-sync] DATABASE_URL not set — skipping prisma db push");
 }
