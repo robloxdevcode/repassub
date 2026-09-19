@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-ads-txt.mjs",
+    "prebuild": "node scripts/generate-ads-txt.mjs && node scripts/db-sync.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

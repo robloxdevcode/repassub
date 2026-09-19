@@ -1,31 +1,31 @@
-/* Linklock v2 — minimal dark system (lemonade-inspired, distinct palette) */
+/* Linklock v2 — minimal system */
 
 :root {
-  --retro-bg: #050506;
-  --retro-surface: #0c0c0f;
-  --retro-surface-2: #121218;
-  --retro-surface-3: #18181f;
-  --retro-ink: #f4f4f5;
-  --retro-border: #27272a;
-  --retro-accent: #d4ff58;
-  --retro-accent-dim: #b8e040;
-  --retro-neon: #d4ff58;
-  --retro-blue: #93c5fd;
-  --retro-blue-dim: #60a5fa;
-  --retro-yellow: #fde047;
-  --retro-yellow-dim: #eab308;
+  --retro-bg: #0c0c0e;
+  --retro-surface: #141418;
+  --retro-surface-2: #1a1a20;
+  --retro-surface-3: #22222a;
+  --retro-ink: #f5f5f7;
+  --retro-border: #2e2e36;
+  --retro-accent: #5b9dff;
+  --retro-accent-dim: #3d7fe0;
+  --retro-neon: #5b9dff;
+  --retro-blue: #5b9dff;
+  --retro-blue-dim: #3d7fe0;
+  --retro-yellow: #fcd34d;
+  --retro-yellow-dim: #f59e0b;
   --retro-pink: #f472b6;
   --retro-cyan: #67e8f9;
-  --retro-lime: #d4ff58;
+  --retro-lime: #86efac;
   --retro-success: #4ade80;
   --retro-warning: #fb923c;
   --retro-error: #f87171;
-  --retro-glow: rgba(212, 255, 88, 0.12);
-  --retro-text: #fafafa;
+  --retro-glow: rgba(91, 157, 255, 0.15);
+  --retro-text: #f5f5f7;
   --retro-text-dim: #a1a1aa;
   --retro-text-muted: #71717a;
-  --retro-text-on-dark: #fafafa;
-  --retro-band: #0c0c0f;
+  --retro-text-on-dark: #f5f5f7;
+  --retro-band: #141418;
   --ui-radius-sm: 0.5rem;
   --ui-radius: 0.625rem;
   --ui-radius-lg: 0.75rem;
@@ -124,8 +124,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 0 1.35rem;
+  min-height: 48px;
+  padding: 0 1.75rem;
   border-radius: 999px;
   background: var(--retro-accent);
   color: #0a0a0a;
@@ -134,9 +134,63 @@ body {
   transition: transform 120ms ease, opacity 120ms ease;
 }
 
+.llv2-page {
+  background: var(--retro-bg);
+}
+
+.llv2-nav {
+  background: rgba(12, 12, 14, 0.9);
+}
+
+.llv2-footer {
+  border-top: 1px solid var(--retro-border);
+}
+
+.llv2-hero--center {
+  min-height: calc(100vh - 8rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-bottom: none;
+}
+
+.llv2-hero-inner--narrow {
+  max-width: 40rem;
+  padding: 3rem 1.25rem 4rem;
+}
+
+.llv2-sub--center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.llv2-hero-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.llv2-footnote {
+  margin-top: 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--retro-text-muted);
+}
+
+.llv2-footnote-link {
+  color: var(--retro-text-dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.llv2-footnote-link:hover {
+  color: var(--retro-text);
+}
+
 .llv2-cta:hover {
   transform: translateY(-1px);
   opacity: 0.92;
+  color: #0a0a0a;
 }
 
 .llv2-cta:active {

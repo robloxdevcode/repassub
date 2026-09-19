@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/dashboard/app-sidebar";
 import { DatabaseSetupRequired } from "@/components/dashboard/database-setup-required";
-import { isDatabaseConfigError, hasDatabaseUrl } from "@/lib/env";
+import { DatabaseSchemaOutdated } from "@/components/dashboard/database-schema-outdated";
+import { isDatabaseConfigError, isSchemaMigrationError, hasDatabaseUrl } from "@/lib/env";
 import { getCurrentUser } from "@/lib/auth";
 import { getUserPlan } from "@/lib/stripe";
 import { hasAdminPanelAccess } from "@/lib/admin-access";
@@ -27,6 +28,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     showAdminPanel = user ? hasAdminPanelAccess(user) : false;
     plan = getUserPlan(user?.subscriptions?.[0]?.plan);
   } catch (error) {
+    if (isSchemaMigrationError(error)) {
+      return <DatabaseSchemaOutdated />;
+    }
     if (isDatabaseConfigError(error)) {
       return <DatabaseSetupRequired />;
     }

@@ -44,13 +44,21 @@ export function getDatabaseUrl(): string | undefined {
   return url || undefined;
 }
 
+export function isSchemaMigrationError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const code = (error as { code?: string }).code;
+  return (
+    code === "P2022" ||
+    (error.message.includes("column") && error.message.includes("does not exist"))
+  );
+}
+
 export function isDatabaseConfigError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
+  if (isSchemaMigrationError(error)) return false;
   return (
     error.name === "PrismaClientInitializationError" ||
     error.message.includes("Environment variable not found: DATABASE_URL") ||
-    error.message.includes("DATABASE_URL is not configured") ||
-    (error.message.includes("column") && error.message.includes("does not exist")) ||
-    (error as { code?: string }).code === "P2022"
+    error.message.includes("DATABASE_URL is not configured")
   );
 }
