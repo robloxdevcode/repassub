@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getPublicCampaign } from "@/lib/actions/unlock";
 import { PublicUnlockClient } from "@/components/unlock/public-unlock-client";
 import { planShowsAds, isProPlan } from "@/lib/stripe";
+import { getUnlockPageAdConfig } from "@/lib/adsense-config";
 import { absoluteUrl, buildPageMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 
@@ -39,12 +40,15 @@ export default async function PublicUnlockPage({ params }: Props) {
   if (!campaign) notFound();
 
   const plan = campaign.user.subscriptions?.[0]?.plan;
+  const ads = getUnlockPageAdConfig();
 
   return (
     <PublicUnlockClient
       campaign={campaign}
       showAds={planShowsAds(plan)}
       isPro={isProPlan(plan)}
+      adClient={ads.client}
+      adSlots={ads.slots}
     />
   );
 }

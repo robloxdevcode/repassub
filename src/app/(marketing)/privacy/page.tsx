@@ -147,8 +147,8 @@ export default function PrivacyPage() {
             <li>
               <strong>Service providers</strong> who help us operate the Service, such as Clerk
               (authentication), Supabase/PostgreSQL hosting (database), Vercel or similar (hosting), Stripe
-              (payments), Resend (transactional email), Cloudflare or similar (infrastructure), and
-              analytics providers if enabled
+              (payments), Google AdSense (advertising on free unlock pages), Resend (transactional email),
+              Cloudflare or similar (infrastructure), and analytics providers if enabled
             </li>
             <li>
               <strong>Creators</strong>, in the sense that analytics and audience submissions belong to the
@@ -174,6 +174,29 @@ export default function PrivacyPage() {
             We use cookies and similar storage technologies for essential Service functions, including
             keeping creators signed in (via Clerk), remembering visitor progress on unlock pages, and
             measuring analytics.
+          </p>
+          <p>
+            On free-tier unlock pages, we may show ads through Google AdSense. Google and its partners may
+            use cookies to serve and measure ads (including personalized ads where permitted). You can learn
+            how Google uses data at{" "}
+            <a
+              href="https://policies.google.com/technologies/partner-sites"
+              className="text-retro-accent hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Google&apos;s partner sites policy
+            </a>
+            . Manage ad personalization at{" "}
+            <a
+              href="https://adssettings.google.com"
+              className="text-retro-accent hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Google Ads Settings
+            </a>
+            .
           </p>
           <p>
             You can control cookies through your browser settings. Blocking essential cookies may prevent

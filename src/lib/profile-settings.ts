@@ -1,3 +1,5 @@
+import { EASTER_EGG_BADGES } from "@/lib/easter-eggs";
+
 export type ProfileStyle = "neon" | "midnight" | "vapor" | "arcade";
 
 export type SocialLinks = {
@@ -85,5 +87,7 @@ export function getBadgeLabel(id: string): { label: string; emoji: string } | nu
   if (milestone) return { label: milestone.label, emoji: milestone.emoji };
   const owner = OWNER_BADGES.find((b) => b.id === id);
   if (owner) return { label: owner.label, emoji: owner.emoji };
+  const secret = EASTER_EGG_BADGES.find((b) => b.id === id);
+  if (secret) return { label: secret.label, emoji: secret.emoji };
   return null;
 }

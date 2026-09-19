@@ -11,7 +11,7 @@ export function PromoPill() {
       href="/pricing"
       className="inline-block text-xs text-retro-text-dim hover:text-retro-accent font-body border border-retro-border px-3 py-1"
     >
-      Pro yearly — {labels.yearly} ({discountPercent}% off)
+      Pro yearly — {labels.yearly} · save {discountPercent}%
     </Link>
   );
 }

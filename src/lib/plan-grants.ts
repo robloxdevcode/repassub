@@ -9,17 +9,36 @@ export function hasLifetimePro(email?: string | null) {
 
 type UserWithSubs = User & { subscriptions: Subscription[] };
 
-export function applyLifetimeProGrant(user: UserWithSubs): UserWithSubs {
-  if (!hasLifetimePro(user.email)) return user;
+function hasPaidPro(sub?: Subscription | null) {
+  return !!sub?.stripeSubscriptionId && (sub.plan === "PRO" || sub.plan === "BUSINESS");
+}
 
-  if (user.subscriptions[0]) {
+export function applyEasterEggProGrant(user: UserWithSubs): UserWithSubs {
+  if (hasPaidPro(user.subscriptions[0])) return user;
+
+  const sub = user.subscriptions[0];
+  if (!sub?.currentPeriodEnd || sub.currentPeriodEnd < new Date()) return user;
+  if (sub.stripeSubscriptionId) return user;
+  if (sub.plan === "PRO" || sub.plan === "BUSINESS") return user;
+
+  return {
+    ...user,
+    subscriptions: [{ ...sub, plan: "PRO", status: "ACTIVE" }],
+  };
+}
+
+export function applyLifetimeProGrant(user: UserWithSubs): UserWithSubs {
+  const withEgg = applyEasterEggProGrant(user);
+  if (!hasLifetimePro(withEgg.email)) return withEgg;
+
+  if (withEgg.subscriptions[0]) {
     return {
-      ...user,
-      subscriptions: [{ ...user.subscriptions[0], plan: "PRO", status: "ACTIVE" }],
+      ...withEgg,
+      subscriptions: [{ ...withEgg.subscriptions[0], plan: "PRO", status: "ACTIVE" }],
     };
   }
 
-  return user;
+  return withEgg;
 }
 
 export async function ensureLifetimeProInDb(userId: string, email?: string | null) {

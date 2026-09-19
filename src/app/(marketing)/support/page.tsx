@@ -46,8 +46,8 @@ export default function SupportPage() {
 
         <p className="text-sm text-retro-text-dim">
           More questions on the{" "}
-          <Link href="/#faq" className="text-retro-blue hover:underline">
-            homepage FAQ
+          <Link href="/help" className="text-retro-blue hover:underline">
+            Help & FAQ
           </Link>
           .
         </p>

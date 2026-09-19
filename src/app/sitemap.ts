@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { absoluteUrl, SITEMAP_ROUTES } from "@/lib/seo";
 import { BLOG_POSTS } from "@/lib/blog-posts";
+import { USE_CASE_PAGES } from "@/lib/use-cases-content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
@@ -19,5 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...marketingRoutes, ...blogRoutes];
+  const useCaseRoutes = USE_CASE_PAGES.map((page) => ({
+    url: absoluteUrl(`/use-cases/${page.slug}`),
+    lastModified,
+    changeFrequency: "monthly" as const,
+    priority: 0.72,
+  }));
+
+  return [...marketingRoutes, ...blogRoutes, ...useCaseRoutes];
 }

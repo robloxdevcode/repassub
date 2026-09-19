@@ -98,12 +98,24 @@ async function findOrCreatePrice(
     limit: 100,
   });
 
+  const byLookup = existing.data.find((p) => p.lookup_key === lookupKey);
+  if (byLookup) {
+    if (byLookup.unit_amount === amount) {
+      console.log(`Using existing ${period} ${currency} price: ${byLookup.id}`);
+      return byLookup;
+    }
+    console.log(
+      `Archiving outdated ${period} ${currency} price ${byLookup.id} (${byLookup.unit_amount} -> ${amount})`
+    );
+    await stripe.prices.update(byLookup.id, { active: false, lookup_key: "" });
+  }
+
   const match = existing.data.find(
     (p) =>
-      p.lookup_key === lookupKey ||
-      (p.currency === currency.toLowerCase() &&
-        p.unit_amount === amount &&
-        p.recurring?.interval === interval)
+      p.active &&
+      p.currency === currency.toLowerCase() &&
+      p.unit_amount === amount &&
+      p.recurring?.interval === interval
   );
 
   if (match) {

@@ -5,6 +5,23 @@ import { trackEvent } from "@/lib/analytics";
 import { getAnalyticsContext } from "@/lib/analytics-context";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
+import { CampaignStatus } from "@prisma/client";
+
+async function getPublishedCampaign(campaignId: string) {
+  const campaign = await db.campaign.findUnique({
+    where: { id: campaignId },
+    include: {
+      user: { select: { banned: true } },
+      actions: { orderBy: { sortOrder: "asc" } },
+    },
+  });
+
+  if (!campaign || campaign.user.banned || campaign.status !== CampaignStatus.PUBLISHED) {
+    throw new Error("This unlock link is no longer available");
+  }
+
+  return campaign;
+}
 
 export async function getOrCreateVisitorId(clientVisitorId?: string) {
   const cookieStore = await cookies();
@@ -53,11 +70,7 @@ export async function getPublicCampaign(username: string, slug: string) {
 
 export async function getUnlockSession(campaignId: string, clientVisitorId?: string) {
   const visitorId = await getOrCreateVisitorId(clientVisitorId);
-  const campaign = await db.campaign.findUnique({
-    where: { id: campaignId },
-    include: { actions: { orderBy: { sortOrder: "asc" } } },
-  });
-  if (!campaign) throw new Error("Campaign not found");
+  const campaign = await getPublishedCampaign(campaignId);
 
   const actionIds = new Set(campaign.actions.map((a) => a.id));
 
@@ -93,22 +106,26 @@ export async function completeAction(
   clientVisitorId?: string
 ) {
   const visitorId = await getOrCreateVisitorId(clientVisitorId);
-  const session = await db.unlockSession.findFirst({
+
+  const campaign = await getPublishedCampaign(campaignId);
+  const actionIds = new Set(campaign.actions.map((a) => a.id));
+  if (!actionIds.has(actionId)) throw new Error("Action not found");
+
+  let session = await db.unlockSession.findFirst({
     where: { campaignId, visitorId },
     orderBy: { updatedAt: "desc" },
   });
-  if (!session) throw new Error("No session");
 
-  const completed = (session.completedActions as string[]) || [];
+  if (!session) {
+    session = await db.unlockSession.create({
+      data: { campaignId, visitorId, status: "STARTED", completedActions: [] },
+    });
+  }
+
+  const completed = ((session.completedActions as string[]) || []).filter((id) => actionIds.has(id));
   if (!completed.includes(actionId)) {
     completed.push(actionId);
   }
-
-  const campaign = await db.campaign.findUnique({
-    where: { id: campaignId },
-    include: { actions: true },
-  });
-  if (!campaign) throw new Error("Campaign not found");
 
   const allComplete = campaign.actions.every((a) => completed.includes(a.id));
   const status = allComplete ? "COMPLETED" : "IN_PROGRESS";
@@ -133,30 +150,52 @@ export async function completeAction(
 
 export async function unlockContent(campaignId: string, clientVisitorId?: string) {
   const visitorId = await getOrCreateVisitorId(clientVisitorId);
+
+  const campaign = await db.campaign.findUnique({
+    where: { id: campaignId },
+    include: {
+      actions: true,
+      content: true,
+      user: { select: { banned: true } },
+    },
+  });
+  if (!campaign || campaign.user.banned || campaign.status !== CampaignStatus.PUBLISHED) {
+    throw new Error("This unlock link is no longer available");
+  }
+
   const session = await db.unlockSession.findFirst({
     where: { campaignId, visitorId },
     orderBy: { updatedAt: "desc" },
   });
-  if (!session || session.status !== "COMPLETED") {
+
+  if (!session) {
+    throw new Error("Complete all actions first");
+  }
+
+  const actionIds = new Set(campaign.actions.map((a) => a.id));
+  const completed = ((session.completedActions as string[]) || []).filter((id) => actionIds.has(id));
+  const allComplete = campaign.actions.length > 0 && campaign.actions.every((a) => completed.includes(a.id));
+
+  if (!allComplete) {
     throw new Error("Complete all actions first");
   }
 
   const updated = await db.unlockSession.update({
     where: { id: session.id },
-    data: { status: "UNLOCKED", unlockedAt: new Date() },
+    data: { status: "UNLOCKED", unlockedAt: new Date(), completedActions: completed },
   });
 
   await trackEvent({ campaignId, type: "UNLOCK", ...(await getAnalyticsContext()) });
 
-  const campaign = await db.campaign.findUnique({
-    where: { id: campaignId },
-    include: { content: true },
-  });
-
-  return { session: updated, content: campaign?.content };
+  return { session: updated, content: campaign.content };
 }
 
 export async function trackCampaignView(campaignId: string) {
+  const campaign = await db.campaign.findFirst({
+    where: { id: campaignId, status: CampaignStatus.PUBLISHED, user: { banned: false } },
+    select: { id: true },
+  });
+  if (!campaign) return;
   await trackEvent({ campaignId, type: "VIEW", ...(await getAnalyticsContext()) });
 }
 
@@ -165,7 +204,9 @@ export async function submitEmailAction(campaignId: string, email: string, name?
     where: { id: campaignId },
     include: { user: true },
   });
-  if (!campaign) throw new Error("Campaign not found");
+  if (!campaign || campaign.user.banned || campaign.status !== CampaignStatus.PUBLISHED) {
+    throw new Error("This unlock link is no longer available");
+  }
 
   await db.audienceMember.create({
     data: {

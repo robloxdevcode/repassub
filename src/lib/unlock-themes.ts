@@ -1,4 +1,5 @@
 import type { RetroButtonVariant } from "@/components/retro/retro-button-styles";
+import { stripCaptchaFromTheme } from "@/lib/easter-eggs";
 
 export const UNLOCK_THEMES = [
   { id: "default", label: "Classic", swatch: "bg-retro-surface border-retro-ink" },
@@ -11,7 +12,8 @@ export const UNLOCK_THEMES = [
 export type UnlockThemeId = (typeof UNLOCK_THEMES)[number]["id"];
 
 export function unlockThemeClass(theme?: string | null) {
-  const id = UNLOCK_THEMES.some((t) => t.id === theme) ? theme : "default";
+  const base = stripCaptchaFromTheme(theme || "default");
+  const id = UNLOCK_THEMES.some((t) => t.id === base) ? base : "default";
   return `unlock-theme-${id}`;
 }
 

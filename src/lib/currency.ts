@@ -13,14 +13,18 @@ export const BILLING_CURRENCIES: {
   { code: "PLN", label: "Polish Złoty", short: "PLN zł" },
 ];
 
-export const PRO_PLAN_PRICES: Record<BillingCurrency, { monthly: number; yearly: number }> = {
-  EUR: { monthly: 699, yearly: 3585 },
-  USD: { monthly: 799, yearly: 3999 },
-  GBP: { monthly: 599, yearly: 2999 },
-  PLN: { monthly: 2999, yearly: 14999 },
-};
+export const PRO_YEARLY_DISCOUNT_PERCENT = 30;
 
-export const PRO_YEARLY_DISCOUNT_PERCENT = 50;
+function proYearlyFromMonthly(monthly: number) {
+  return Math.round(monthly * 12 * (1 - PRO_YEARLY_DISCOUNT_PERCENT / 100));
+}
+
+export const PRO_PLAN_PRICES: Record<BillingCurrency, { monthly: number; yearly: number }> = {
+  EUR: { monthly: 699, yearly: proYearlyFromMonthly(699) },
+  USD: { monthly: 799, yearly: proYearlyFromMonthly(799) },
+  GBP: { monthly: 599, yearly: proYearlyFromMonthly(599) },
+  PLN: { monthly: 2999, yearly: proYearlyFromMonthly(2999) },
+};
 
 const LOCALE_BY_CURRENCY: Record<BillingCurrency, string> = {
   EUR: "en-IE",
@@ -38,7 +42,7 @@ export function getProPlanPrices(currency: BillingCurrency = DEFAULT_BILLING_CUR
 }
 
 export function getProYearlyCompareAt(currency: BillingCurrency = DEFAULT_BILLING_CURRENCY) {
-  return PRO_PLAN_PRICES[currency].yearly * 2;
+  return PRO_PLAN_PRICES[currency].monthly * 12;
 }
 
 export function formatPlanPrice(cents: number, currency: BillingCurrency = DEFAULT_BILLING_CURRENCY): string {

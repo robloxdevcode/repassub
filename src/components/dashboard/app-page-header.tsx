@@ -18,7 +18,7 @@ export function AppPageHeader({
 
 }: {
 
-  title: string;
+  title: string | ReactNode;
 
   subtitle?: string;
 
@@ -104,7 +104,7 @@ export function AppCard({
 
             : "";
 
-  return <div className={`ll-app-card ${accentClass} ${className}`}>{children}</div>;
+  return <div className={`dash-pro-card ${accentClass} ${className}`}>{children}</div>;
 
 }
 

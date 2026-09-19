@@ -2,16 +2,19 @@
 
 import { UserButton } from "@clerk/nextjs";
 import { User } from "lucide-react";
+import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
 
-export function ClerkUserMenu({ plan: _plan = "FREE" }: { plan?: string }) {
-
+export function ClerkUserMenu() {
   return (
-    <div className="flex items-center gap-3 min-w-0 px-1">
+    <div className="sidebar-account">
       <UserButton
         appearance={{
+          ...clerkAuthAppearance,
           elements: {
-            rootBox: "flex shrink-0",
-            userButtonTrigger: "rounded-full hover:opacity-90 transition-opacity",
+            ...clerkAuthAppearance.elements,
+            rootBox: "flex shrink-0 w-auto",
+            userButtonTrigger: "rounded-full flex shrink-0",
+            userButtonPopoverCard: "bg-retro-surface border border-retro-border shadow-lg rounded-xl",
           },
         }}
       >
@@ -19,7 +22,7 @@ export function ClerkUserMenu({ plan: _plan = "FREE" }: { plan?: string }) {
           <UserButton.Link label="Profile" labelIcon={<User size={14} />} href="/profile" />
         </UserButton.MenuItems>
       </UserButton>
-      <p className="text-xs text-retro-text-muted truncate">Account & profile</p>
+      <p className="text-xs text-retro-text-muted">Account & profile</p>
     </div>
   );
 }

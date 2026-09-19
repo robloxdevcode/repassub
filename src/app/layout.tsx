@@ -9,86 +9,45 @@ import { RetroToastProvider } from "@/components/retro";
 import { CurrencyProvider } from "@/components/providers/currency-provider";
 
 import { buildRootMetadata } from "@/lib/seo";
+import { getAdSenseClient } from "@/lib/adsense-config";
+import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
+import { getClerkProviderProps } from "@/lib/clerk-config";
 
 import "./globals.css";
 
-
-
 const inter = Inter({
-
   subsets: ["latin"],
-
   variable: "--font-inter",
-
 });
-
-
-
-const ADSENSE_SRC =
-
-  "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1007476096338167";
-
-
 
 export const metadata: Metadata = buildRootMetadata();
 
-
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const clerk = getClerkProviderProps();
+  const adsenseClient = getAdSenseClient();
+  const adsenseSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`;
 
   return (
-
     <html lang="en" className={`${inter.variable} h-full`}>
-
       <head>
-
-        <script async src={ADSENSE_SRC} crossOrigin="anonymous" />
-
+        <script async src={adsenseSrc} crossOrigin="anonymous" />
       </head>
-
       <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
-
         <ClerkProvider
-
-          signInUrl="/sign-in"
-
-          signUpUrl="/sign-up"
-
-          signInFallbackRedirectUrl="/dashboard"
-
-          signUpFallbackRedirectUrl="/dashboard"
-
+          {...clerk}
           appearance={{
-
+            ...clerkAuthAppearance,
             variables: {
-
-              colorPrimary: "#6366f1",
-
-              colorBackground: "#ffffff",
-
-              borderRadius: "0.625rem",
-
+              ...clerkAuthAppearance.variables,
               fontFamily: "var(--font-inter), system-ui, sans-serif",
-
             },
-
           }}
-
         >
-
           <CurrencyProvider>
-
             <RetroToastProvider>{children}</RetroToastProvider>
-
           </CurrencyProvider>
-
         </ClerkProvider>
-
       </body>
-
     </html>
-
   );
-
 }
-

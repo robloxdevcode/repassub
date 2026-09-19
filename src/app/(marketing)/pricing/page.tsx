@@ -10,39 +10,24 @@ import { useToast } from "@/components/retro";
 import { useCurrency } from "@/components/providers/currency-provider";
 import { PLAN_FEATURES, PLAN_FINE_PRINT, PLAN_TAGLINE } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
-
-function checkoutErrorMessage(error: unknown) {
-  const message = typeof error === "string" ? error : error instanceof Error ? error.message : "";
-  if (message === "Unauthorized" || message === "Sign in again to upgrade.") {
-    return "Sign in first, then try Upgrade to Pro again.";
-  }
-  if (message === "Already subscribed") {
-    return "You're already on Pro. Open Billing to manage your plan.";
-  }
-  if (message.includes("Stripe not configured")) {
-    return "Stripe isn’t configured on this server yet.";
-  }
-  return "Couldn’t start checkout. Try again from Billing while signed in.";
-}
+import { checkoutErrorMessage } from "@/lib/checkout-errors";
 
 export default function PricingPage() {
   const { isSignedIn } = useAuth();
   const [yearly, setYearly] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
+  const [fetchedPlan, setFetchedPlan] = useState<string | null>(null);
   const { toast } = useToast();
   const { prices, formatPrice, yearlyCompareAtCents, discountPercent, currency } = useCurrency();
 
   useEffect(() => {
-    if (!isSignedIn) {
-      setCurrentPlan(null);
-      return;
-    }
+    if (!isSignedIn) return;
     getBillingData()
-      .then((data) => setCurrentPlan(data.plan))
-      .catch(() => setCurrentPlan(null));
+      .then((data) => setFetchedPlan(data.plan))
+      .catch(() => setFetchedPlan(null));
   }, [isSignedIn]);
 
+  const currentPlan = isSignedIn ? fetchedPlan : null;
   const isPro = currentPlan === "PRO" || currentPlan === "BUSINESS";
 
   const plans = [
@@ -126,6 +111,10 @@ export default function PricingPage() {
             Yearly · {discountPercent}% off
           </button>
         </div>
+
+        <p className="text-center text-xs text-retro-text-muted mb-10">
+          Card, PayPal, Apple Pay, and Google Pay at checkout (via Stripe).
+        </p>
 
         <div className="grid gap-5 sm:grid-cols-2 max-w-3xl mx-auto">
           {plans.map((p) => (

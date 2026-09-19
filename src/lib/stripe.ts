@@ -23,6 +23,8 @@ export const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { typescript: true })
   : null;
 
+export { getCheckoutPaymentMethodTypes } from "@/lib/checkout-payment-methods";
+
 /** @deprecated Weekly quotas removed — free plan has unlimited links. */
 export const FREE_UNLOCK_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -36,24 +38,26 @@ export const PLAN_FEATURES = {
   FREE: [
     "Unlimited unlock links",
     "Up to 4 steps per link",
-    "Views and unlock stats",
+    "Views, unlocks & per-link stats",
+    "TikTok, Instagram, custom visit steps",
   ],
   PRO: [
     "Up to 10 steps per link",
     "Custom logo, colors, music & video",
     "Traffic source, device & country stats",
     "No Linklock branding on pages",
+    "Priority feel — built for serious creators",
   ],
 } as const;
 
 export const PLAN_FINE_PRINT = {
   FREE: "Linklock ads shown on unlock pages.",
-  PRO: "Billed yearly or monthly. Cancel anytime.",
+  PRO: "Save 30% on yearly billing. Cancel anytime.",
 } as const;
 
 export const PLAN_TAGLINE = {
-  FREE: "Everything you need to start gating downloads.",
-  PRO: "More steps, your branding, no ads.",
+  FREE: "Everything you need to start — unlimited links, real stats.",
+  PRO: "More steps, your branding, advanced analytics, no ads.",
 } as const;
 
 export function getUnlockQuotaWindowStart(now = new Date()) {

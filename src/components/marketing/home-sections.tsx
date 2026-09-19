@@ -89,15 +89,18 @@ export function HowItWorksSection() {
 }
 
 export function PlatformMarquee() {
-  const items = [...MARKETING_PLATFORMS, ...MARKETING_PLATFORMS];
+  const group = MARKETING_PLATFORMS.map(({ id, name }) => (
+    <PlatformMarqueeItem key={id} id={id} name={name} />
+  ));
 
   return (
     <section className="ll-marquee-wrap" aria-label="Supported platforms">
       <p className="ll-marquee-label">Works with 70+ platforms</p>
       <div className="ll-marquee-track">
-        {items.map(({ id, name }, i) => (
-          <PlatformMarqueeItem key={`${id}-${i}`} id={id} name={name} />
-        ))}
+        <div className="ll-marquee-group">{group}</div>
+        <div className="ll-marquee-group" aria-hidden>
+          {group}
+        </div>
       </div>
     </section>
   );
@@ -188,7 +191,9 @@ export function PlansSection() {
               {formatPrice(prices.yearly)}
               <span className="text-sm font-normal text-retro-text-dim"> /yr</span>
             </p>
-            <p className="text-xs text-retro-text-muted mt-1">{discountPercent}% off vs monthly</p>
+            <p className="text-xs text-retro-text-muted mt-1">
+              Save {discountPercent}% vs paying monthly · {formatPrice(Math.round(prices.yearly / 12))}/mo billed yearly
+            </p>
             <div className="mt-6 flex-1">
               <PlanFeatureList features={PLAN_FEATURES.PRO} finePrint={PLAN_FINE_PRINT.PRO} />
             </div>

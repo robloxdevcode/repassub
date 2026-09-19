@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUser, requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { stripe, getOrCreateStripeCustomer, getUserPlan } from "@/lib/stripe";
+import { getCheckoutPaymentMethodTypes } from "@/lib/checkout-payment-methods";
 import { DEFAULT_BILLING_CURRENCY, isBillingCurrency, type BillingCurrency } from "@/lib/currency";
 import { getPaymentsSiteUrl } from "@/lib/site-url";
 
@@ -315,14 +316,34 @@ export async function createCheckoutSession(
     const customerId = await resolveCheckoutCustomerId(user);
     const siteUrl = getPaymentsSiteUrl();
 
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: "subscription",
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${siteUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/billing?checkout=canceled`,
-      metadata: { userId: user.id, plan },
-    });
+    const paymentMethods = getCheckoutPaymentMethodTypes();
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: "subscription",
+        payment_method_types: paymentMethods,
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: `${siteUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${siteUrl}/billing?checkout=canceled`,
+        metadata: { userId: user.id, plan },
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message.toLowerCase().includes("paypal") && paymentMethods.includes("paypal")) {
+        session = await stripe.checkout.sessions.create({
+          customer: customerId,
+          mode: "subscription",
+          payment_method_types: ["card"],
+          line_items: [{ price: priceId, quantity: 1 }],
+          success_url: `${siteUrl}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${siteUrl}/billing?checkout=canceled`,
+          metadata: { userId: user.id, plan },
+        });
+      } else {
+        throw error;
+      }
+    }
 
     return { url: session.url };
   } catch (error) {
@@ -394,8 +415,7 @@ export async function getPaymentData() {
 
 export async function createBillingPortal(): Promise<ActionResult> {
   try {
-    const user = await getCurrentUser();
-    if (!user) return actionError("Sign in again to manage billing.");
+    const user = await requireUser();
     if (!stripe) return actionError("Stripe not configured");
 
     let customerId: string;

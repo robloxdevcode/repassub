@@ -1,5 +1,6 @@
 import { RetroLink } from "@/components/retro";
 import { getUserCampaigns } from "@/lib/actions/campaigns";
+import { ShareKit } from "@/components/dashboard/share-kit";
 import { DeleteUnlockButton } from "@/components/dashboard/delete-unlock-button";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
@@ -49,6 +50,14 @@ export default async function UnlocksPage() {
                     <DeleteUnlockButton campaignId={campaign.id} title={campaign.title} />
                   </div>
                 </div>
+                {url ? (
+                  <details className="group">
+                    <summary className="text-sm font-semibold text-retro-accent cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                      Share kit — link, bio line, QR
+                    </summary>
+                    <ShareKit url={url} title={campaign.title} />
+                  </details>
+                ) : null}
               </AppCard>
             );
           })}

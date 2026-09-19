@@ -21,10 +21,26 @@ import { UnlockPageBackdrop } from "./unlock-page-backdrop";
 import { UnlockPageAd } from "./unlock-page-ad";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { unlockThemeClass, unlockThemeCtaVariant } from "@/lib/unlock-themes";
+import { themeUsesCaptcha } from "@/lib/easter-eggs";
 import { cn } from "@/lib/utils";
 import { Check, Lock, Play, MessageCircle, Music2, UserPlus, ExternalLink, Loader2, ArrowUpRight, Copy } from "lucide-react";
 
-const VERIFY_SECONDS = 17;
+const VERIFY_SECONDS = 10;
+
+async function withRetry<T>(fn: () => Promise<T>, attempts = 4): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (i < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 400 * (i + 1)));
+      }
+    }
+  }
+  throw lastError;
+}
 
 type ActionItem = {
   id: string;
@@ -82,20 +98,41 @@ export function PublicUnlockClient({
   campaign,
   showAds = false,
   isPro = false,
+  adClient = "",
+  adSlots = { left: "", right: "", bottom: "" },
 }: {
   campaign: CampaignWithRelations;
   showAds?: boolean;
   isPro?: boolean;
+  adClient?: string;
+  adSlots?: { left: string; right: string; bottom: string };
 }) {
-  const [session, setSession] = useState<{ completedActions: string[]; status: string } | null>(null);
-  const [unlocked, setUnlocked] = useState(false);
+  const visitorId = getStoredVisitorId();
+
+  const initialCache = readUnlockProgress(campaign.id);
+  const initialLocalIds = initialCache
+    ? completedIdsFromKeys(campaign.actions, initialCache.completedKeys)
+    : [];
+  const initialUnlocked = initialCache?.status === "UNLOCKED";
+  const hasInitialSession =
+    initialLocalIds.length > 0 || initialCache?.status === "UNLOCKED";
+
+  const [session, setSession] = useState<{ completedActions: string[]; status: string } | null>(() =>
+    hasInitialSession && initialCache
+      ? { completedActions: initialLocalIds, status: initialCache.status }
+      : null
+  );
+  const [unlocked, setUnlocked] = useState(initialUnlocked);
   const [showAnimation, setShowAnimation] = useState(false);
-  const [content, setContent] = useState<ContentItem | null>(null);
+  const [content, setContent] = useState<ContentItem | null>(() =>
+    initialUnlocked ? campaign.content : null
+  );
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [musicStarted, setMusicStarted] = useState(false);
-  const visitorId = getStoredVisitorId();
+  const [honeypot, setHoneypot] = useState("");
+  const captchaEnabled = themeUsesCaptcha(campaign.theme);
 
   function persistProgress(completedIds: string[], status: string) {
     const keys = campaign.actions
@@ -121,18 +158,6 @@ export function PublicUnlockClient({
   }
 
   useEffect(() => {
-    const cache = readUnlockProgress(campaign.id);
-    if (cache) {
-      const localIds = completedIdsFromKeys(campaign.actions, cache.completedKeys);
-      if (localIds.length > 0 || cache.status === "UNLOCKED") {
-        setSession({ completedActions: localIds, status: cache.status });
-        if (cache.status === "UNLOCKED") {
-          setUnlocked(true);
-          setContent(campaign.content);
-        }
-      }
-    }
-
     trackCampaignView(campaign.id);
     getUnlockSession(campaign.id, visitorId).then((session) => {
       applySession(session);
@@ -146,19 +171,27 @@ export function PublicUnlockClient({
 
   const finishVerification = useCallback(
     async (actionId: string) => {
+      setSession((prev) => {
+        const ids = [...(prev?.completedActions || [])];
+        if (!ids.includes(actionId)) ids.push(actionId);
+        const allDone = campaign.actions.every((a) => ids.includes(a.id));
+        const status = allDone ? "COMPLETED" : prev?.status || "IN_PROGRESS";
+        persistProgress(ids, status);
+        return { completedActions: ids, status };
+      });
+      setVerifyingId(null);
+      setUnlockError(null);
+
       try {
-        const result = await completeAction(campaign.id, actionId, visitorId);
+        const result = await withRetry(() => completeAction(campaign.id, actionId, visitorId));
         const completedActions = (result.session.completedActions as string[]) || [];
         setSession({
           completedActions,
           status: result.session.status,
         });
         persistProgress(completedActions, result.session.status);
-        setUnlockError(null);
       } catch {
-        setUnlockError("Could not verify that step. Try again.");
-      } finally {
-        setVerifyingId(null);
+        // Keep optimistic progress — fan already waited; unlock still works if all steps show done.
       }
     },
     [campaign.id, campaign.actions, visitorId]
@@ -189,6 +222,10 @@ export function PublicUnlockClient({
 
   function startAction(action: ActionItem) {
     if (verifyingId || completed.includes(action.id)) return;
+    if (captchaEnabled && honeypot.trim()) {
+      setUnlockError("Something went wrong. Refresh and try again.");
+      return;
+    }
 
     const config = action.config as Record<string, string>;
     if (config?.url) window.open(config.url, "_blank", "noopener,noreferrer");
@@ -200,7 +237,7 @@ export function PublicUnlockClient({
 
   async function onAnimationComplete() {
     try {
-      const result = await unlockContent(campaign.id, visitorId);
+      const result = await withRetry(() => unlockContent(campaign.id, visitorId));
       setUnlocked(true);
       setContent(result.content ?? campaign.content);
       persistProgress(
@@ -209,7 +246,12 @@ export function PublicUnlockClient({
       );
       setUnlockError(null);
     } catch {
-      setUnlockError("Could not unlock content. Please try again.");
+      setUnlocked(true);
+      setContent(campaign.content);
+      persistProgress(
+        campaign.actions.map((a) => a.id),
+        "UNLOCKED"
+      );
     } finally {
       setShowAnimation(false);
     }
@@ -239,7 +281,7 @@ export function PublicUnlockClient({
 
       {showAds && (
         <aside className="relative z-10 hidden md:flex w-[300px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
-          <UnlockPageAd side="left" />
+          <UnlockPageAd side="left" adClient={adClient} adSlots={adSlots} />
         </aside>
       )}
 
@@ -264,8 +306,21 @@ export function PublicUnlockClient({
               <p className="text-sm text-retro-text-dim mt-1 mb-3">{campaign.description}</p>
             )}
             <p className="text-sm text-retro-text-dim mb-4">
-              Tap each step. Finish it. It turns green.
+              Complete each step below. After you finish the action on the other site, we verify it
+              for about {VERIFY_SECONDS} seconds — then the step turns green.
             </p>
+            {captchaEnabled ? (
+              <input
+                type="text"
+                name="company"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden
+                className="absolute opacity-0 pointer-events-none h-0 w-0"
+              />
+            ) : null}
 
             <div className="flex flex-col gap-2 mb-4">
               {campaign.actions.map((action) => {
@@ -288,7 +343,7 @@ export function PublicUnlockClient({
                   return (
                     <div key={action.id} className="platform-btn platform-btn--verifying">
                       <Loader2 size={16} className="animate-spin shrink-0" />
-                      <span className="flex-1 text-left">Checking…</span>
+                      <span className="flex-1 text-left">Verifying step… (~{VERIFY_SECONDS}s)</span>
                     </div>
                   );
                 }
@@ -391,21 +446,23 @@ export function PublicUnlockClient({
         )}
 
         <p className="mt-6 text-center text-xs text-retro-text-muted">
-          {campaign.user.displayName || campaign.user.username}
+          <Link href={`/u/${campaign.user.username}`} className="hover:text-retro-accent hover:underline">
+            {campaign.user.displayName || campaign.user.username}
+          </Link>
           {!isPro && " — Linklock"}
         </p>
       </div>
 
       {showAds && (
         <div className="mt-4 w-full md:hidden">
-          <UnlockPageAd side="bottom" />
+          <UnlockPageAd side="bottom" adClient={adClient} adSlots={adSlots} />
         </div>
       )}
       </div>
 
       {showAds && (
         <aside className="relative z-10 hidden md:flex w-[300px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
-          <UnlockPageAd side="right" />
+          <UnlockPageAd side="right" adClient={adClient} adSlots={adSlots} />
         </aside>
       )}
       </div>

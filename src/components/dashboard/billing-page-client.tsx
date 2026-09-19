@@ -7,23 +7,20 @@ import { useToast } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
 import { getBillingData, createBillingPortal, createCheckoutSession } from "@/lib/actions/payments";
 import { PLAN_FEATURES, PLAN_FINE_PRINT } from "@/lib/stripe";
-import { ProPriceText } from "@/components/marketing/pro-price-text";
 import { CurrencyToggle } from "@/components/marketing/currency-toggle";
 import { useCurrency } from "@/components/providers/currency-provider";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
 import { cn } from "@/lib/utils";
+import { checkoutErrorMessage } from "@/lib/checkout-errors";
+import { FinePrintTrapdoorTrigger } from "@/components/easter-egg/fine-print-trapdoor-trigger";
 
 export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
   const { toast } = useToast();
-  const { currency } = useCurrency();
+  const { currency, formatPrice, prices, discountPercent } = useCurrency();
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState(initialPlan);
   const [yearly, setYearly] = useState(true);
-
-  useEffect(() => {
-    setPlan(initialPlan);
-  }, [initialPlan]);
 
   useEffect(() => {
     getBillingData().then((data) => setPlan(data.plan)).catch(() => {});
@@ -34,7 +31,7 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
     try {
       const result = await createCheckoutSession("PRO", yearly ? "yearly" : "monthly", currency);
       if (result.error) {
-        toast(result.error, "error");
+        toast(checkoutErrorMessage(result.error), "error");
         return;
       }
       if (result.url) window.location.href = result.url;
@@ -50,7 +47,7 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
     try {
       const result = await createBillingPortal();
       if (result.error) {
-        toast(result.error, "error");
+        toast(checkoutErrorMessage(result.error), "error");
         return;
       }
       if (result.url) window.location.href = result.url;
@@ -87,8 +84,8 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
             ? "Fans see your brand, not Linklock ads. Cancel anytime from Stripe."
             : (
               <>
-                Pro is <ProPriceText variant="monthly" /> or <ProPriceText variant="yearly" /> — built for beat packs,
-                mods, presets & file drops.
+                Pro is {formatPrice(prices.monthly)}/mo or {formatPrice(prices.yearly)}/yr (save {discountPercent}% vs
+                monthly) — built for beat packs, mods, presets & file drops.
               </>
             )}
         </p>
@@ -126,14 +123,27 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
                   onClick={() => setYearly(true)}
                   className={cn("simple-toggle-btn", yearly && "simple-toggle-btn--active")}
                 >
-                  Yearly
+                  Yearly · {discountPercent}% off
                 </button>
               </div>
-              <RetroButton variant="primary" loading={loading} onClick={handleUpgrade} className="w-full sm:flex-1">
-                Upgrade to Pro
-              </RetroButton>
+              <div className="flex flex-col gap-2 w-full sm:flex-1">
+                <p className="text-sm font-semibold text-retro-text">
+                  {yearly
+                    ? `${formatPrice(prices.yearly)}/yr · ${formatPrice(Math.round(prices.yearly / 12))}/mo`
+                    : `${formatPrice(prices.monthly)}/mo`}
+                </p>
+                <RetroButton variant="primary" loading={loading} onClick={handleUpgrade} className="w-full">
+                  Upgrade to Pro
+                </RetroButton>
+              </div>
             </div>
           )}
+          {!isPro ? (
+            <p className="mt-4 text-xs text-retro-text-muted">
+              Pay with card, PayPal, Apple Pay, or Google Pay (via Stripe).
+              <FinePrintTrapdoorTrigger />
+            </p>
+          ) : null}
         </div>
       </AppCard>
 
@@ -146,7 +156,7 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
           </p>
         )}
         <p className="mt-6 text-xs text-retro-text-muted leading-relaxed">
-          Payments are handled securely by Stripe. See our{" "}
+          Payments are handled securely by Stripe. We accept card, PayPal, Apple Pay, and Google Pay. See our{" "}
           <Link href="/refund-policy" className="text-retro-accent hover:underline">
             Refund Policy
           </Link>

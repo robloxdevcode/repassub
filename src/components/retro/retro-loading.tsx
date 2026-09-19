@@ -1,26 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { pickLoadingTip } from "@/lib/loading-tips";
 
 interface RetroLoadingProps {
   message?: string;
   className?: string;
-}
-
-export function RetroLoading({ message = "LOADING SYSTEM...", className }: RetroLoadingProps) {
-  return (
-    <div className={cn("flex flex-col items-center gap-4 py-12", className)}>
-      <p className="font-display text-sm uppercase tracking-widest text-retro-glow animate-pulse">
-        {message}
-      </p>
-      <div className="w-64 retro-progress h-3">
-        <div className="retro-progress-fill h-full animate-shimmer w-3/5" />
-      </div>
-      <p className="font-mono text-xs text-retro-text-dim tracking-widest">
-        ████████░░░░░░
-      </p>
-    </div>
-  );
+  tip?: string;
 }
 
 export function RetroSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
@@ -28,9 +15,23 @@ export function RetroSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   return (
     <div
       className={cn(
-        "animate-spin rounded-full border-2 border-retro-border border-t-retro-glow",
+        "animate-spin rounded-full border-2 border-retro-border border-t-retro-accent",
         sizes[size]
       )}
+      role="status"
+      aria-label="Loading"
     />
+  );
+}
+
+export function RetroLoading({ message = "Loading", className, tip }: RetroLoadingProps) {
+  const loadingTip = useMemo(() => tip ?? pickLoadingTip(), [tip]);
+
+  return (
+    <div className={cn("flex flex-col items-center gap-4 py-16 px-6 text-center max-w-md mx-auto", className)}>
+      <p className="text-sm text-retro-text-dim leading-relaxed">{loadingTip}</p>
+      <p className="text-base font-semibold text-retro-text">{message}</p>
+      <RetroSpinner size="md" />
+    </div>
   );
 }

@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 export function AppNavProgress() {
   const pathname = usePathname();
   const [pending, setPending] = useState(false);
+  const [trackedPathname, setTrackedPathname] = useState(pathname);
 
-  useEffect(() => {
+  if (trackedPathname !== pathname) {
+    setTrackedPathname(pathname);
     setPending(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     function onClick(event: MouseEvent) {

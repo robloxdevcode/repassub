@@ -33,7 +33,8 @@ A retro-styled creator unlock platform built with Next.js, Clerk, Supabase (Post
    ```
 
 2. **Clerk** — create an app at [dashboard.clerk.com](https://dashboard.clerk.com):
-   - Copy publishable + secret keys into `.env.local`
+   - **Local dev:** Clerk → **Development** instance → copy `pk_test_` / `sk_test_` into `.env.development.local` (see `.env.development.local.example`). Production `pk_live_` keys **do not work** on `localhost`.
+   - **Production (Vercel):** Clerk → **Production** instance → `pk_live_` / `sk_live_` in Vercel env + `NEXT_PUBLIC_CLERK_DOMAIN=linklock.org`
    - **User & authentication → Restrictions:** Sign-up mode = **Public**
    - **Email:** enabled, required
    - **Password:** enabled, required

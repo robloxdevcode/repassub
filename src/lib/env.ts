@@ -49,6 +49,8 @@ export function isDatabaseConfigError(error: unknown): boolean {
   return (
     error.name === "PrismaClientInitializationError" ||
     error.message.includes("Environment variable not found: DATABASE_URL") ||
-    error.message.includes("DATABASE_URL is not configured")
+    error.message.includes("DATABASE_URL is not configured") ||
+    (error.message.includes("column") && error.message.includes("does not exist")) ||
+    (error as { code?: string }).code === "P2022"
   );
 }

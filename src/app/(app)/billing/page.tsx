@@ -8,7 +8,7 @@ export default async function BillingPage() {
   const { plan } = await getBillingData();
 
   return (
-    <Suspense fallback={<RetroLoading message="Loading billing..." />}>
+    <Suspense fallback={<RetroLoading message="Loading" />}>
       <BillingStatusBanner />
       <BillingPageClient initialPlan={plan} />
     </Suspense>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useTransition, Suspense } from "react";
+import { useState, useEffect, useCallback, useTransition, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { RetroLoading, RetroButton, RetroInput, RetroTextarea, RetroProgressBar, RetroLink } from "@/components/retro";
 import { useToast } from "@/components/retro";
@@ -13,10 +13,15 @@ import {
   getCampaign,
 } from "@/lib/actions/campaigns";
 import { isProPlan, PLAN_LIMITS } from "@/lib/stripe";
-import { detectPlatformFromUrl, getPlatform, guessPlatform } from "@/lib/unlock-platforms";
+import { detectPlatformFromUrl, getPlatform, guessPlatform, UNLOCK_PLATFORMS } from "@/lib/unlock-platforms";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard } from "@/components/dashboard/app-page-header";
+import { EasterEggTrigger } from "@/components/easter-egg/easter-egg-trigger";
+import { applyCaptchaToTheme } from "@/lib/easter-eggs";
+import { ShareKit } from "@/components/dashboard/share-kit";
+import { UnlockPreviewPanel } from "@/components/dashboard/unlock-preview-panel";
 import { UNLOCK_THEMES } from "@/lib/unlock-themes";
+import { PlatformBrandIcon } from "@/components/marketing/platform-brand-icon";
 import { Link as LinkIcon, FileText, Check, Plus, Trash2 } from "lucide-react";
 import type { ContentType } from "@prisma/client";
 
@@ -33,7 +38,7 @@ type ActionDraft = {
   labelTouched: boolean;
 };
 
-const STEPS = ["Your file", "Fan steps", "Publish"];
+const STEPS = ["Your content", "Fan steps", "Publish"];
 
 function actionErrorMessage(error: unknown, fallback: string) {
   if (error instanceof Error) {
@@ -59,12 +64,13 @@ function newActionDraft(): ActionDraft {
 function CreateUnlockWizard() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [, startNav] = useTransition();
+  const [isNavigating, startNav] = useTransition();
   const { toast } = useToast();
   const editId = searchParams.get("id");
+  const creatingCampaignRef = useRef<Promise<string> | null>(null);
 
   const [step, setStep] = useState(0);
-  const [saving, setSaving] = useState<"content" | "actions" | "publish" | null>(null);
+  const [saving, setSaving] = useState<"publish" | null>(null);
   const [campaignId, setCampaignId] = useState<string | null>(editId);
   const [username, setUsername] = useState("");
   const [slug, setSlug] = useState("");
@@ -87,6 +93,8 @@ function CreateUnlockWizard() {
   const [logoUrl, setLogoUrl] = useState("");
   const [backgroundMusicUrl, setBackgroundMusicUrl] = useState("");
   const [backgroundVideoUrl, setBackgroundVideoUrl] = useState("");
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const isPro = isProPlan(plan);
   const isPublishedEdit = !!editId && campaignStatus === "PUBLISHED";
@@ -146,24 +154,79 @@ function CreateUnlockWizard() {
           setStep(2);
         } else if (campaign.content) {
           setStep(1);
+          if (!campaign.actions.length) {
+            setActions([newActionDraft()]);
+          }
         }
       });
     }
   }, [editId]);
 
-  useEffect(() => {
-    if (step === 1 && actions.length === 0) {
-      setActions([newActionDraft()]);
-    }
-  }, [step, actions.length]);
-
   const ensureCampaign = useCallback(async () => {
     if (campaignId) return campaignId;
-    const campaign = await createCampaign({ title: title || "My unlock" });
-    setCampaignId(campaign.id);
-    setSlug(campaign.slug);
-    return campaign.id;
+    if (!creatingCampaignRef.current) {
+      creatingCampaignRef.current = createCampaign({ title: title || "My unlock" }).then((campaign) => {
+        setCampaignId(campaign.id);
+        setSlug(campaign.slug);
+        return campaign.id;
+      });
+    }
+    return creatingCampaignRef.current;
   }, [campaignId, title]);
+
+  useEffect(() => {
+    if (editId || campaignId) return;
+    void ensureCampaign().catch(() => {
+      creatingCampaignRef.current = null;
+    });
+  }, [editId, campaignId, ensureCampaign]);
+
+  const saveContentToServer = useCallback(
+    async (id: string) => {
+      const content =
+        contentType === "URL"
+          ? { type: "URL" as ContentType, externalUrl: externalUrl.trim() }
+          : { type: "TEXT" as ContentType, textBody: textBody.trim() };
+      await updateCampaignContent(id, content);
+    },
+    [contentType, externalUrl, textBody]
+  );
+
+  const saveActionsToServer = useCallback(
+    async (id: string) => {
+      await updateCampaignActions(
+        id,
+        actions.map((action) => {
+          const platform = getPlatform(action.platformId)!;
+          return {
+            type: platform.type,
+            label: action.label.trim(),
+            config: { url: action.url.trim(), platform: platform.id },
+            verificationMode: "MANUAL" as const,
+          };
+        })
+      );
+    },
+    [actions]
+  );
+
+  const persistContentStep = useCallback(async () => {
+    try {
+      const id = await ensureCampaign();
+      await saveContentToServer(id);
+    } catch (e) {
+      toast(actionErrorMessage(e, "Could not save"), "error");
+    }
+  }, [ensureCampaign, saveContentToServer, toast]);
+
+  const persistActionsStep = useCallback(async () => {
+    try {
+      const id = await ensureCampaign();
+      await saveActionsToServer(id);
+    } catch (e) {
+      toast(actionErrorMessage(e, "Could not save steps"), "error");
+    }
+  }, [ensureCampaign, saveActionsToServer, toast]);
 
   function validateContent(): string | null {
     if (contentType === "URL" && !externalUrl.trim()) return "Paste your download link";
@@ -172,28 +235,16 @@ function CreateUnlockWizard() {
     return null;
   }
 
-  async function handleContentNext() {
+  function handleContentNext() {
     const err = validateContent();
     if (err) {
       toast(err, "error");
       return;
     }
 
-    setSaving("content");
-    try {
-      const id = await ensureCampaign();
-      const content =
-        contentType === "URL"
-          ? { type: "URL" as ContentType, externalUrl: externalUrl.trim() }
-          : { type: "TEXT" as ContentType, textBody: textBody.trim() };
-
-      await updateCampaignContent(id, content);
-      setStep(1);
-    } catch (e) {
-      toast(actionErrorMessage(e, "Could not save"), "error");
-    } finally {
-      setSaving(null);
-    }
+    setActions((prev) => (prev.length === 0 ? [newActionDraft()] : prev));
+    setStep(1);
+    void persistContentStep();
   }
 
   function validateActions(): string | null {
@@ -212,34 +263,15 @@ function CreateUnlockWizard() {
     return null;
   }
 
-  async function handleActionsNext() {
+  function handleActionsNext() {
     const err = validateActions();
     if (err) {
       toast(err, "error");
       return;
     }
 
-    setSaving("actions");
-    try {
-      const id = await ensureCampaign();
-      await updateCampaignActions(
-        id,
-        actions.map((action) => {
-          const platform = getPlatform(action.platformId)!;
-          return {
-            type: platform.type,
-            label: action.label.trim(),
-            config: { url: action.url.trim(), platform: platform.id },
-            verificationMode: "MANUAL" as const,
-          };
-        })
-      );
-      setStep(2);
-    } catch (e) {
-      toast(actionErrorMessage(e, "Could not save steps"), "error");
-    } finally {
-      setSaving(null);
-    }
+    setStep(2);
+    void persistActionsStep();
   }
 
   async function handleFinishStep() {
@@ -250,13 +282,15 @@ function CreateUnlockWizard() {
     setSaving("publish");
     try {
       const id = await ensureCampaign();
+      await saveContentToServer(id);
+      await saveActionsToServer(id);
       const updated = await updateCampaignCustomization(id, {
         title: title.trim(),
         description,
         buttonText: buttonText.trim() || "Get download",
+        theme: applyCaptchaToTheme(isPro ? theme : "default", requireCaptcha),
         ...(isPro
           ? {
-              theme,
               logoUrl: logoUrl.trim() || null,
               slug: slug.trim() || undefined,
               backgroundMusicUrl: backgroundMusicUrl.trim() || null,
@@ -318,18 +352,41 @@ function CreateUnlockWizard() {
     setActions((prev) => prev.filter((a) => a.id !== id));
   }
 
+  function quickAddPlatform(platformId: string) {
+    const platform = getPlatform(platformId);
+    if (!platform) return;
+    if (actions.length >= actionLimit) {
+      toast(`Free plan allows ${actionLimit} steps. Upgrade for more.`, "error");
+      return;
+    }
+    setActions((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        platformId,
+        url: "",
+        label: platform.label,
+        labelTouched: false,
+      },
+    ]);
+  }
+
   if (published) {
     const url = publishedUrl;
     return (
       <div className="mx-auto max-w-lg text-center">
         <AppCard className="p-8" accent="green">
-          <h1 className="font-body text-2xl font-bold mb-2">Link is live</h1>
+          <h1 className="font-body text-2xl font-bold mb-2">Your link is live</h1>
           <p className="font-body text-sm text-retro-text-dim mb-4">Share this anywhere:</p>
           <p className="font-mono text-sm bg-retro-surface-2 border-2 border-retro-ink p-3 break-all">{url}</p>
-          <div className="mt-8">
-            <RetroButton onClick={() => navigator.clipboard.writeText(url)} className="w-full sm:w-auto">
-              Copy link
+          <ShareKit url={url} title={title || "My unlock link"} />
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <RetroButton type="button" onClick={() => window.open(url, "_blank", "noopener,noreferrer")} className="w-full sm:w-auto">
+              Preview live page
             </RetroButton>
+            <RetroLink href="/create" variant="secondary" className="w-full sm:w-auto">
+              Create another
+            </RetroLink>
           </div>
           <RetroLink href="/dashboard" variant="ghost" className="inline-block mt-6 text-sm">
             Back to dashboard
@@ -340,11 +397,18 @@ function CreateUnlockWizard() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="create-wizard relative z-10 mx-auto max-w-2xl">
       <div className="mb-8">
         <h1 className="font-body text-2xl font-bold">{editId ? "Edit link" : "Create link"}</h1>
         <p className="mt-2 text-sm text-retro-text-dim">
-          Step {step + 1} of {STEPS.length}: {STEPS[step]}
+          Step {step + 1} of {STEPS.length}:{" "}
+          {step === 2 ? (
+            <EasterEggTrigger eggId="publish-wink" clicks={3} className="inline font-medium text-retro-text">
+              Publish
+            </EasterEggTrigger>
+          ) : (
+            STEPS[step]
+          )}
         </p>
         {plan === "FREE" && (
           <p className="mt-1 text-xs text-retro-text-muted">
@@ -357,14 +421,14 @@ function CreateUnlockWizard() {
       {step === 0 && (
         <AppCard className="p-6" accent="yellow">
           <h2 className="font-body text-lg font-bold mb-1">What do fans unlock?</h2>
-          <p className="text-sm text-retro-text-dim mb-6">Paste the file or page they get after finishing your steps.</p>
+          <p className="text-sm text-retro-text-dim mb-6">Paste the file link or text fans get after completing your steps.</p>
           <div className="grid gap-3 sm:grid-cols-2 mb-6">
             {CONTENT_TYPES.map(({ type, label, hint, icon: Icon }) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setContentType(type)}
-                className={`brutal-border p-4 text-left transition-colors duration-75 ${
+                className={`brutal-border p-4 text-left ${
                   contentType === type ? "border-retro-accent bg-retro-accent/10 brutal-shadow-sm" : "bg-retro-surface-2"
                 }`}
               >
@@ -395,7 +459,7 @@ function CreateUnlockWizard() {
           )}
 
           <div className="wizard-footer">
-            <RetroButton onClick={handleContentNext} loading={saving === "content"} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
+            <RetroButton type="button" onClick={handleContentNext} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
               Next
             </RetroButton>
           </div>
@@ -408,7 +472,7 @@ function CreateUnlockWizard() {
             <div>
               <h2 className="font-body text-lg font-bold mb-1">What must fans do first?</h2>
               <p className="text-sm text-retro-text-dim">
-                Add a step, paste your subscribe/join/follow link — we name the button for you.
+                Paste a subscribe / follow / join link — we pick the platform and button name for you.
               </p>
             </div>
             <span className="text-xs font-semibold bg-retro-surface-2 border border-retro-ink px-2 py-1 shrink-0">
@@ -425,7 +489,8 @@ function CreateUnlockWizard() {
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xs font-bold text-retro-text-dim shrink-0">Step {index + 1}</span>
                       {platform && (
-                        <span className={`text-xs font-bold px-2 py-0.5 border border-retro-ink shrink-0 ${platform.accent}`}>
+                        <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2 py-0.5 border border-retro-ink shrink-0 ${platform.accent}`}>
+                          <PlatformBrandIcon platform={platform.id} size="sm" />
                           {platform.shortName}
                         </span>
                       )}
@@ -461,15 +526,23 @@ function CreateUnlockWizard() {
 
           {actions.length === 0 && (
             <p className="text-sm text-retro-text-dim text-center py-4 mb-2 border-2 border-dashed border-retro-ink/25">
-              No steps yet — add one below.
+              No steps yet — add one below or quick-add a platform.
             </p>
           )}
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            {UNLOCK_PLATFORMS.filter((p) => ["tiktok", "instagram", "youtube", "website"].includes(p.id)).map((p) => (
+              <RetroButton key={p.id} type="button" variant="secondary" size="sm" onClick={() => quickAddPlatform(p.id)}>
+                + {p.shortName}
+              </RetroButton>
+            ))}
+          </div>
 
           <RetroButton
             type="button"
             variant="secondary"
             onClick={addAction}
-            disabled={actions.length >= actionLimit || saving === "actions"}
+            disabled={actions.length >= actionLimit}
             className="w-full mb-8"
             size="lg"
           >
@@ -486,10 +559,10 @@ function CreateUnlockWizard() {
           )}
 
           <div className="wizard-footer wizard-footer--split">
-            <RetroButton variant="ghost" onClick={() => setStep(0)} disabled={!!saving} size="lg" className="w-full sm:w-auto">
+            <RetroButton type="button" variant="ghost" onClick={() => setStep(0)} size="lg" className="w-full sm:w-auto">
               Back
             </RetroButton>
-            <RetroButton onClick={handleActionsNext} loading={saving === "actions"} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
+            <RetroButton type="button" onClick={handleActionsNext} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
               Next
             </RetroButton>
           </div>
@@ -524,6 +597,34 @@ function CreateUnlockWizard() {
             />
           </div>
 
+          <label className="mt-4 flex items-start gap-3 text-sm text-retro-text-dim cursor-pointer">
+            <input
+              type="checkbox"
+              checked={requireCaptcha}
+              onChange={(e) => setRequireCaptcha(e.target.checked)}
+              className="mt-1"
+            />
+            <span>
+              <strong className="text-retro-text">Spam protection</strong> — add a hidden bot check on the unlock page (recommended for public links).
+            </span>
+          </label>
+
+          <div className="mt-6">
+            <RetroButton type="button" variant="secondary" size="sm" onClick={() => setShowPreview((v) => !v)}>
+              {showPreview ? "Hide fan preview" : "See what fans see"}
+            </RetroButton>
+          </div>
+          {showPreview ? (
+            <UnlockPreviewPanel
+              className="mt-4"
+              title={title}
+              description={description}
+              buttonText={buttonText}
+              theme={theme}
+              actions={actions}
+            />
+          ) : null}
+
           {isPro ? (
             <div className="mt-6 pt-6 border-t-2 border-retro-ink/10 space-y-4">
               <p className="font-body text-sm font-bold">Pro options</p>
@@ -552,7 +653,7 @@ function CreateUnlockWizard() {
                       key={t.id}
                       type="button"
                       onClick={() => setTheme(t.id)}
-                      className={`px-4 py-2.5 border-2 border-retro-ink text-xs font-bold rounded-lg transition-transform hover:scale-[1.02] ${t.swatch} ${
+                      className={`px-4 py-2.5 border-2 border-retro-ink text-xs font-bold rounded-lg ${t.swatch} ${
                         theme === t.id ? "brutal-shadow-sm ring-2 ring-retro-accent ring-offset-1" : ""
                       }`}
                     >
@@ -589,10 +690,10 @@ function CreateUnlockWizard() {
           )}
 
           <div className="wizard-footer wizard-footer--split">
-            <RetroButton variant="ghost" onClick={() => setStep(1)} disabled={!!saving} size="lg" className="w-full sm:w-auto">
+            <RetroButton type="button" variant="ghost" onClick={() => setStep(1)} size="lg" className="w-full sm:w-auto">
               Back
             </RetroButton>
-            <RetroButton onClick={handleFinishStep} loading={saving === "publish"} size="lg" className="w-full sm:w-auto sm:min-w-[160px]">
+            <RetroButton type="button" onClick={handleFinishStep} loading={saving === "publish" || isNavigating} size="lg" className="w-full sm:w-auto sm:min-w-[160px]">
               {isPublishedEdit ? "Save changes" : "Publish link"}
             </RetroButton>
           </div>
@@ -604,7 +705,7 @@ function CreateUnlockWizard() {
 
 export default function CreateUnlockPage() {
   return (
-    <Suspense fallback={<RetroLoading message="Loading..." />}>
+    <Suspense fallback={<RetroLoading message="Loading" />}>
       <CreateUnlockWizard />
     </Suspense>
   );

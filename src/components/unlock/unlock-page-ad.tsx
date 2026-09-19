@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import {
-  ADSENSE_CLIENT,
-  getUnlockAdSlot,
-  isUnlockAdConfigured,
-  type UnlockAdSide,
-} from "@/lib/adsense";
+import { isUnlockAdConfigured, type UnlockAdSide } from "@/lib/adsense";
 import { cn } from "@/lib/utils";
 
 declare global {
@@ -19,13 +14,20 @@ function pushAdUnit() {
   (window.adsbygoogle = window.adsbygoogle || []).push({});
 }
 
-function AdSenseUnit({ side }: { side: UnlockAdSide }) {
+function AdSenseUnit({
+  side,
+  adClient,
+  adSlot,
+}: {
+  side: UnlockAdSide;
+  adClient: string;
+  adSlot: string;
+}) {
   const pushed = useRef(false);
-  const slot = getUnlockAdSlot(side);
   const isSide = side === "left" || side === "right";
 
   useEffect(() => {
-    if (!slot || pushed.current) return;
+    if (!adClient || pushed.current) return;
 
     const tryPush = () => {
       try {
@@ -44,7 +46,7 @@ function AdSenseUnit({ side }: { side: UnlockAdSide }) {
     }, 250);
 
     return () => window.clearInterval(interval);
-  }, [slot]);
+  }, [adClient, adSlot]);
 
   return (
     <div
@@ -56,8 +58,8 @@ function AdSenseUnit({ side }: { side: UnlockAdSide }) {
       <ins
         className="adsbygoogle block"
         style={{ display: "block" }}
-        data-ad-client={ADSENSE_CLIENT}
-        data-ad-slot={slot}
+        data-ad-client={adClient}
+        {...(adSlot ? { "data-ad-slot": adSlot } : {})}
         data-ad-format="auto"
         data-full-width-responsive="true"
       />
@@ -65,10 +67,19 @@ function AdSenseUnit({ side }: { side: UnlockAdSide }) {
   );
 }
 
-export function UnlockPageAd({ side = "bottom" }: { side?: UnlockAdSide }) {
-  if (!isUnlockAdConfigured(side)) {
+export type UnlockPageAdProps = {
+  side?: UnlockAdSide;
+  adClient: string;
+  adSlots: { left: string; right: string; bottom: string };
+};
+
+export function UnlockPageAd({ side = "bottom", adClient, adSlots }: UnlockPageAdProps) {
+  const slot =
+    side === "left" ? adSlots.left : side === "right" ? adSlots.right : adSlots.bottom;
+
+  if (!isUnlockAdConfigured(adClient, slot, side)) {
     return null;
   }
 
-  return <AdSenseUnit side={side} />;
+  return <AdSenseUnit side={side} adClient={adClient} adSlot={slot} />;
 }

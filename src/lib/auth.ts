@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import type { User as ClerkUser } from "@clerk/backend";
 import { UserRole } from "@prisma/client";
@@ -50,7 +51,7 @@ function resolveUserRole(email: string | null | undefined, currentRole?: UserRol
   return currentRole === UserRole.ADMIN ? UserRole.USER : currentRole ?? UserRole.USER;
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async function getCurrentUser() {
   if (!hasDatabaseUrl()) return null;
 
   const { userId } = await auth();
@@ -72,7 +73,7 @@ export async function getCurrentUser() {
   if (!user) return null;
 
   return applyLifetimeProGrant(user);
-}
+});
 
 export async function requireUser() {
   const user = await getCurrentUser();

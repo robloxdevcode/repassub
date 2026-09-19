@@ -37,6 +37,29 @@ const OG_IMAGE = {
 const DEFAULT_DESCRIPTION =
   "Gate downloads behind follows and subs. Unlimited free links, 4 fan steps, 70+ platforms — Pro adds 10 steps, branding, and analytics.";
 
+/** Homepage meta — keyword-rich for primary rankings. */
+export const HOME_META_DESCRIPTION =
+  "Linklock — free subscribe-to-download links for creators. Gate preset packs, beats, and mods behind YouTube subscribe, TikTok follow, and Discord join. Unlimited links, no fan sign-up.";
+
+export const HOME_KEYWORDS = [
+  "subscribe to download",
+  "unlock link",
+  "free content locker",
+  "link in bio tool",
+  "Rekonise alternative",
+  "follow to unlock",
+  "subscribe to unlock",
+  "preset pack download link",
+  "gate download link",
+  "social unlock page",
+  "youtube subscribe to download",
+  "tiktok follow to unlock",
+  "discord join to download",
+  "creator unlock page",
+  "linklock",
+  "linklock.org",
+];
+
 export const HOME_FAQS = [
   {
     q: "Is Linklock free?",
@@ -85,8 +108,11 @@ export function getSiteUrl() {
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
     process.env.NEXT_PUBLIC_APP_URL?.trim();
 
-  const url = configured || "https://linklock.org";
-  return url.replace(/\/$/, "");
+  let url = (configured || "https://www.linklock.org").replace(/\/$/, "");
+  if (url === "https://linklock.org" || url === "http://linklock.org") {
+    url = "https://www.linklock.org";
+  }
+  return url;
 }
 
 export function absoluteUrl(path = "") {
@@ -102,6 +128,8 @@ type PageMetaInput = {
   keywords?: string[];
   noIndex?: boolean;
   openGraphType?: "website" | "article";
+  /** ISO date for article pages */
+  publishedTime?: string;
 };
 
 export function buildPageMetadata({
@@ -111,6 +139,7 @@ export function buildPageMetadata({
   keywords = DEFAULT_KEYWORDS,
   noIndex = false,
   openGraphType = "website",
+  publishedTime,
 }: PageMetaInput): Metadata {
   const url = absoluteUrl(path);
 
@@ -121,7 +150,11 @@ export function buildPageMetadata({
     alternates: { canonical: url },
     robots: noIndex
       ? { index: false, follow: true }
-      : { index: true, follow: true, googleBot: { index: true, follow: true } },
+      : {
+          index: true,
+          follow: true,
+          googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+        },
     openGraph: {
       type: openGraphType,
       locale: "en_US",
@@ -130,6 +163,9 @@ export function buildPageMetadata({
       title: `${title} | ${SITE_NAME}`,
       description,
       images: [OG_IMAGE],
+      ...(publishedTime && openGraphType === "article"
+        ? { publishedTime, modifiedTime: publishedTime }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
@@ -149,14 +185,18 @@ export function buildRootMetadata(): Metadata {
       default: "Linklock — Free Subscribe-to-Download Links for Creators",
       template: `%s | ${SITE_NAME}`,
     },
-    description: DEFAULT_DESCRIPTION,
-    keywords: DEFAULT_KEYWORDS,
+    description: HOME_META_DESCRIPTION,
+    keywords: HOME_KEYWORDS,
     applicationName: SITE_NAME,
     authors: [{ name: SITE_NAME, url: siteUrl }],
     creator: SITE_NAME,
     publisher: SITE_NAME,
     category: "technology",
-    robots: { index: true, follow: true },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    },
     alternates: { canonical: siteUrl },
     openGraph: {
       type: "website",
@@ -164,20 +204,21 @@ export function buildRootMetadata(): Metadata {
       url: siteUrl,
       siteName: SITE_NAME,
       title: "Linklock — Free Subscribe-to-Download Links for Creators",
-      description: DEFAULT_DESCRIPTION,
+      description: HOME_META_DESCRIPTION,
       images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
+      site: "@linklock",
       title: "Linklock — Free Subscribe-to-Download Links for Creators",
-      description: DEFAULT_DESCRIPTION,
+      description: HOME_META_DESCRIPTION,
       images: [OG_IMAGE.url],
     },
     icons: {
-      icon: [{ url: "/favicon.ico", sizes: "any" }],
+      icon: [{ url: "/icon.png", type: "image/png", sizes: "512x512" }],
       apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
-      shortcut: ["/favicon.ico"],
     },
+    manifest: "/manifest.webmanifest",
   };
 }
 
@@ -199,16 +240,10 @@ export function websiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
+    alternateName: "Linklock.org",
     url: siteUrl,
-    description: DEFAULT_DESCRIPTION,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteUrl}/blog?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
+    description: HOME_META_DESCRIPTION,
+    inLanguage: "en-US",
   };
 }
 
@@ -219,15 +254,52 @@ export function softwareApplicationJsonLd() {
     "@type": "SoftwareApplication",
     name: SITE_NAME,
     applicationCategory: "BusinessApplication",
+    applicationSubCategory: "Content Gating",
     operatingSystem: "Web",
     url: siteUrl,
-    description: DEFAULT_DESCRIPTION,
+    description: HOME_META_DESCRIPTION,
     offers: {
       "@type": "Offer",
       price: "0",
-      priceCurrency: "EUR",
+      priceCurrency: "USD",
       description: "Free tier — unlimited links, 4 steps per link",
     },
+    featureList: [
+      "Subscribe to download links",
+      "TikTok and Instagram follow steps",
+      "Discord join gates",
+      "Per-link analytics",
+      "Share kit with bio line and QR code",
+    ],
+  };
+}
+
+export function webPageJsonLd(input: {
+  name: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: getSiteUrl() },
+    inLanguage: "en-US",
+  };
+}
+
+export function itemListJsonLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: absoluteUrl(item.path),
+    })),
   };
 }
 
@@ -318,10 +390,17 @@ export const SITEMAP_ROUTES: {
 }[] = [
   { path: "", priority: 1, changeFrequency: "weekly" },
   { path: "/pricing", priority: 0.9, changeFrequency: "weekly" },
+  { path: "/sign-up", priority: 0.85, changeFrequency: "monthly" },
+  { path: "/sign-in", priority: 0.8, changeFrequency: "monthly" },
   { path: "/how-it-works", priority: 0.85, changeFrequency: "monthly" },
   { path: "/features", priority: 0.85, changeFrequency: "monthly" },
   { path: "/creators", priority: 0.8, changeFrequency: "monthly" },
   { path: "/use-cases", priority: 0.75, changeFrequency: "monthly" },
+  { path: "/help", priority: 0.85, changeFrequency: "weekly" },
+  { path: "/leaderboard", priority: 0.7, changeFrequency: "daily" },
+  { path: "/grow", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/alternatives/rekonise", priority: 0.9, changeFrequency: "weekly" },
+  { path: "/about", priority: 0.5, changeFrequency: "yearly" },
   { path: "/support", priority: 0.7, changeFrequency: "monthly" },
   { path: "/docs", priority: 0.65, changeFrequency: "monthly" },
   { path: "/blog", priority: 0.65, changeFrequency: "weekly" },

@@ -1,20 +1,20 @@
-import { HeroSection, SimplePlatformLine } from "@/components/marketing/hero-section";
+import type { Metadata } from "next";
+import { HomeLanding } from "@/components/marketing/home-landing";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildPageMetadata, HOME_KEYWORDS, HOME_META_DESCRIPTION } from "@/lib/seo";
 
-export const metadata = buildPageMetadata({
-  title: "Linklock — Share a link, unlock when they're done",
-  description:
-    "One link for your content. Fans complete your steps, then it opens. Free to start.",
+export const metadata: Metadata = buildPageMetadata({
+  title: "Free Subscribe-to-Download Links for Creators",
+  description: HOME_META_DESCRIPTION,
   path: "/",
+  keywords: HOME_KEYWORDS,
 });
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <>
       <HomeStructuredData />
-      <HeroSection />
-      <SimplePlatformLine />
+      <HomeLanding />
     </>
   );
 }

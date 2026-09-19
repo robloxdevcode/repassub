@@ -5,8 +5,16 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
+        userAgent: "Google-adstxt",
+        allow: "/ads.txt",
+      },
+      {
+        userAgent: "Mediapartners-Google",
+        allow: "/ads.txt",
+      },
+      {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/ads.txt"],
         disallow: [
           "/dashboard",
           "/admin",
@@ -18,12 +26,11 @@ export default function robots(): MetadataRoute.Robots {
           "/profile",
           "/billing",
           "/payments",
-          "/sign-in",
-          "/sign-up",
           "/forgot-password",
           "/u/",
           "/api",
-        ],      },
+        ],
+      },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),
     host: absoluteUrl(),

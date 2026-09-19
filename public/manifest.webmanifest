@@ -1,0 +1,22 @@
+{
+  "name": "Linklock",
+  "short_name": "Linklock",
+  "description": "Free subscribe-to-download links for creators. Gate preset packs, beats, and mods behind social steps.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf8f5",
+  "theme_color": "#6366f1",
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

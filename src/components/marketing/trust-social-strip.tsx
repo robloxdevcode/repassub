@@ -1,33 +1,18 @@
 "use client";
 
-import { MARKETING_PLATFORMS, PlatformBrandIcon } from "@/components/marketing/platform-brand-icon";
-
-const EXTRA_PLATFORMS = [
-  { id: "facebook", name: "Facebook" },
-  { id: "linkedin", name: "LinkedIn" },
-  { id: "reddit", name: "Reddit" },
-  { id: "kick", name: "Kick" },
-] as const;
-
-const MARQUEE_ITEMS = [...MARKETING_PLATFORMS, ...EXTRA_PLATFORMS, ...MARKETING_PLATFORMS];
+import { PlatformMarqueeTrack } from "@/components/marketing/platform-brand-icon";
 
 export function TrustSocialStrip() {
   return (
-    <section className="ll-trust-strip" aria-label="Trusted by creators worldwide">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 md:py-12 text-center">
-        <p className="ll-trust-strip-text">
-          Trusted by <span className="ll-trust-neon">95K+ creators</span> who gained{" "}
-          <span className="ll-trust-neon">647M+</span> followers
+    <section className="lt-platforms" aria-label="Platforms supported">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 text-center">
+        <p className="text-base lt-subcopy">
+          Plays nice with{" "}
+          <span className="font-bold lt-accent-grape">80+ platforms</span>
         </p>
       </div>
-      <div className="ll-trust-marquee-wrap" aria-hidden>
-        <div className="ll-trust-marquee-track">
-          {MARQUEE_ITEMS.map((p, i) => (
-            <span key={`${p.id}-${i}`} className="ll-trust-marquee-item">
-              <PlatformBrandIcon platform={p.id} size="md" />
-            </span>
-          ))}
-        </div>
+      <div className="ll-trust-marquee-wrap">
+        <PlatformMarqueeTrack iconSize="lg" />
       </div>
     </section>
   );

@@ -6,11 +6,20 @@ const links = {
     { href: "/features", label: "Features" },
     { href: "/pricing", label: "Pricing" },
     { href: "/how-it-works", label: "How it works" },
+    { href: "/use-cases", label: "Use cases" },
+    { href: "/help", label: "Help & FAQ" },
+    { href: "/leaderboard", label: "Leaderboard" },
+  ],
+  Grow: [
+    { href: "/creators", label: "For creators" },
+    { href: "/grow", label: "Growth kit" },
+    { href: "/alternatives/rekonise", label: "Rekonise alternative" },
+    { href: "/blog", label: "Blog" },
   ],
   Company: [
+    { href: "/about", label: "About" },
     { href: "/support", label: "Support" },
     { href: "/docs", label: "Docs" },
-    { href: "/blog", label: "Blog" },
   ],
   Legal: [
     { href: "/terms", label: "Terms" },
@@ -23,11 +32,12 @@ export function RetroFooter() {
   return (
     <footer className="ll-footer">
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
             <LinklockLogo size={36} showWordmark wordmarkClassName="text-retro-text font-bold" />
             <p className="mt-4 text-sm text-retro-text-dim leading-relaxed max-w-xs">
-              Share unlock links. Gate content behind simple steps.
+              Free subscribe-to-download links for creators — gate preset packs, beats, and mods behind
+              follow, sub, and join steps.
             </p>
           </div>
           {Object.entries(links).map(([group, items]) => (

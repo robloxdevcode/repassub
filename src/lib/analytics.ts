@@ -56,19 +56,9 @@ export async function getCampaignAnalytics(campaignId: string) {
 }
 
 export async function getUserAnalytics(userId: string) {
-  const campaigns = await db.campaign.findMany({
-    where: { userId },
-    select: { id: true },
-  });
-
-  const campaignIds = campaigns.map((c) => c.id);
-  if (campaignIds.length === 0) {
-    return { views: 0, started: 0, actionComplete: 0, unlocked: 0, conversion: 0 };
-  }
-
   const events = await db.analyticsEvent.groupBy({
     by: ["type"],
-    where: { campaignId: { in: campaignIds } },
+    where: { campaign: { userId } },
     _count: { type: true },
   });
 
@@ -127,18 +117,67 @@ export async function getAnalyticsBreakdown(userId: string) {
     const rows = perCampaignEvents.filter((e) => e.campaignId === c.id);
     const counts = Object.fromEntries(rows.map((r) => [r.type, r._count.type])) as Record<string, number>;
     const views = counts.VIEW || 0;
+    const started = counts.START || 0;
     const unlocked = counts.UNLOCK || 0;
+    const actionComplete = counts.ACTION_COMPLETE || 0;
     return {
       id: c.id,
       title: c.title,
       slug: c.slug,
       views,
+      started,
+      actionComplete,
       unlocked,
       conversion: views > 0 ? (unlocked / views) * 100 : 0,
+      dropOffBeforeStart: Math.max(0, views - started),
+      dropOffBeforeUnlock: Math.max(0, started - unlocked),
     };
   }).sort((a, b) => b.views - a.views);
 
   return { bySource, byDevice, byCountry, campaigns, campaignStats };
+}
+
+export async function getBasicCampaignBreakdown(userId: string) {
+  const campaigns = await db.campaign.findMany({
+    where: { userId },
+    select: { id: true, title: true, slug: true },
+  });
+
+  const campaignIds = campaigns.map((c) => c.id);
+  if (campaignIds.length === 0) {
+    return { campaignStats: [] as Awaited<ReturnType<typeof getAnalyticsBreakdown>>["campaignStats"] };
+  }
+
+  const perCampaignEvents = await db.analyticsEvent.groupBy({
+    by: ["campaignId", "type"],
+    where: { campaignId: { in: campaignIds } },
+    _count: { type: true },
+  });
+
+  const campaignStats = campaigns
+    .map((c) => {
+      const rows = perCampaignEvents.filter((e) => e.campaignId === c.id);
+      const counts = Object.fromEntries(rows.map((r) => [r.type, r._count.type])) as Record<string, number>;
+      const views = counts.VIEW || 0;
+      const started = counts.START || 0;
+      const unlocked = counts.UNLOCK || 0;
+      const actionComplete = counts.ACTION_COMPLETE || 0;
+      return {
+        id: c.id,
+        title: c.title,
+        slug: c.slug,
+        views,
+        started,
+        actionComplete,
+        unlocked,
+        conversion: views > 0 ? (unlocked / views) * 100 : 0,
+        dropOffBeforeStart: Math.max(0, views - started),
+        dropOffBeforeUnlock: Math.max(0, started - unlocked),
+      };
+    })
+    .sort((a, b) => b.views - a.views);
+
+  return { campaignStats };
 }
 
 function startOfUtcDay(date = new Date()) {

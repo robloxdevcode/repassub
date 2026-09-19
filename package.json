@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/generate-ads-txt.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -16,6 +17,7 @@
     "stripe:sync-billing": "dotenv -e .env.local -- npx tsx scripts/sync-stripe-billing-profile.ts",
     "db:upgrade-pro": "dotenv -e .env.local -- npx tsx scripts/upgrade-user-to-pro.ts",
     "stripe:setup": "dotenv -e .env.local -- npx tsx scripts/setup-stripe.ts",
+    "stripe:setup:win": "scripts\\stripe-setup.cmd",
     "stripe:setup:production": "dotenv -e .env.local -- npx tsx scripts/setup-stripe.ts -- --production-webhook",
     "stripe:audit:live": "dotenv -e .env.local -- npx tsx scripts/audit-stripe-live.ts",
     "stripe:verify-webhook:production": "dotenv -e .env.local -- npx tsx scripts/verify-production-stripe-webhook.ts",
@@ -40,6 +42,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "recharts": "^3.10.1",
+    "simple-icons": "^16.28.0",
     "stripe": "^22.4.0",
     "svix": "^1.99.1",
     "tailwind-merge": "^3.6.0",
