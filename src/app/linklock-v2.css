@@ -1,7 +1,151 @@
 /* Linklock — Rekonise-style (orange + green), animated marketing */
 
+.rk-home {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100vh - 4rem);
+}
+
+.rk-home-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 50% at 10% 0%, rgba(251, 146, 60, 0.2), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 95% 15%, rgba(74, 222, 128, 0.18), transparent 50%),
+    var(--retro-bg);
+}
+
+.rk-home-bg .ll-dot-canvas {
+  opacity: 0.85;
+}
+
+.rk-home-bg-blob {
+  opacity: 0.55;
+}
+
+.rk-home-bg-blob.rk-hero-blob--orange {
+  top: -80px;
+  left: -100px;
+}
+
+.rk-home-bg-blob.rk-hero-blob--green {
+  top: 40%;
+  right: -120px;
+}
+
+.rk-home-bg-grid {
+  inset: 0;
+  position: absolute;
+  animation: rk-grid-drift 24s linear infinite;
+}
+
+@keyframes rk-grid-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(48px, 48px);
+  }
+}
+
+.rk-home-steps {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 0 1.25rem 2rem;
+}
+
+.rk-home-steps-list {
+  display: grid;
+  gap: 0.65rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .rk-home-steps-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+.rk-home-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 0.15rem 0.65rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--ui-radius-lg);
+  border: 1px solid var(--retro-border);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.rk-home-step:hover {
+  border-color: var(--retro-hot);
+  box-shadow: var(--play-shadow);
+}
+
+.rk-home-step-num {
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, var(--retro-hot), var(--retro-neon));
+}
+
+.rk-home-step-title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--retro-text);
+}
+
+.rk-home-step-desc {
+  grid-column: 2;
+  font-size: 0.8125rem;
+  color: var(--retro-text-dim);
+}
+
+.rk-home-cta {
+  text-align: center;
+  padding: 2rem 1.25rem 3.5rem;
+  border-top: 1px solid var(--retro-border);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(6px);
+}
+
+.rk-home-cta-text {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--retro-text);
+  margin-bottom: 1rem;
+}
+
+.rk-home-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
 .rk-shell {
   background: transparent;
+}
+
+.ll-marquee-wrap {
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
 }
 
 .rk-nav {

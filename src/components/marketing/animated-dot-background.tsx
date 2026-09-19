@@ -100,9 +100,12 @@ export function AnimatedDotBackground({
             if (dist < linkDist) {
               const fade = 1 - dist / linkDist;
               if (dark) {
-                ctx.strokeStyle = `rgba(240, 62, 62, ${fade * 0.12})`;
+                ctx.strokeStyle = `rgba(249, 115, 22, ${fade * 0.14})`;
               } else {
-                ctx.strokeStyle = `rgba(240, 62, 62, ${fade * 0.08})`;
+                const green = (a.tint + b.tint) / 2 > 0.5;
+                ctx.strokeStyle = green
+                  ? `rgba(34, 197, 94, ${fade * 0.12})`
+                  : `rgba(249, 115, 22, ${fade * 0.1})`;
               }
               ctx.lineWidth = 1;
               ctx.beginPath();
@@ -117,14 +120,16 @@ export function AnimatedDotBackground({
       for (const d of dots) {
         if (dark) {
           if (d.tint > 0.82) {
-            ctx.fillStyle = `rgba(255, 107, 107, ${d.alpha + 0.15})`;
+            ctx.fillStyle = `rgba(251, 146, 60, ${d.alpha + 0.15})`;
           } else {
             ctx.fillStyle = `rgba(255, 255, 255, ${d.alpha * 0.55})`;
           }
-        } else if (d.tint > 0.85) {
-          ctx.fillStyle = `rgba(240, 62, 62, ${d.alpha * 0.35})`;
+        } else if (d.tint > 0.55) {
+          ctx.fillStyle = `rgba(34, 197, 94, ${d.alpha * 0.45})`;
+        } else if (d.tint > 0.25) {
+          ctx.fillStyle = `rgba(249, 115, 22, ${d.alpha * 0.4})`;
         } else {
-          ctx.fillStyle = `rgba(0, 0, 0, ${d.alpha * 0.12})`;
+          ctx.fillStyle = `rgba(251, 146, 60, ${d.alpha * 0.25})`;
         }
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);

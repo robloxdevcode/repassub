@@ -1,20 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { HeroLiveUnlock } from "@/components/marketing/hero-live-unlock";
 import { RetroLink } from "@/components/retro";
 
 export function HeroSection() {
   return (
-    <section className="rk-hero ll-hero--business relative z-10">
-      <div className="rk-hero-blob rk-hero-blob--orange" aria-hidden />
-      <div className="rk-hero-blob rk-hero-blob--green" aria-hidden />
-      <div className="rk-hero-blob rk-hero-blob--peach" aria-hidden />
-      <div className="rk-hero-grid" aria-hidden />
-      <div className="ll-hero-grid-bg" aria-hidden />
-
-      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 pt-12 pb-14 md:pt-16 md:pb-20">
+    <section className="rk-hero ll-hero--business relative z-10 border-b-0">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 pt-10 pb-10 md:pt-14 md:pb-12">
         <div className="grid lg:grid-cols-[1fr_380px] gap-10 lg:gap-14 items-center">
           <div className="text-center lg:text-left">
             <p
@@ -63,38 +56,6 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-    </section>
-  );
-}
-
-export function SimplePlatformLine() {
-  const [count, setCount] = useState(0);
-  const target = 70;
-
-  useEffect(() => {
-    let frame = 0;
-    let start = 0;
-    const duration = 1400;
-
-    const tick = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.round(eased * target));
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, []);
-
-  return (
-    <section className="ll-platform-line rk-platform-line" aria-label="Supported platforms">
-      <p>
-        Works with{" "}
-        <span className="ll-hero-accent tabular-nums font-bold">{count}+</span> platforms — YouTube, TikTok,
-        Instagram, Discord & more
-      </p>
     </section>
   );
 }
