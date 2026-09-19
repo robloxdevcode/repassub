@@ -1,5 +1,31 @@
 /* Linklock — Rekonise-style (orange + green), animated marketing */
 
+/* Visible CTAs site-wide — high contrast, no ghost buttons on marketing */
+.rk-btn,
+a.rk-btn,
+button.rk-btn {
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rk-btn--primary,
+a.rk-btn--primary {
+  color: #ffffff !important;
+}
+
+.rk-btn--secondary,
+a.rk-btn--secondary {
+  color: var(--retro-text) !important;
+  border: 2px solid var(--retro-border) !important;
+  background: #ffffff !important;
+}
+
+.sidebar-primary-cta,
+.dash-pro-action {
+  color: #ffffff !important;
+}
+
 .rk-home {
   position: relative;
   isolation: isolate;

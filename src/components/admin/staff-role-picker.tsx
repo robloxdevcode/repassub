@@ -34,7 +34,7 @@ export function StaffRolePicker({
 
   return (
     <select
-      className="admin-v2-select"
+      className="min-h-10 min-w-[9rem] rounded-lg border-2 border-stone-200 bg-white px-2 text-sm font-bold text-stone-800 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 disabled:opacity-50"
       value={current}
       disabled={pending}
       onChange={(e) => onChange(e.target.value as StaffRole)}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./linklock-v2.css";
 
 :root {
   /* Rekonise-inspired: smooth orange + fresh green */
@@ -5488,5 +5489,3 @@ body {
   font-weight: 600;
   color: var(--lt-grape-deep);
 }
-
-@import "./linklock-v2.css";

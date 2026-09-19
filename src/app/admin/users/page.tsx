@@ -3,6 +3,12 @@ import { getAdminUsers } from "@/lib/actions/dashboard";
 import { AdminBanButton } from "@/components/admin/admin-ban-button";
 import { AdminSearchBar } from "@/components/admin/admin-search";
 import { AdminTable } from "@/components/admin/admin-shell";
+import {
+  adminTableClass,
+  adminTdClass,
+  adminThClass,
+  AdminPageTitle,
+} from "@/components/admin/admin-ui";
 import { STAFF_ROLE_LABELS } from "@/lib/admin-access";
 import { UserRole, StaffRole } from "@prisma/client";
 import { getCurrentUser, requireAdminPanel } from "@/lib/auth";
@@ -20,54 +26,64 @@ export default async function AdminUsersPage({ searchParams }: Props) {
   const users = await getAdminUsers(q);
 
   return (
-    <div className="admin-v2-section">
-      <div className="admin-v2-section-head">
-        <div>
-          <h2 className="admin-v2-h2">People</h2>
-          <p className="admin-v2-muted">Search creators, view status, suspend accounts.</p>
-        </div>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <AdminPageTitle
+          title="People"
+          description="Search creators, view status, suspend accounts."
+        />
         <Suspense fallback={null}>
           <AdminSearchBar />
         </Suspense>
       </div>
 
       <AdminTable>
-        <table className="admin-v2-table">
+        <table className={adminTableClass}>
           <thead>
             <tr>
               {["User", "Email", "Access", "Links", "Status", "Action"].map((col) => (
-                <th key={col}>{col}</th>
+                <th key={col} className={adminThClass}>
+                  {col}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={6} className="admin-v2-empty">
+                <td colSpan={6} className="px-4 py-12 text-center text-stone-500">
                   No users match your search.
                 </td>
               </tr>
             ) : (
               users.map((u) => (
                 <tr key={u.id}>
-                  <td>
-                    <span className="admin-v2-strong">{u.username}</span>
+                  <td className={adminTdClass}>
+                    <span className="font-bold text-stone-900">{u.username}</span>
                   </td>
-                  <td className="admin-v2-mono">{u.email || "—"}</td>
-                  <td>
+                  <td className={`${adminTdClass} font-mono text-xs text-stone-600`}>
+                    {u.email || "—"}
+                  </td>
+                  <td className={adminTdClass}>
                     {u.role === UserRole.ADMIN
-                      ? "Admin"
+                      ? "Primary admin"
                       : u.staffRole !== StaffRole.NONE
                         ? STAFF_ROLE_LABELS[u.staffRole]
                         : "Creator"}
                   </td>
-                  <td>{u._count.campaigns}</td>
-                  <td>
-                    <span className={u.banned ? "admin-v2-badge admin-v2-badge--bad" : "admin-v2-badge admin-v2-badge--ok"}>
+                  <td className={adminTdClass}>{u._count.campaigns}</td>
+                  <td className={adminTdClass}>
+                    <span
+                      className={
+                        u.banned
+                          ? "inline-flex rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-800"
+                          : "inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-800"
+                      }
+                    >
                       {u.banned ? "Suspended" : "Active"}
                     </span>
                   </td>
-                  <td>
+                  <td className={adminTdClass}>
                     {canModerate ? (
                       <AdminBanButton userId={u.id} banned={u.banned} username={u.username} />
                     ) : (
