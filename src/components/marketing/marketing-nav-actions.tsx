@@ -1,29 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { RetroLink } from "@/components/retro";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 import { useMarketingSignedIn } from "@/components/marketing/marketing-auth-provider";
+import { cn } from "@/lib/utils";
 
-export function MarketingNavActions() {
+export function MarketingNavActions({ onHome = false }: { onHome?: boolean }) {
   const isSignedIn = useMarketingSignedIn();
 
   if (isSignedIn) {
     return (
       <div className="flex items-center gap-3 shrink-0">
-        <RetroLink href="/dashboard" size="sm">
+        <Link
+          href="/dashboard"
+          className={cn("lm-btn lm-btn--nav lm-focus-ring", onHome && "lm-btn--nav-home")}
+        >
           Dashboard
-        </RetroLink>
+        </Link>
         <ClerkUserMenu />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center shrink-0">
-      <RetroLink href="/sign-up" size="sm" className="shrink-0">
-        Get started
-      </RetroLink>
-    </div>
+    <Link
+      href="/sign-up"
+      className={cn("lm-btn lm-btn--nav lm-focus-ring shrink-0", onHome && "lm-btn--nav-home")}
+    >
+      Get started
+    </Link>
   );
 }

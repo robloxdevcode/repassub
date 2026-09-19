@@ -16,8 +16,10 @@ const sticker =
   "border-2 border-retro-ink shadow-[4px_4px_0_var(--retro-ink)] hover:-translate-x-px hover:-translate-y-px hover:shadow-[5px_5px_0_var(--retro-ink)]";
 
 const variants: Record<RetroButtonVariant, string> = {
-  primary: cn("text-retro-ink bg-[#6ee7b7] hover:bg-[#5ddba8]", sticker, "font-extrabold"),
-  secondary: "bg-white text-retro-text border-2 border-retro-ink shadow-[3px_3px_0_var(--retro-ink)] hover:-translate-x-px hover:-translate-y-px font-bold",
+  primary:
+    "text-[#000] bg-white border-2 border-white hover:opacity-90 font-semibold rounded-[var(--ui-radius-lg)] min-h-[44px]",
+  secondary:
+    "bg-transparent text-retro-text border-2 border-retro-border hover:border-retro-text-dim font-semibold rounded-[var(--ui-radius-lg)] min-h-[44px]",
   blue: cn("bg-retro-blue text-white", sticker),
   yellow: cn("bg-retro-yellow text-retro-ink", sticker, "font-bold"),
   white: "bg-retro-surface text-retro-text border-2 border-retro-border hover:bg-retro-surface-2 font-semibold",

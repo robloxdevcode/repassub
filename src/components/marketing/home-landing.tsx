@@ -3,30 +3,44 @@ import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 
 export function HomeLanding() {
   return (
-    <div className="llv2-page">
-      <section className="llv2-hero llv2-hero--center">
-        <div className="llv2-hero-inner llv2-hero-inner--narrow">
-          <p className="llv2-kicker">Linklock</p>
-          <h1 className="llv2-title">
-            Subscribe-to-unlock
-            <br />
-            links for creators
+    <div className="lm-page">
+      <section className="lm-hero" aria-labelledby="lm-hero-title">
+        <div className="lm-hero-core">
+          <h1 id="lm-hero-title" className="lm-headline">
+            <span className="lm-headline-row">Turn downloads into audience</span>
+            <span className="lm-headline-row lm-headline-row--echo" aria-hidden="true">
+              Turn downloads into audience
+            </span>
           </h1>
-          <p className="llv2-sub llv2-sub--center">
-            One link. Your steps. Their download. No clutter.
+          <p className="lm-lede">
+            Subscribe-to-unlock links for creators. One URL, your steps, their file.
           </p>
-          <div className="llv2-hero-actions">
+          <div className="lm-actions">
             <MarketingAuthLink href="/sign-up">
-              <span className="llv2-cta">Create your link</span>
+              <span className="lm-btn lm-btn--primary">Get started</span>
             </MarketingAuthLink>
+            <Link href="/pricing" className="lm-btn lm-btn--ghost">
+              See pricing
+            </Link>
           </div>
-          <p className="llv2-footnote">
-            Free to start ·{" "}
-            <Link href="/sign-in" className="llv2-footnote-link">
+        </div>
+        <footer className="lm-hero-footer">
+          <p>
+            <Link href="/sign-in" className="lm-inline-link">
               Sign in
             </Link>
+            <span className="lm-dot" aria-hidden="true">
+              ·
+            </span>
+            <Link href="/terms" className="lm-inline-link">
+              Terms
+            </Link>
+            <span className="lm-dot" aria-hidden="true">
+              ·
+            </span>
+            <span>© Linklock</span>
           </p>
-        </div>
+        </footer>
       </section>
     </div>
   );
