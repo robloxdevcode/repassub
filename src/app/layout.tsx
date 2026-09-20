@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Inter, Syne } from "next/font/google";
+import { Inter, Pixelify_Sans, Press_Start_2P } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -14,7 +14,6 @@ import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
 import { getClerkProviderProps } from "@/lib/clerk-config";
 
 import "./globals.css";
-import "./linklock-down.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,10 +22,17 @@ const inter = Inter({
   display: "swap",
 });
 
-const syne = Syne({
+const pressStart = Press_Start_2P({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["600", "700", "800"],
+  variable: "--font-press-start",
+  weight: "400",
+  display: "swap",
+});
+
+const pixelify = Pixelify_Sans({
+  subsets: ["latin"],
+  variable: "--font-pixelify",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -38,19 +44,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const adsenseSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`;
 
   return (
-    <html lang="en" className={`${inter.variable} ${syne.variable} h-full`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${pressStart.variable} ${pixelify.variable} h-full`}
+    >
       <head>
         <script async src={adsenseSrc} crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
         <ClerkProvider
           {...clerk}
-            appearance={{
+          appearance={{
             ...clerkAuthAppearance,
             variables: {
               ...clerkAuthAppearance.variables,
-              fontFamily: "var(--font-inter), system-ui, sans-serif",
-              fontFamilyButtons: "var(--font-inter), system-ui, sans-serif",
+              fontFamily: "var(--font-pixelify), var(--font-inter), system-ui, sans-serif",
+              fontFamilyButtons: "var(--font-pixelify), var(--font-inter), system-ui, sans-serif",
             },
           }}
         >

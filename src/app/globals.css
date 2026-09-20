@@ -1,15 +1,13 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 @import "../styles/tailwind-theme.css";
-@import "./linklock-v2.css";
 @import "../styles/base.css";
 @import "../styles/primitives.css";
+@import "../styles/classic-retro.css";
 @import "../styles/marketing.css";
 @import "../styles/app-shell.css";
 @import "../styles/dashboard-ui.css";
+@import "./linklock-v2.css";
 @import "./dashboard-theme.css";
-@import "./platform-modern.css";
-@import "./lemonade-theme.css";
-@import "../styles/v12-release.css";
 
-/* Legacy monolith archived at src/styles/globals.legacy.css — not imported. */
+/* Linklock Classic — one retro stack for marketing + app */

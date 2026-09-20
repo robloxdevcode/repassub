@@ -125,6 +125,37 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
 
+  /* Optional: LINKLOCK_SIMPLE_PUBLIC=true → home + app only */
+  const simplePublic = process.env.LINKLOCK_SIMPLE_PUBLIC === "true";
+  if (simplePublic) {
+    const productPath =
+      pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/unlocks") ||
+      pathname.startsWith("/create") ||
+      pathname.startsWith("/analytics") ||
+      pathname.startsWith("/audience") ||
+      pathname.startsWith("/settings") ||
+      pathname.startsWith("/profile") ||
+      pathname.startsWith("/billing") ||
+      pathname.startsWith("/admin") ||
+      pathname.startsWith("/sign-in") ||
+      pathname.startsWith("/sign-up") ||
+      pathname.startsWith("/forgot-password") ||
+      pathname.startsWith("/welcome") ||
+      pathname.startsWith("/u/") ||
+      pathname.startsWith("/suspended") ||
+      pathname.startsWith("/privacy") ||
+      pathname.startsWith("/terms") ||
+      pathname.startsWith("/refund-policy") ||
+      pathname === "/";
+    if (!productPath && !pathname.startsWith("/api/")) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/";
+      url.search = "";
+      return NextResponse.redirect(url, 307);
+    }
+  }
+
   if (pathname.toLowerCase() === "/ads.txt" && pathname !== "/ads.txt") {
     return NextResponse.redirect(new URL("/ads.txt", req.url), 301);
   }

@@ -25,6 +25,6 @@
   --color-platform-youtube: var(--platform-youtube);
   --color-platform-discord: var(--platform-discord);
   --color-platform-spotify: var(--platform-spotify);
-  --font-display: var(--font-inter);
-  --font-body: var(--font-inter);
+  --font-display: var(--font-press-start), monospace;
+  --font-body: var(--font-pixelify), var(--font-inter), system-ui, sans-serif;
 }

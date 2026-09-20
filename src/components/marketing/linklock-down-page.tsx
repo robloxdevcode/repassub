@@ -1,33 +1,35 @@
 import { LinklockLogo } from "@/components/brand/linklock-logo";
+import { MemphisDecorations } from "@/components/retro/memphis-ui";
+import { RetroBackground } from "@/components/retro/retro-background";
 
 export function LinklockDownPage() {
   return (
-    <div className="ll-down">
-      <div className="ll-down-glow ll-down-glow--a" aria-hidden />
-      <div className="ll-down-glow ll-down-glow--b" aria-hidden />
-      <div className="ll-down-grid" aria-hidden />
+    <div className="classic-shell classic-down">
+      <RetroBackground />
+      <MemphisDecorations />
 
-      <main className="ll-down-main">
-        <LinklockLogo size={56} showWordmark wordmarkClassName="ll-down-logo-text" />
+      <main className="classic-down-main">
+        <LinklockLogo
+          size={56}
+          showWordmark
+          wordmarkClassName="font-display text-retro-ink justify-center"
+        />
 
-        <p className="ll-down-badge">Linklock is down</p>
+        <p className="classic-down-badge classic-blink">OFFLINE — BE RIGHT BACK</p>
 
-        <h1 className="ll-down-title">
-          We&apos;re rebuilding
+        <h1 className="classic-down-title">
+          We&apos;re polishing the
           <br />
-          <span className="ll-down-title-accent">something better.</span>
+          classic experience.
         </h1>
 
-        <p className="ll-down-lead">
-          Linklock is offline for a short time while the team makes things sharper, faster, and
-          more reliable.
+        <p className="classic-down-lead">
+          Linklock is taking a quick break while we make unlocks smoother, faster, and even more fun.
         </p>
 
-        <p className="ll-down-sub">
-          Please try again later. Thank you for your patience — we&apos;ll be back soon.
-        </p>
+        <p className="classic-down-sub">Try again later — thanks for waiting, creator.</p>
 
-        <p className="ll-down-team">— The Linklock team</p>
+        <p className="classic-down-team">— TEAM LINKLOCK</p>
       </main>
     </div>
   );
