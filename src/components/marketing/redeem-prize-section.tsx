@@ -47,19 +47,20 @@ export function RedeemPrizeSection({ onRedeemed }: { onRedeemed?: () => void }) 
         </Link>
         . Winners receive a code from staff — paste it below while signed in.
       </p>
-      <div className="mt-6 flex flex-col sm:flex-row gap-3">
-        <RetroInput
-          label="Prize code"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="LLPRIZE-XXXX-XXXX"
-          className="flex-1"
-        />
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="flex-1 min-w-0">
+          <RetroInput
+            label="Prize code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="LLPRIZE-XXXX-XXXX"
+          />
+        </div>
         <RetroButton
           variant="primary"
           loading={loading}
           onClick={handleRedeem}
-          className="sm:self-end shrink-0"
+          className="w-full sm:w-auto min-h-[48px] px-8 shrink-0"
         >
           {isSignedIn ? "Redeem" : "Sign in to redeem"}
         </RetroButton>

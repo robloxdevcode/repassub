@@ -44,7 +44,7 @@ export function AppPageHeader({
 
         <h1 className="text-2xl md:text-[1.75rem] font-semibold tracking-tight text-retro-text">{title}</h1>
 
-        {subtitle ? <p className="mt-1.5 text-sm text-retro-text-dim leading-relaxed">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-2 text-sm md:text-base text-retro-text-dim leading-relaxed max-w-xl">{subtitle}</p> : null}
 
       </div>
 

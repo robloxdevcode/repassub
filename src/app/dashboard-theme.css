@@ -54,11 +54,13 @@
 
 .dash-pro-main {
   padding-top: 4.5rem;
+  padding-bottom: 3rem;
 }
 
 @media (min-width: 768px) {
   .dash-pro-main {
     padding-top: 2.5rem;
+    padding-bottom: 4rem;
   }
 }
 

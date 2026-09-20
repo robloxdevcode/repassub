@@ -7,7 +7,7 @@ import { stripe, getOrCreateStripeCustomer, getUserPlan } from "@/lib/stripe";
 import { getCheckoutPaymentMethodTypes } from "@/lib/checkout-payment-methods";
 import { DEFAULT_BILLING_CURRENCY, isBillingCurrency, type BillingCurrency } from "@/lib/currency";
 import { getPaymentsSiteUrl } from "@/lib/site-url";
-import { downgradeExpiredPrizePro, getEffectiveUserPlan } from "@/lib/subscription-access";
+import { downgradeExpiredPrizePro, getEffectiveUserPlan, isPaidStripePro } from "@/lib/subscription-access";
 
 type ActionResult = { url?: string | null; error?: string };
 
@@ -305,8 +305,8 @@ export async function createCheckoutSession(
     if (user.banned) return actionError("Account suspended");
 
     const billingCurrency = isBillingCurrency(currency) ? currency : DEFAULT_BILLING_CURRENCY;
-    const activePlan = getEffectiveUserPlan(user.subscriptions?.[0]);
-    if (activePlan === "PRO" || activePlan === "BUSINESS") {
+    const sub = user.subscriptions?.[0];
+    if (isPaidStripePro(sub)) {
       return actionError("Already subscribed");
     }
 
@@ -393,7 +393,12 @@ export async function getBillingData() {
   const initialSub = refreshed.subscriptions[0] || null;
   const sub = initialSub ? await downgradeExpiredPrizePro(refreshed.id, initialSub) : null;
   const plan = getEffectiveUserPlan(sub);
-  return { plan, subscription: sub };
+  const paidStripe = isPaidStripePro(sub);
+  const prizeProUntil =
+    !paidStripe && (plan === "PRO" || plan === "BUSINESS") && sub?.currentPeriodEnd
+      ? sub.currentPeriodEnd.toISOString()
+      : null;
+  return { plan, subscription: sub, paidStripe, prizeProUntil };
 }
 
 export async function getPaymentData() {

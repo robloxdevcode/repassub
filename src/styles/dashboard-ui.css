@@ -34,9 +34,11 @@ html {
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
+  min-height: 48px;
+  padding: 0.75rem 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
+  line-height: 1.3;
   color: #141414;
   background: var(--retro-ink);
   border: 1px solid var(--retro-ink);
@@ -69,6 +71,46 @@ html {
 .dash-pro-main {
   max-width: 56rem;
   margin: 0 auto;
+  line-height: 1.65;
+}
+
+.dash-pro-main p {
+  line-height: 1.65;
+}
+
+.billing-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Plan period toggle (billing + pricing) */
+.simple-toggle,
+.ll-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-lg);
+  padding: 0.35rem;
+}
+
+.simple-toggle-btn,
+.ll-toggle-btn {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--ui-radius);
+  color: var(--retro-text-dim);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.simple-toggle-btn--active,
+.ll-toggle-btn--active {
+  background: var(--retro-ink);
+  color: #fff;
 }
 
 .dash-pro-sidebar {

@@ -5,12 +5,16 @@ import { BillingStatusBanner } from "@/components/dashboard/billing-status-banne
 import { getBillingData } from "@/lib/actions/payments";
 
 export default async function BillingPage() {
-  const { plan } = await getBillingData();
+  const { plan, paidStripe, prizeProUntil } = await getBillingData();
 
   return (
     <Suspense fallback={<RetroLoading message="Loading" />}>
       <BillingStatusBanner />
-      <BillingPageClient initialPlan={plan} />
+      <BillingPageClient
+        initialPlan={plan}
+        initialPaidStripe={paidStripe}
+        initialPrizeProUntil={prizeProUntil}
+      />
     </Suspense>
   );
 }
