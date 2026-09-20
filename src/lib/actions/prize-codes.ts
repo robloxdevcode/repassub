@@ -203,6 +203,7 @@ export async function redeemPrizeCode(rawCode: string): Promise<
     });
 
     revalidatePath("/pricing");
+    revalidatePath("/redeem");
     revalidatePath("/billing");
     revalidatePath("/dashboard");
     revalidatePath("/admin/reward-codes");

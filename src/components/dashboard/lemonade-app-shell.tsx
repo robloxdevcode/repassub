@@ -13,6 +13,7 @@ import {
   BarChart3,
   CreditCard,
   User,
+  Gift,
 } from "lucide-react";
 import { ClassicAnimatedBackdrop } from "@/components/marketing/classic-animated-backdrop";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ const mainNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/unlocks", label: "My links", icon: Lock },
   { href: "/analytics", label: "Stats", icon: BarChart3 },
+  { href: "/redeem", label: "Redeem a code", icon: Gift },
   { href: "/profile", label: "Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
