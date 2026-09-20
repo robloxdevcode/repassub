@@ -17,9 +17,9 @@ export function RetroNav() {
 
   return (
     <header className="ll-nav sticky top-0 z-50">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 sm:px-6 h-[4.25rem]">
+      <div className="mx-auto flex max-w-[var(--ll-content,72rem)] items-center justify-between gap-8 px-[var(--ll-page-x,1.25rem)] min-h-[5rem]">
         <Link href="/" prefetch className="flex items-center gap-2 shrink-0 min-w-0">
-          <LinklockLogo size={40} showWordmark wordmarkClassName="hidden sm:inline text-retro-text" />
+          <LinklockLogo size={44} showWordmark wordmarkClassName="hidden sm:inline text-retro-text font-display font-extrabold tracking-tight" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">

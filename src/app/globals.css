@@ -10,5 +10,6 @@
 @import "./dashboard-theme.css";
 @import "./platform-modern.css";
 @import "./lemonade-theme.css";
+@import "../styles/v12-release.css";
 
 /* Legacy monolith archived at src/styles/globals.legacy.css — not imported. */

@@ -15,14 +15,14 @@ export function MarketingPageHero({
   actions?: ReactNode;
 }) {
   return (
-    <section className="ll-page-hero border-b border-retro-border">
-      <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+      <section className="ll-page-hero border-b border-retro-border">
+      <div className="mx-auto max-w-[72rem] px-[var(--ll-page-x,1.25rem)] py-14 md:py-20">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-2xl">
             <p className="ll-label">{label}</p>
-            <h1 className="ll-section-title mt-3">{title}</h1>
+            <h1 className="ll-section-title mt-4">{title}</h1>
             {description ? (
-              <p className="mt-4 text-retro-text-dim leading-relaxed max-w-lg">{description}</p>
+              <p className="mt-5 text-lg text-retro-text-dim leading-relaxed max-w-xl">{description}</p>
             ) : null}
           </div>
           {actions ? <div className="shrink-0">{actions}</div> : null}
@@ -41,8 +41,19 @@ export function MarketingPageBody({
   className?: string;
   width?: "3xl" | "4xl" | "5xl" | "6xl";
 }) {
-  const max = width === "3xl" ? "max-w-3xl" : width === "4xl" ? "max-w-4xl" : width === "5xl" ? "max-w-5xl" : "max-w-6xl";
-  return <div className={`mx-auto ${max} px-4 py-12 md:py-16 ${className}`.trim()}>{children}</div>;
+  const max =
+    width === "3xl"
+      ? "max-w-3xl"
+      : width === "4xl"
+        ? "max-w-4xl"
+        : width === "5xl"
+          ? "max-w-5xl"
+          : "max-w-[72rem]";
+  return (
+    <div className={`mx-auto ${max} px-[var(--ll-page-x,1.25rem)] py-14 md:py-20 ${className}`.trim()}>
+      {children}
+    </div>
+  );
 }
 
 export function MarketingPageSection({

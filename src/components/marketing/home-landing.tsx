@@ -7,29 +7,29 @@ import { Lock, Share2, Sparkles } from "lucide-react";
 function HeroVisual() {
   return (
     <div className="unlock-v2-card w-full max-w-[360px] p-6 lg:ml-auto">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-retro-accent mb-4">
+      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#0ea5e9] mb-5">
         <Sparkles size={14} aria-hidden />
         Creator flow
       </div>
-      <ul className="space-y-3 text-sm text-retro-text-dim">
-        <li className="flex items-center gap-3 rounded-lg border border-retro-border bg-retro-surface-2 px-3 py-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-retro-glow text-retro-accent font-bold text-xs">
+      <ul className="space-y-4 text-[0.9375rem] leading-relaxed text-retro-text-dim">
+        <li className="flex items-center gap-3 rounded-xl border border-retro-border bg-retro-surface-2 px-4 py-3.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-retro-accent/40 text-retro-ink font-extrabold text-sm">
             1
           </span>
           Set your unlock steps
         </li>
-        <li className="flex items-center gap-3 rounded-lg border border-retro-border bg-retro-surface-2 px-3 py-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-retro-glow text-retro-accent font-bold text-xs">
+        <li className="flex items-center gap-3 rounded-xl border border-retro-border bg-retro-surface-2 px-4 py-3.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-retro-accent/40 text-retro-ink font-extrabold text-sm">
             2
           </span>
-          <Share2 size={16} className="text-retro-accent shrink-0" aria-hidden />
+          <Share2 size={18} className="text-[#0ea5e9] shrink-0" aria-hidden />
           Share one link everywhere
         </li>
-        <li className="flex items-center gap-3 rounded-lg border border-retro-border bg-retro-surface-2 px-3 py-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-retro-glow text-retro-accent font-bold text-xs">
+        <li className="flex items-center gap-3 rounded-xl border border-retro-border bg-retro-surface-2 px-4 py-3.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-retro-accent/40 text-retro-ink font-extrabold text-sm">
             3
           </span>
-          <Lock size={16} className="text-retro-accent shrink-0" aria-hidden />
+          <Lock size={18} className="text-[#0ea5e9] shrink-0" aria-hidden />
           Fans unlock your content
         </li>
       </ul>
@@ -46,7 +46,7 @@ export function HomeLanding() {
       <section className="llv2-hero">
         <div className="llv2-hero-inner">
           <div>
-            <p className="llv2-kicker">Linklock for creators</p>
+            <p className="llv2-kicker">Linklock 1.2 · for creators</p>
             <h1 className="llv2-title">
               Grow your audience
               <br />
@@ -56,7 +56,7 @@ export function HomeLanding() {
               Subscribe-to-unlock links built for creators. Set your steps, share one URL, and turn
               downloads into follows and subs.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-5">
               <MarketingAuthLink href="/sign-up">
                 <span className="llv2-cta ui-instant">Start free — no card</span>
               </MarketingAuthLink>

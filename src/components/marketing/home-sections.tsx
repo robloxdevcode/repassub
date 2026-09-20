@@ -56,13 +56,13 @@ import { PlatformMarqueeItem, MARKETING_PLATFORMS } from "@/components/marketing
 export function HowItWorksSection() {
   return (
     <section className="ll-section ll-section--surface">
-      <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+      <div className="mx-auto max-w-[72rem] px-[var(--ll-page-x,1.25rem)]">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div>
             <p className="ll-brand-tag ll-brand-tag--dark">HOW IT WORKS</p>
-            <h2 className="ll-section-title mt-3">Three steps, one link</h2>
+            <h2 className="ll-section-title mt-4">Three steps, one link</h2>
           </div>
-          <p className="text-sm text-retro-text-dim max-w-sm md:text-right">
+          <p className="text-base text-retro-text-dim max-w-md md:text-right leading-relaxed">
             Most links are live in under 2 minutes. No code, no embeds.
           </p>
         </div>
@@ -72,8 +72,8 @@ export function HowItWorksSection() {
             <li key={step.num} className="ll-step">
               <span className="ll-step-num">{step.num}</span>
               <div>
-                <h3 className="font-bold text-base mb-1">{step.title}</h3>
-                <p className="text-sm text-retro-text-dim leading-relaxed">{step.desc}</p>
+                <h3 className="font-display font-bold text-lg mb-2 tracking-tight">{step.title}</h3>
+                <p className="text-[0.9375rem] text-retro-text-dim leading-relaxed">{step.desc}</p>
               </div>
               {i < STEPS.length - 1 ? (
                 <span className="ll-step-arrow hidden md:block" aria-hidden>
@@ -152,12 +152,12 @@ export function PlansSection() {
   const { formatPrice, prices, discountPercent } = useCurrency();
 
   return (
-    <section id="pricing" className="ll-section ll-section--muted scroll-mt-20">
-      <div className="mx-auto max-w-4xl px-4 py-16 md:py-24">
-        <div className="mb-10">
+    <section id="pricing" className="ll-section ll-section--muted scroll-mt-24">
+      <div className="mx-auto max-w-[72rem] px-[var(--ll-page-x,1.25rem)]">
+        <div className="mb-12">
           <p className="ll-brand-tag ll-brand-tag--dark">PRICING</p>
-          <h2 className="ll-section-title mt-3">Free to start</h2>
-          <p className="mt-3 text-retro-text-dim text-sm max-w-lg">
+          <h2 className="ll-section-title mt-4">Free to start</h2>
+          <p className="mt-4 text-retro-text-dim text-base max-w-xl leading-relaxed">
             Unlimited links on both plans. Pro unlocks more steps, your branding, and no ads.
           </p>
         </div>
@@ -168,7 +168,7 @@ export function PlansSection() {
           <span className="text-retro-accent font-semibold">10 steps on Pro</span>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-5">
+        <div className="grid sm:grid-cols-2 gap-6 max-w-4xl">
           <article className="ll-plan-card">
             <p className="font-bold text-lg">Free</p>
             <p className="ll-plan-price mt-1">{formatPrice(0)}</p>

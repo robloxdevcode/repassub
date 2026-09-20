@@ -30,9 +30,11 @@
   --ui-radius: 0.625rem;
   --ui-radius-lg: 0.75rem;
   --ui-radius-xl: 1rem;
-  --play-shadow-sm: none;
-  --play-shadow: none;
-  --play-shadow-lg: none;
+  --play-shadow-sm: 0 2px 8px rgba(20, 20, 20, 0.06);
+  --play-shadow: 0 12px 40px rgba(20, 20, 20, 0.08);
+  --play-shadow-lg: 0 24px 64px rgba(20, 20, 20, 0.1);
+  --ui-radius-lg: 1rem;
+  --ui-radius-xl: 1.375rem;
 }
 
 body {
@@ -45,8 +47,8 @@ body {
 }
 
 .ll-nav {
-  background: rgba(12, 12, 20, 0.82);
-  backdrop-filter: blur(16px) saturate(160%);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px) saturate(180%);
   border-bottom: 1px solid var(--retro-border);
 }
 

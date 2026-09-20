@@ -1,0 +1,233 @@
+/**
+ * Linklock v1.2 — typography, rhythm, dramatic polish (loads last)
+ */
+
+:root {
+  --ll-text-xs: 0.8125rem;
+  --ll-text-sm: 0.9375rem;
+  --ll-text-base: 1.0625rem;
+  --ll-text-lg: 1.25rem;
+  --ll-text-xl: 1.5rem;
+  --ll-leading: 1.65;
+  --ll-leading-tight: 1.12;
+  --ll-section-y: clamp(4rem, 8vw, 6.5rem);
+  --ll-page-x: clamp(1.25rem, 4vw, 2rem);
+  --ll-content: 72rem;
+  --ll-read: 42rem;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+  font-size: var(--ll-text-base);
+  line-height: var(--ll-leading);
+  letter-spacing: -0.011em;
+}
+
+.font-body {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+
+.font-display,
+.llv2-title,
+.ll-section-title,
+.dash-pro-title,
+.admin-v2-title {
+  font-family: var(--font-display), var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+/* ——— Nav (light, airy) ——— */
+.ll-nav {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-bottom: 1px solid var(--retro-border) !important;
+}
+
+.ll-nav-link {
+  font-size: var(--ll-text-sm) !important;
+  font-weight: 600 !important;
+  padding: 0.625rem 1rem !important;
+  letter-spacing: -0.02em;
+}
+
+/* ——— Hero ——— */
+.llv2-hero {
+  background:
+    radial-gradient(ellipse 120% 90% at 0% -30%, rgba(255, 229, 102, 0.55), transparent 58%),
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(14, 165, 233, 0.28), transparent 52%),
+    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(251, 113, 133, 0.14), transparent 55%),
+    var(--retro-bg) !important;
+}
+
+.llv2-hero-inner {
+  max-width: var(--ll-content) !important;
+  padding: clamp(3.5rem, 10vw, 7rem) var(--ll-page-x) clamp(4rem, 8vw, 6rem) !important;
+  gap: clamp(2.5rem, 6vw, 4rem) !important;
+}
+
+.llv2-kicker {
+  font-size: var(--ll-text-xs) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+  margin-bottom: 1.25rem !important;
+  color: var(--retro-blue-dim) !important;
+}
+
+.llv2-title {
+  font-size: clamp(2.75rem, 6.5vw, 4.75rem) !important;
+  line-height: var(--ll-leading-tight) !important;
+  max-width: 14ch;
+}
+
+.llv2-title-accent,
+.llv2-title-accent--cycle {
+  background: linear-gradient(105deg, #0ea5e9 0%, #6366f1 45%, #fb7185 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+
+.llv2-sub {
+  margin-top: 1.75rem !important;
+  font-size: var(--ll-text-lg) !important;
+  line-height: 1.7 !important;
+  max-width: 36rem !important;
+  color: var(--retro-text-dim) !important;
+}
+
+.llv2-cta {
+  min-height: 52px !important;
+  padding: 0 1.75rem !important;
+  font-size: var(--ll-text-sm) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  background: var(--retro-ink) !important;
+  color: #fff !important;
+  box-shadow: 0 16px 48px rgba(20, 20, 20, 0.18) !important;
+}
+
+.llv2-cta:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 22px 56px rgba(20, 20, 20, 0.22) !important;
+}
+
+.llv2-strip-inner {
+  font-size: var(--ll-text-sm) !important;
+  gap: 1rem 1.75rem !important;
+  padding: 1.5rem var(--ll-page-x) !important;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.unlock-v2-card {
+  padding: 1.75rem !important;
+  box-shadow: var(--play-shadow-lg) !important;
+  border-radius: var(--ui-radius-xl) !important;
+}
+
+/* ——— Sections ——— */
+.ll-section {
+  padding-block: var(--ll-section-y) !important;
+}
+
+.ll-section-title {
+  font-size: clamp(2rem, 4vw, 2.75rem) !important;
+  line-height: var(--ll-leading-tight) !important;
+  margin-bottom: 0.5rem;
+}
+
+.ll-page-hero {
+  padding-block: clamp(3rem, 8vw, 5rem) !important;
+}
+
+.ll-page-hero .ll-section-title,
+.ll-page-hero .ll-label {
+  max-width: var(--ll-read);
+}
+
+.ll-label,
+.ll-brand-tag {
+  font-size: var(--ll-text-xs) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em !important;
+}
+
+.ll-bento-card,
+.ll-plan-card,
+.ll-step,
+.ll-use-case {
+  padding: 1.5rem !important;
+  border-radius: var(--ui-radius-xl) !important;
+}
+
+.ll-marketing-prose {
+  font-size: var(--ll-text-base) !important;
+  line-height: 1.75 !important;
+}
+
+/* ——— Dashboard ——— */
+.dash-pro-main {
+  padding-left: var(--ll-page-x) !important;
+  padding-right: var(--ll-page-x) !important;
+  padding-bottom: 3rem !important;
+}
+
+.dash-pro-title {
+  font-size: clamp(1.75rem, 3vw, 2.25rem) !important;
+}
+
+.dash-pro-subtitle {
+  font-size: var(--ll-text-base) !important;
+  line-height: 1.7 !important;
+}
+
+.dash-pro-metric-value {
+  font-family: var(--font-display), var(--font-inter), system-ui, sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.04em;
+}
+
+.sidebar-nav-item {
+  font-size: var(--ll-text-sm) !important;
+  padding: 0.65rem 0.85rem !important;
+}
+
+/* ——— Footer ——— */
+.ll-footer {
+  padding-top: 2rem;
+}
+
+.ll-footer .text-sm {
+  font-size: var(--ll-text-sm) !important;
+  line-height: 1.6;
+}
+
+/* ——— Cards global shadow fix ——— */
+:root {
+  --play-shadow-sm: 0 2px 8px rgba(20, 20, 20, 0.06);
+  --play-shadow: 0 12px 40px rgba(20, 20, 20, 0.08);
+  --play-shadow-lg: 0 24px 64px rgba(20, 20, 20, 0.1);
+  --ui-radius-lg: 1rem;
+  --ui-radius-xl: 1.375rem;
+}
+
+.retro-panel,
+.ll-plan-card,
+.dash-pro-metric,
+.dash-pro-panel {
+  box-shadow: var(--play-shadow-sm) !important;
+}
+
+.site-promo-banner {
+  font-size: var(--ll-text-sm) !important;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding: 0.65rem 1rem !important;
+}

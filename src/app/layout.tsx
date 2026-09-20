@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Inter } from "next/font/google";
+import { Inter, Syne } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -18,6 +18,15 @@ import "./globals.css";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = buildRootMetadata();
@@ -28,18 +37,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const adsenseSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`;
 
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
+    <html lang="en" className={`${inter.variable} ${syne.variable} h-full`}>
       <head>
         <script async src={adsenseSrc} crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">
         <ClerkProvider
           {...clerk}
-          appearance={{
+            appearance={{
             ...clerkAuthAppearance,
             variables: {
               ...clerkAuthAppearance.variables,
               fontFamily: "var(--font-inter), system-ui, sans-serif",
+              fontFamilyButtons: "var(--font-inter), system-ui, sans-serif",
             },
           }}
         >
