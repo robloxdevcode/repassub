@@ -1,0 +1,116 @@
+/* Dramatic maintenance / down page */
+
+.ll-down {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #050508;
+  color: #f4f4f5;
+  padding: 2rem 1.25rem;
+}
+
+.ll-down-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
+  pointer-events: none;
+}
+
+.ll-down-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.ll-down-glow--a {
+  width: min(90vw, 520px);
+  height: 320px;
+  top: -8%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 229, 102, 0.35);
+}
+
+.ll-down-glow--b {
+  width: 400px;
+  height: 400px;
+  bottom: -10%;
+  right: -5%;
+  background: rgba(14, 165, 233, 0.25);
+}
+
+.ll-down-main {
+  position: relative;
+  z-index: 1;
+  max-width: 40rem;
+  text-align: center;
+}
+
+.ll-down-logo-text {
+  font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+}
+
+.ll-down-badge {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 229, 102, 0.45);
+  background: rgba(255, 229, 102, 0.12);
+  color: #ffe566;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ll-down-title {
+  margin-top: 1.75rem;
+  font-family: var(--font-display), var(--font-inter), system-ui, sans-serif;
+  font-size: clamp(2.5rem, 8vw, 4.25rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  color: #fff;
+}
+
+.ll-down-title-accent {
+  background: linear-gradient(105deg, #ffe566 0%, #38bdf8 50%, #fb7185 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ll-down-lead {
+  margin-top: 1.5rem;
+  font-size: clamp(1.0625rem, 2.5vw, 1.25rem);
+  line-height: 1.65;
+  color: rgba(244, 244, 245, 0.82);
+}
+
+.ll-down-sub {
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(161, 161, 170, 0.95);
+}
+
+.ll-down-team {
+  margin-top: 2.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 229, 102, 0.85);
+}

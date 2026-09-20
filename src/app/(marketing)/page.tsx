@@ -1,23 +1,12 @@
 import type { Metadata } from "next";
-import { HomeLanding } from "@/components/marketing/home-landing";
-import { HowItWorksSection, PlansSection } from "@/components/marketing/home-sections";
-import { HomeStructuredData } from "@/components/marketing/home-structured-data";
-import { buildPageMetadata, HOME_KEYWORDS, HOME_META_DESCRIPTION } from "@/lib/seo";
+import { LinklockDownPage } from "@/components/marketing/linklock-down-page";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Free Subscribe-to-Download Links for Creators",
-  description: HOME_META_DESCRIPTION,
-  path: "/",
-  keywords: HOME_KEYWORDS,
-});
+export const metadata: Metadata = {
+  title: "Linklock — down for maintenance",
+  description: "Linklock is temporarily offline while we make things better. Please try again later.",
+  robots: { index: false, follow: false },
+};
 
-export default async function HomePage() {
-  return (
-    <>
-      <HomeStructuredData />
-      <HomeLanding />
-      <HowItWorksSection />
-      <PlansSection />
-    </>
-  );
+export default function HomePage() {
+  return <LinklockDownPage />;
 }
