@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { createCampaignSchema, contentSchema, actionSchema, updateProfileSchema } from "@/lib/validations";
+import { parseProfileSettings } from "@/lib/profile-settings";
 import { getUserPlan, isProPlan, getActionLimit, PLAN_LIMITS, getUnlockQuotaWindowStart, getUnlockQuotaResetAt } from "@/lib/stripe";
 import { slugify } from "@/lib/utils";
 import { getUnlockUrlForRequest } from "@/lib/site-url";
@@ -329,4 +330,23 @@ export async function updateProfile(data: {
   revalidatePath("/profile");
   revalidatePath("/dashboard");
   return updated;
+}
+
+export async function getProfileCustomization() {
+  const user = await requireUser();
+  return parseProfileSettings(user.profileSettings);
+}
+
+export async function updateProfileCustomization(settings: unknown) {
+  const user = await requireUser();
+  const parsed = parseProfileSettings(settings);
+
+  await db.user.update({
+    where: { id: user.id },
+    data: { profileSettings: parsed },
+  });
+
+  revalidatePath("/profile");
+  revalidatePath(`/u/${user.username}`);
+  return parsed;
 }

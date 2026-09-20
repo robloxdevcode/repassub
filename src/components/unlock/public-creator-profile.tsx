@@ -1,9 +1,11 @@
 "use client";
 
-import { getBadgeLabel } from "@/lib/profile-settings";
+import { getBadgeLabel, PROFILE_STYLES, type ProfileSettings, type MilestoneStats } from "@/lib/profile-settings";
 import { formatNumber } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { ExternalLink, Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type PublicCreatorLink = {
   id: string;
@@ -22,6 +24,7 @@ export function PublicCreatorProfile({
   links,
   siteUrl,
   isPro,
+  profileSettings,
 }: {
   username: string;
   displayName: string | null;
@@ -31,48 +34,64 @@ export function PublicCreatorProfile({
   links: PublicCreatorLink[];
   siteUrl: string;
   isPro: boolean;
+  profileSettings: ProfileSettings;
 }) {
   const name = displayName || username;
+  const style = profileSettings.style;
+  const bgStyle = profileSettings.bgUrl
+    ? {
+        backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.45)), url(${profileSettings.bgUrl})`,
+        backgroundSize: "cover" as const,
+        backgroundPosition: "center" as const,
+      }
+    : undefined;
 
   return (
-    <div className="classic-shell unlock-v2 min-h-screen bg-retro-bg">
-      <header className="border-b-[3px] border-[#0a0a0a] bg-retro-surface">
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-4">
-          <Link href="/" className="text-sm font-semibold text-retro-text hover:text-retro-accent">
+    <div className="public-creator-page classic-shell unlock-v2 bg-retro-bg">
+      <header className="border-b-[3px] border-[#0a0a0a] bg-retro-surface shrink-0">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
+          <Link href="/" className="text-sm font-bold text-retro-text hover:text-retro-accent">
             Linklock
           </Link>
-          <Link href="/sign-up" className="text-sm font-semibold text-retro-accent hover:underline">
+          <Link href="/sign-up" className="text-sm font-bold text-retro-accent hover:underline">
             Create your link
           </Link>
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-4 py-10">
-        <div className="retro-panel p-6 md:p-8 mb-8 text-center">
+      <section
+        className={cn("public-creator-hero", `public-creator-hero--${style}`, "relative")}
+        style={bgStyle}
+      >
+        <div className="public-creator-hero-overlay" aria-hidden />
+        <div className="public-creator-hero-content">
           {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarUrl} alt="" className="h-20 w-20 rounded-2xl mx-auto mb-4 object-cover brutal-border" />
+            <Image
+              src={avatarUrl}
+              alt=""
+              width={96}
+              height={96}
+              className="h-24 w-24 rounded-2xl mx-auto mb-4 object-cover border-[3px] border-white/90 shadow-lg"
+              unoptimized
+            />
           ) : (
-            <div className="h-20 w-20 rounded-2xl mx-auto mb-4 brutal-border bg-retro-yellow flex items-center justify-center font-display text-2xl">
-              {name.slice(0, 1).toUpperCase()}
-            </div>
+            <div className="profile-preview-avatar-fallback mx-auto mb-4 h-24 w-24 text-2xl">{name.slice(0, 1).toUpperCase()}</div>
           )}
-          <h1 className="text-2xl font-bold text-retro-text">{name}</h1>
-          <p className="text-sm text-retro-text-muted mt-1">@{username}</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{name}</h1>
+          <p className="text-sm text-white/70 mt-1">@{username}</p>
           {isPro ? (
-            <span className="inline-block mt-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-retro-accent/15 text-retro-accent">
+            <span className="inline-block mt-3 text-xs font-bold px-3 py-1 border-2 border-white/40 bg-white/10 text-white rounded-full">
               Pro creator
             </span>
           ) : null}
-          {bio ? <p className="mt-4 text-sm text-retro-text-dim leading-relaxed">{bio}</p> : null}
-
+          {bio ? <p className="mt-4 text-sm md:text-base text-white/85 leading-relaxed max-w-md mx-auto">{bio}</p> : null}
           {badgeIds.length > 0 ? (
             <div className="mt-5 flex flex-wrap gap-2 justify-center">
               {badgeIds.map((id) => {
                 const badge = getBadgeLabel(id);
                 if (!badge) return null;
                 return (
-                  <span key={id} className="profile-badge profile-badge--earned">
+                  <span key={id} className="profile-badge">
                     {badge.emoji} {badge.label}
                   </span>
                 );
@@ -80,8 +99,10 @@ export function PublicCreatorProfile({
             </div>
           ) : null}
         </div>
+      </section>
 
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-retro-text-muted mb-4">
+      <main className="public-creator-body">
+        <h2 className="font-display text-[0.5rem] md:text-[0.5625rem] uppercase text-retro-text-muted mb-4">
           Unlock links
         </h2>
         {links.length === 0 ? (
@@ -96,7 +117,7 @@ export function PublicCreatorProfile({
                     href={href}
                     className="retro-panel p-4 flex items-center gap-4 hover:border-retro-accent transition-colors block"
                   >
-                    <div className="h-10 w-10 rounded-lg bg-retro-accent/15 flex items-center justify-center shrink-0">
+                    <div className="h-10 w-10 rounded-lg bg-retro-accent/15 flex items-center justify-center shrink-0 border-2 border-[#0a0a0a]">
                       <Lock size={18} className="text-retro-accent" />
                     </div>
                     <div className="min-w-0 flex-1 text-left">

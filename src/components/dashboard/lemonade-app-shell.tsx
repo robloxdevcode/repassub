@@ -185,7 +185,7 @@ export function LemonadeAppShell({
       <LemonadeAppSidebar showAdminPanel={showAdminPanel} plan={plan} />
       <div className="classic-shell app-stage dash-pro-stage relative min-h-screen bg-retro-bg md:ml-[17.5rem]">
         <ClassicAnimatedBackdrop />
-        <main className="dash-pro-main relative z-10 mx-auto w-full max-w-5xl px-4 md:px-8 pb-12">{children}</main>
+        <main className="dash-pro-main relative z-10 mx-auto w-full max-w-6xl px-4 md:px-8 pb-12">{children}</main>
       </div>
     </>
   );

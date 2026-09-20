@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { getEarnedBadges, type MilestoneStats } from "@/lib/profile-settings";
+import { getEarnedBadges, parseProfileSettings, type MilestoneStats } from "@/lib/profile-settings";
 import { getUserPlan } from "@/lib/stripe";
 import { campaignViewCountSelect } from "@/lib/analytics";
 
@@ -36,8 +36,9 @@ export async function getPublicCreatorProfile(username: string) {
     isPro: plan === "PRO" || plan === "BUSINESS",
   };
 
+  const settings = parseProfileSettings(user.profileSettings);
   const milestoneBadges = getEarnedBadges(milestoneStats);
-  const badgeIds = [...new Set(milestoneBadges)];
+  const badgeIds = [...new Set([...milestoneBadges, ...settings.awardedBadges])];
 
   return {
     user: {
@@ -47,6 +48,7 @@ export async function getPublicCreatorProfile(username: string) {
       avatarUrl: user.avatarUrl,
     },
     plan,
+    profileSettings: settings,
     badgeIds,
     links: user.campaigns.map((campaign) => ({
       id: campaign.id,

@@ -35,6 +35,7 @@ export default async function PublicCreatorPage({ params }: { params: Promise<{ 
       links={profile.links}
       siteUrl={siteUrl}
       isPro={profile.plan === "PRO" || profile.plan === "BUSINESS"}
+      profileSettings={profile.profileSettings}
     />
   );
 }

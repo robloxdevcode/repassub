@@ -127,6 +127,7 @@ model User {
   stripeConnectId  String?
   banned           Boolean  @default(false)
   banReason        String?
+  profileSettings  Json?
   notifyUnlockEmail    Boolean @default(true)
   notifyWeeklyEmail    Boolean @default(false)
   notifySecurityEmail  Boolean @default(true)
