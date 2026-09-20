@@ -76,6 +76,16 @@ export function canManageStaff(user: {
   return false;
 }
 
+/** Reward codes tab — Support, Head admin, Owner, or primary site admin */
+export function canAccessRewardCodes(user: { role: UserRole; staffRole: StaffRole }) {
+  if (user.role === UserRole.ADMIN) return true;
+  return (
+    user.staffRole === StaffRole.SUPPORT ||
+    user.staffRole === StaffRole.HEAD_ADMIN ||
+    user.staffRole === StaffRole.OWNER
+  );
+}
+
 export function canAssignStaffRole(
   actor: { email: string | null | undefined; role: UserRole; staffRole: StaffRole },
   next: StaffRole,

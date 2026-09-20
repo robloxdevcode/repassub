@@ -12,6 +12,7 @@ import { useCurrency } from "@/components/providers/currency-provider";
 import { PLAN_FEATURES, PLAN_FINE_PRINT, PLAN_TAGLINE } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 import { checkoutErrorMessage } from "@/lib/checkout-errors";
+import { RedeemPrizeSection } from "@/components/marketing/redeem-prize-section";
 
 export default function PricingPage() {
   const { isSignedIn } = useAuth();
@@ -162,6 +163,15 @@ export default function PricingPage() {
             </article>
           ))}
         </div>
+
+        <RedeemPrizeSection
+          onRedeemed={() => {
+            if (!isSignedIn) return;
+            getBillingData()
+              .then((data) => setFetchedPlan(data.plan))
+              .catch(() => {});
+          }}
+        />
       </MarketingPageBody>
     </div>
   );

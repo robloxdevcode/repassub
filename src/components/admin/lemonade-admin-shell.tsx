@@ -7,16 +7,19 @@ type NavLink = { href: string; label: string };
 export function LemonadeAdminShell({
   children,
   showStaffTab,
+  showRewardCodesTab = false,
   canModerate,
 }: {
   children: ReactNode;
   showStaffTab: boolean;
+  showRewardCodesTab?: boolean;
   canModerate: boolean;
 }) {
   const links: NavLink[] = [
     { href: "/admin", label: "Overview" },
     { href: "/admin/users", label: "People" },
     { href: "/admin/links", label: "Links" },
+    ...(showRewardCodesTab ? [{ href: "/admin/reward-codes", label: "Reward codes" }] : []),
     ...(showStaffTab ? [{ href: "/admin/staff", label: "Staff" }] : []),
   ];
 
