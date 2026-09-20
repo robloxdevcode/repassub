@@ -2,9 +2,6 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 import { NextResponse } from "next/server";
 
-/** Site-wide maintenance: set LINKLOCK_MAINTENANCE=false to restore full site */
-const MAINTENANCE_MODE = process.env.LINKLOCK_MAINTENANCE !== "false";
-
 const isPublicRoute = createRouteMatcher([
 
   "/",
@@ -102,28 +99,6 @@ const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 export default clerkMiddleware(async (auth, req) => {
   const host = req.headers.get("host") || "";
   const pathname = req.nextUrl.pathname;
-
-  if (MAINTENANCE_MODE) {
-    if (pathname.startsWith("/api/webhooks")) {
-      return NextResponse.next();
-    }
-    if (pathname.startsWith("/api/")) {
-      return NextResponse.json(
-        { ok: false, message: "Linklock is temporarily down. Please try again later." },
-        { status: 503 },
-      );
-    }
-    if (pathname === "/ads.txt") {
-      return NextResponse.next();
-    }
-    if (pathname !== "/") {
-      const url = req.nextUrl.clone();
-      url.pathname = "/";
-      url.search = "";
-      return NextResponse.redirect(url, 307);
-    }
-    return NextResponse.next();
-  }
 
   /* Optional: LINKLOCK_SIMPLE_PUBLIC=true → home + app only */
   const simplePublic = process.env.LINKLOCK_SIMPLE_PUBLIC === "true";

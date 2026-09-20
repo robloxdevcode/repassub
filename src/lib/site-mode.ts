@@ -1,4 +1,4 @@
-/** Whole-site maintenance gate. Default: ON until LINKLOCK_MAINTENANCE=false on Vercel. */
+/** @deprecated Maintenance mode removed — site is always live. */
 export function isMaintenanceMode() {
-  return process.env.LINKLOCK_MAINTENANCE !== "false";
+  return false;
 }
