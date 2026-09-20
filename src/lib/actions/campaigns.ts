@@ -334,19 +334,24 @@ export async function updateProfile(data: {
 
 export async function getProfileCustomization() {
   const user = await requireUser();
-  return parseProfileSettings(user.profileSettings);
+  return {
+    settings: parseProfileSettings(user.profileSettings),
+    role: user.role,
+    staffRole: user.staffRole,
+  };
 }
 
 export async function updateProfileCustomization(settings: unknown) {
   const user = await requireUser();
   const parsed = parseProfileSettings(settings);
+  const toSave = { ...parsed, awardedBadges: [] as string[] };
 
   await db.user.update({
     where: { id: user.id },
-    data: { profileSettings: parsed },
+    data: { profileSettings: toSave },
   });
 
   revalidatePath("/profile");
   revalidatePath(`/u/${user.username}`);
-  return parsed;
+  return toSave;
 }

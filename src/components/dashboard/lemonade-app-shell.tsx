@@ -10,7 +10,6 @@ import {
   Settings,
   Menu,
   X,
-  Shield,
   BarChart3,
   CreditCard,
   User,
@@ -20,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
+import { AdminNavItem } from "@/components/dashboard/admin-nav-item";
 import { isProPlanName } from "@/components/dashboard/plan-badge";
 
 const mainNavItems = [
@@ -112,15 +112,11 @@ export function LemonadeAppSidebar({
                 onNavigate={close}
               />
             ))}
-            {showAdminPanel ? (
-              <NavItem
-                href="/admin"
-                label="Admin"
-                icon={Shield}
-                active={pathname.startsWith("/admin")}
-                onNavigate={close}
-              />
-            ) : null}
+            <AdminNavItem
+              initialShow={showAdminPanel}
+              active={pathname.startsWith("/admin")}
+              onNavigate={close}
+            />
           </nav>
 
           <div className="sidebar-footer mt-auto border-t border-retro-border pt-4">

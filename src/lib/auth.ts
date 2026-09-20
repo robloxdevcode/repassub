@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import type { User as ClerkUser } from "@clerk/backend";
@@ -54,7 +53,38 @@ function resolveUserRole(email: string | null | undefined, currentRole?: UserRol
   return currentRole === UserRole.ADMIN ? UserRole.USER : currentRole ?? UserRole.USER;
 }
 
-export const getCurrentUser = cache(async function getCurrentUser() {
+export type SessionAccess = {
+  role: UserRole;
+  staffRole: StaffRole;
+  banned: boolean;
+};
+
+/** Fresh DB read for admin panel gating — not React-cached. */
+export async function getSessionAccess(): Promise<SessionAccess | null> {
+  noStore();
+  if (!hasDatabaseUrl()) return null;
+
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const row = await db.user.findUnique({
+    where: { clerkId: userId },
+    select: { role: true, staffRole: true, banned: true },
+  });
+
+  if (!row) {
+    await syncClerkUser();
+    const afterSync = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: { role: true, staffRole: true, banned: true },
+    });
+    return afterSync;
+  }
+
+  return row;
+}
+
+export async function getCurrentUser() {
   noStore();
   if (!hasDatabaseUrl()) return null;
 
@@ -77,7 +107,7 @@ export const getCurrentUser = cache(async function getCurrentUser() {
   if (!user) return null;
 
   return applyLifetimeProGrant(user);
-});
+}
 
 export async function requireUser() {
   const user = await getCurrentUser();

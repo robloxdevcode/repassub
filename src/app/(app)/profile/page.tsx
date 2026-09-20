@@ -3,16 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { StaffRole, UserRole } from "@prisma/client";
 import { RetroButton, RetroInput, RetroTextarea } from "@/components/retro";
-import {
-  getEarnedBadges,
-  getBadgeLabel,
-  OWNER_BADGES,
-  PROFILE_STYLES,
-  type MilestoneStats,
-  type ProfileSettings,
-  type SocialLinks,
-} from "@/lib/profile-settings";
+import { getBadgeLabel, PROFILE_STYLES, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
+import { getStaffProfileBadgeIds } from "@/lib/admin-access";
 import { cn } from "@/lib/utils";
 import { ProfileAvatarField } from "@/components/dashboard/profile-avatar-field";
 import { AppPageHeader } from "@/components/dashboard/app-page-header";
@@ -23,7 +17,6 @@ import {
 } from "@/lib/actions/campaigns";
 import { getDashboardStats } from "@/lib/actions/dashboard";
 import { useToast } from "@/components/retro";
-import { isProPlanName } from "@/components/dashboard/plan-badge";
 import { RetroLoading } from "@/components/retro";
 
 const SOCIAL_FIELDS: { key: keyof SocialLinks; label: string; placeholder: string }[] = [
@@ -50,35 +43,26 @@ export default function ProfilePage() {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [local, setLocal] = useState<ProfileSettings | null>(null);
-  const [milestoneStats, setMilestoneStats] = useState<MilestoneStats>({
-    publishedLinks: 0,
-    totalUnlocks: 0,
-    isPro: false,
-  });
+  const [access, setAccess] = useState<{ role: UserRole; staffRole: StaffRole } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([getDashboardStats(), getProfileCustomization()])
-      .then(([s, settings]) => {
+      .then(([s, customization]) => {
         setUser(s.user);
         setDisplayName(s.user.displayName || "");
         setBio(s.user.bio || "");
         setUsername(s.user.username);
         setAvatarUrl(s.user.avatarUrl);
-        setLocal(settings);
-        setMilestoneStats({
-          publishedLinks: s.campaignCount,
-          totalUnlocks: s.analytics.unlocked,
-          isPro: isProPlanName(s.plan),
-        });
+        setLocal(customization.settings);
+        setAccess({ role: customization.role, staffRole: customization.staffRole });
       })
       .catch((e) => setLoadError(e instanceof Error ? e.message : "Could not load profile"));
   }, []);
 
-  const earned = useMemo(() => getEarnedBadges(milestoneStats), [milestoneStats]);
   const previewBadges = useMemo(
-    () => (local ? [...new Set([...earned, ...local.awardedBadges])] : []),
-    [earned, local],
+    () => (access ? getStaffProfileBadgeIds(access) : []),
+    [access],
   );
 
   const previewBg = local?.bgUrl
@@ -143,10 +127,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="profile-page-preview-bleed mb-8">
-        <div
-          className={cn("profile-preview", `profile-preview--${local.style}`)}
-          style={previewBg}
-        >
+        <div className={cn("profile-preview", `profile-preview--${local.style}`)} style={previewBg}>
           <div className="profile-preview-inner">
             <div className="profile-preview-avatar">
               {avatarUrl ? (
@@ -270,14 +251,14 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="profile-custom-panel">
-          <h2 className="font-bold text-retro-text mb-2">Badges on your page</h2>
-          <p className="text-xs font-bold uppercase text-retro-text-muted mb-2">From milestones</p>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {earned.length === 0 ? (
-              <span className="text-sm text-retro-text-muted">Publish a link to earn badges.</span>
-            ) : (
-              earned.map((id) => {
+        {previewBadges.length > 0 ? (
+          <div className="profile-custom-panel">
+            <h2 className="font-bold text-retro-text mb-2">Staff badge</h2>
+            <p className="text-sm text-retro-text-muted mb-3">
+              Shown on your public profile automatically from your team role.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {previewBadges.map((id) => {
                 const badge = getBadgeLabel(id);
                 if (!badge) return null;
                 return (
@@ -285,37 +266,10 @@ export default function ProfilePage() {
                     {badge.emoji} {badge.label}
                   </span>
                 );
-              })
-            )}
+              })}
+            </div>
           </div>
-          <p className="text-xs font-bold uppercase text-retro-text-muted mb-2">Optional extras</p>
-          <div className="flex flex-wrap gap-2">
-            {OWNER_BADGES.map((badge) => {
-              const active = local.awardedBadges.includes(badge.id);
-              return (
-                <button
-                  key={badge.id}
-                  type="button"
-                  onClick={() =>
-                    setLocal((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            awardedBadges: prev.awardedBadges.includes(badge.id)
-                              ? prev.awardedBadges.filter((b) => b !== badge.id)
-                              : [...prev.awardedBadges, badge.id],
-                          }
-                        : prev,
-                    )
-                  }
-                  className={cn("profile-badge profile-badge--toggle", active && "profile-badge--toggle-on")}
-                >
-                  {badge.emoji} {badge.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        ) : null}
 
         <RetroButton onClick={handleSaveLook} loading={customSaving} size="lg" className="w-full sm:w-auto">
           Save look to public page

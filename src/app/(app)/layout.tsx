@@ -2,7 +2,7 @@ import { LemonadeAppShell } from "@/components/dashboard/lemonade-app-shell";
 import { DatabaseSetupRequired } from "@/components/dashboard/database-setup-required";
 import { DatabaseSchemaOutdated } from "@/components/dashboard/database-schema-outdated";
 import { isDatabaseConfigError, isSchemaMigrationError, hasDatabaseUrl } from "@/lib/env";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getSessionAccess } from "@/lib/auth";
 import { getUserPlan } from "@/lib/stripe";
 import { hasAdminPanelAccess } from "@/lib/admin-access";
 import type { Metadata } from "next";
@@ -23,9 +23,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   let plan = "FREE";
 
   try {
+    const access = await getSessionAccess();
+    if (access?.banned) redirect("/suspended");
+    showAdminPanel = access ? hasAdminPanelAccess(access) : false;
     const user = await getCurrentUser();
     if (user?.banned) redirect("/suspended");
-    showAdminPanel = user ? hasAdminPanelAccess(user) : false;
     plan = getUserPlan(user?.subscriptions?.[0]?.plan);
   } catch (error) {
     if (isSchemaMigrationError(error)) {

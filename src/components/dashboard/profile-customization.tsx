@@ -1,16 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { RetroButton, RetroInput, RetroTextarea } from "@/components/retro";
+import { RetroButton, RetroInput } from "@/components/retro";
 import { AppCard } from "@/components/dashboard/app-page-header";
 import {
   DEFAULT_PROFILE_SETTINGS,
   getBadgeLabel,
-  getEarnedBadges,
-  OWNER_BADGES,
   PROFILE_STYLES,
-  type MilestoneStats,
   type ProfileSettings,
   type SocialLinks,
 } from "@/lib/profile-settings";
@@ -31,8 +28,7 @@ export function ProfileCustomization({
   bio,
   avatarUrl,
   settings,
-  milestoneStats,
-  secretBadges = [],
+  staffBadgeIds = [],
   onSave,
   saving,
 }: {
@@ -41,30 +37,11 @@ export function ProfileCustomization({
   bio: string;
   avatarUrl: string | null;
   settings: ProfileSettings;
-  milestoneStats: MilestoneStats;
-  secretBadges?: string[];
+  staffBadgeIds?: string[];
   onSave: (settings: ProfileSettings) => Promise<void>;
   saving: boolean;
 }) {
   const [local, setLocal] = useState<ProfileSettings>(settings);
-
-  const earned = useMemo(() => getEarnedBadges(milestoneStats), [milestoneStats]);
-  const allBadges = useMemo(
-    () => [...new Set([...earned, ...local.awardedBadges])],
-    [earned, local.awardedBadges]
-  );
-
-  function toggleOwnerBadge(id: string) {
-    setLocal((prev) => {
-      const has = prev.awardedBadges.includes(id);
-      return {
-        ...prev,
-        awardedBadges: has
-          ? prev.awardedBadges.filter((b) => b !== id)
-          : [...prev.awardedBadges, id],
-      };
-    });
-  }
 
   async function handleSaveCustomization() {
     await onSave(local);
@@ -95,9 +72,9 @@ export function ProfileCustomization({
               <p className="font-semibold text-lg text-white truncate">{displayName || username}</p>
               <p className="text-sm text-white/60">@{username}</p>
               {bio ? <p className="mt-3 text-sm text-white/75 leading-relaxed line-clamp-3">{bio}</p> : null}
-              {allBadges.length > 0 ? (
+              {staffBadgeIds.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  {allBadges.map((id) => {
+                  {staffBadgeIds.map((id) => {
                     const badge = getBadgeLabel(id);
                     if (!badge) return null;
                     return (
@@ -161,48 +138,6 @@ export function ProfileCustomization({
             placeholder={field.placeholder}
           />
         ))}
-      </AppCard>
-
-      <AppCard className="p-6">
-        <h2 className="text-base font-semibold text-retro-text mb-1">Badges</h2>
-        <p className="text-sm text-retro-text-dim mb-4">
-          Milestone badges unlock automatically. You can award custom badges on your own profile.
-        </p>
-
-        <p className="text-xs font-medium uppercase tracking-wide text-retro-text-muted mb-2">Earned from milestones</p>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {earned.length === 0 ? (
-            <span className="text-sm text-retro-text-muted">Publish a link to earn your first badge.</span>
-          ) : (
-            earned.map((id) => {
-              const badge = getBadgeLabel(id);
-              if (!badge) return null;
-              return (
-                <span key={id} className="profile-badge profile-badge--earned">
-                  {badge.emoji} {badge.label}
-                </span>
-              );
-            })
-          )}
-        </div>
-
-
-        <p className="text-xs font-medium uppercase tracking-wide text-retro-text-muted mb-2">Award on your profile</p>
-        <div className="flex flex-wrap gap-2">
-          {OWNER_BADGES.map((badge) => {
-            const active = local.awardedBadges.includes(badge.id);
-            return (
-              <button
-                key={badge.id}
-                type="button"
-                onClick={() => toggleOwnerBadge(badge.id)}
-                className={cn("profile-badge profile-badge--toggle", active && "profile-badge--toggle-on")}
-              >
-                {badge.emoji} {badge.label}
-              </button>
-            );
-          })}
-        </div>
       </AppCard>
 
       <RetroButton onClick={handleSaveCustomization} loading={saving} className="w-full sm:w-auto">

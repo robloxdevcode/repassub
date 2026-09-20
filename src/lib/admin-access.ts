@@ -86,3 +86,34 @@ export function canAssignStaffRole(
   }
   return true;
 }
+
+const STAFF_BADGE_EMOJI: Record<Exclude<StaffRole, "NONE">, string> = {
+  TESTER: "🧪",
+  SUPPORT: "🎧",
+  ADMIN: "🛡️",
+  HEAD_ADMIN: "⭐",
+  OWNER: "👑",
+};
+
+/** Badge ids shown on public profile — staff / primary site admin only. */
+export function getStaffProfileBadgeIds(user: { role: UserRole; staffRole: StaffRole }): string[] {
+  if (user.staffRole !== StaffRole.NONE) {
+    return [`staff:${user.staffRole}`];
+  }
+  if (user.role === UserRole.ADMIN) {
+    return ["staff:SITE_ADMIN"];
+  }
+  return [];
+}
+
+export function getStaffBadgeLabel(id: string): { label: string; emoji: string } | null {
+  if (id === "staff:SITE_ADMIN") {
+    return { label: "Admin", emoji: "🛡️" };
+  }
+  if (!id.startsWith("staff:")) return null;
+  const roleKey = id.slice("staff:".length) as StaffRole;
+  if (roleKey === StaffRole.NONE || !(roleKey in STAFF_BADGE_EMOJI)) return null;
+  const label = STAFF_ROLE_LABELS[roleKey];
+  const emoji = STAFF_BADGE_EMOJI[roleKey as Exclude<StaffRole, "NONE">];
+  return { label, emoji };
+}

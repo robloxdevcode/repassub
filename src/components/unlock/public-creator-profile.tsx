@@ -1,6 +1,6 @@
 "use client";
 
-import { getBadgeLabel, PROFILE_STYLES, type ProfileSettings, type MilestoneStats } from "@/lib/profile-settings";
+import { getBadgeLabel, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
 import { formatNumber } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,7 +23,6 @@ export function PublicCreatorProfile({
   badgeIds,
   links,
   siteUrl,
-  isPro,
   profileSettings,
 }: {
   username: string;
@@ -33,7 +32,7 @@ export function PublicCreatorProfile({
   badgeIds: string[];
   links: PublicCreatorLink[];
   siteUrl: string;
-  isPro: boolean;
+  isPro?: boolean;
   profileSettings: ProfileSettings;
 }) {
   const name = displayName || username;
@@ -79,11 +78,6 @@ export function PublicCreatorProfile({
           )}
           <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{name}</h1>
           <p className="text-sm text-white/70 mt-1">@{username}</p>
-          {isPro ? (
-            <span className="inline-block mt-3 text-xs font-bold px-3 py-1 border-2 border-white/40 bg-white/10 text-white rounded-full">
-              Pro creator
-            </span>
-          ) : null}
           {bio ? <p className="mt-4 text-sm md:text-base text-white/85 leading-relaxed max-w-md mx-auto">{bio}</p> : null}
           {badgeIds.length > 0 ? (
             <div className="mt-5 flex flex-wrap gap-2 justify-center">

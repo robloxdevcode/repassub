@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
-import { getEarnedBadges, parseProfileSettings, type MilestoneStats } from "@/lib/profile-settings";
+import { getStaffProfileBadgeIds } from "@/lib/admin-access";
+import { parseProfileSettings } from "@/lib/profile-settings";
 import { getUserPlan } from "@/lib/stripe";
 import { campaignViewCountSelect } from "@/lib/analytics";
 
@@ -25,20 +26,8 @@ export async function getPublicCreatorProfile(username: string) {
   if (!user || user.banned) return null;
 
   const plan = getUserPlan(user.subscriptions[0]?.plan);
-  const publishedLinks = user.campaigns.length;
-  const totalUnlocks = await db.analyticsEvent.count({
-    where: { type: "UNLOCK", campaign: { userId: user.id } },
-  });
-
-  const milestoneStats: MilestoneStats = {
-    publishedLinks,
-    totalUnlocks,
-    isPro: plan === "PRO" || plan === "BUSINESS",
-  };
-
   const settings = parseProfileSettings(user.profileSettings);
-  const milestoneBadges = getEarnedBadges(milestoneStats);
-  const badgeIds = [...new Set([...milestoneBadges, ...settings.awardedBadges])];
+  const badgeIds = getStaffProfileBadgeIds(user);
 
   return {
     user: {

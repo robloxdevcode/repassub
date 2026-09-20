@@ -1,4 +1,4 @@
-import { EASTER_EGG_BADGES } from "@/lib/easter-eggs";
+import { getStaffBadgeLabel } from "@/lib/admin-access";
 
 export type ProfileStyle = "neon" | "midnight" | "vapor" | "arcade";
 
@@ -83,11 +83,7 @@ export function getEarnedBadges(stats: MilestoneStats): string[] {
 }
 
 export function getBadgeLabel(id: string): { label: string; emoji: string } | null {
-  const milestone = MILESTONE_BADGES.find((b) => b.id === id);
-  if (milestone) return { label: milestone.label, emoji: milestone.emoji };
-  const owner = OWNER_BADGES.find((b) => b.id === id);
-  if (owner) return { label: owner.label, emoji: owner.emoji };
-  const secret = EASTER_EGG_BADGES.find((b) => b.id === id);
-  if (secret) return { label: secret.label, emoji: secret.emoji };
+  const staff = getStaffBadgeLabel(id);
+  if (staff) return staff;
   return null;
 }

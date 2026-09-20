@@ -41,6 +41,7 @@ export async function setUserStaffRole(userId: string, staffRole: StaffRole): Pr
     revalidatePath("/admin/users");
     revalidatePath("/admin");
     revalidatePath("/dashboard");
+    revalidatePath("/", "layout");
     return { ok: true };
   } catch (error) {
     console.error("[setUserStaffRole]", error);
