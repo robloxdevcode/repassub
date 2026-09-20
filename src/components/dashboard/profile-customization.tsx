@@ -50,8 +50,8 @@ export function ProfileCustomization({
 
   const earned = useMemo(() => getEarnedBadges(milestoneStats), [milestoneStats]);
   const allBadges = useMemo(
-    () => [...new Set([...earned, ...secretBadges, ...local.awardedBadges])],
-    [earned, local.awardedBadges, secretBadges]
+    () => [...new Set([...earned, ...local.awardedBadges])],
+    [earned, local.awardedBadges]
   );
 
   function toggleOwnerBadge(id: string) {
@@ -186,24 +186,6 @@ export function ProfileCustomization({
           )}
         </div>
 
-        {secretBadges.length > 0 ? (
-          <>
-            <p className="text-xs font-medium uppercase tracking-wide text-retro-text-muted mb-2">
-              Secret badges
-            </p>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {secretBadges.map((id) => {
-                const badge = getBadgeLabel(id);
-                if (!badge) return null;
-                return (
-                  <span key={id} className="profile-badge profile-badge--earned">
-                    {badge.emoji} {badge.label}
-                  </span>
-                );
-              })}
-            </div>
-          </>
-        ) : null}
 
         <p className="text-xs font-medium uppercase tracking-wide text-retro-text-muted mb-2">Award on your profile</p>
         <div className="flex flex-wrap gap-2">

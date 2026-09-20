@@ -14,26 +14,26 @@
   --lt-ink-soft: #a1a1aa;
   --lt-border: #27272a;
 
-  --retro-bg: #050506;
-  --retro-surface: #0c0c0f;
-  --retro-surface-2: #121218;
-  --retro-surface-3: #18181f;
+  --retro-bg: #070708;
+  --retro-surface: #0f0f12;
+  --retro-surface-2: #16161c;
+  --retro-surface-3: #1c1c24;
   --retro-ink: #f4f4f5;
-  --retro-border: #27272a;
-  --retro-accent: #d4ff58;
-  --retro-accent-dim: #b8e040;
-  --retro-neon: #d4ff58;
+  --retro-border: #2a2a32;
+  --retro-accent: #818cf8;
+  --retro-accent-dim: #6366f1;
+  --retro-neon: #a5b4fc;
   --retro-blue: #93c5fd;
   --retro-blue-dim: #60a5fa;
   --retro-yellow: #fde047;
   --retro-yellow-dim: #eab308;
   --retro-pink: #f472b6;
   --retro-cyan: #67e8f9;
-  --retro-lime: #d4ff58;
-  --retro-success: #4ade80;
-  --retro-warning: #fb923c;
+  --retro-lime: #818cf8;
+  --retro-success: #34d399;
+  --retro-warning: #fbbf24;
   --retro-error: #f87171;
-  --retro-glow: rgba(212, 255, 88, 0.12);
+  --retro-glow: rgba(99, 102, 241, 0.16);
   --retro-text: #fafafa;
   --retro-text-dim: #a1a1aa;
   --retro-text-muted: #71717a;
@@ -2723,9 +2723,9 @@ body {
 /* -- Linklock design system -- */
 
 .ll-nav {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px) saturate(180%);
-  border-bottom: 2px solid var(--retro-border);
+  background: rgba(7, 7, 8, 0.88);
+  backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid var(--retro-border);
 }
 
 .dark .ll-nav {
@@ -2860,8 +2860,8 @@ body {
 }
 
 .ll-footer {
-  border-top: 2px dashed var(--lt-lavender);
-  background: linear-gradient(180deg, #fff 0%, var(--retro-bg) 100%);
+  border-top: 1px solid var(--retro-border);
+  background: var(--retro-surface);
 }
 
 .ll-highlight-icon {
@@ -3598,8 +3598,8 @@ body {
 }
 
 .ll-footer {
-  border-top: 2px dashed var(--lt-lavender);
-  background: linear-gradient(180deg, #fff 0%, var(--retro-bg) 100%);
+  border-top: 1px solid var(--retro-border);
+  background: var(--retro-surface);
 }
 
 .ll-page-hero {

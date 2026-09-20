@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminNav } from "@/components/admin/admin-ui";
+import { AdminCommandMenu } from "@/components/admin/admin-command-menu";
 
 export function AdminShell({
   children,
@@ -27,6 +28,12 @@ export function AdminShell({
             <h1 className="admin-v2-title">Control center</h1>
           </div>
           <AdminNav links={links} />
+          <div className="admin-v2-toolbar w-full sm:w-auto sm:ml-auto">
+            <AdminCommandMenu navLinks={links} />
+            <Link href="/dashboard" className="admin-v2-toolbar-btn">
+              Dashboard
+            </Link>
+          </div>
         </div>
         {!canModerate ? (
           <p className="admin-v2-banner">

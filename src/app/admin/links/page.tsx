@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { getAdminLinks } from "@/lib/actions/dashboard";
 import { AdminSearchBar } from "@/components/admin/admin-search";
 import { AdminTable } from "@/components/admin/admin-shell";
+import { AdminExportButton } from "@/components/admin/admin-command-menu";
 
 interface Props {
   searchParams: Promise<{ q?: string }>;
@@ -11,6 +12,15 @@ interface Props {
 export default async function AdminLinksPage({ searchParams }: Props) {
   const { q } = await searchParams;
   const campaigns = await getAdminLinks(q);
+
+  const exportRows = campaigns.map((c) => [
+    c.title,
+    c.user.username,
+    c.status,
+    String(c._count.analyticsEvents),
+    c.status === "PUBLISHED" ? `/u/${c.user.username}/${c.slug}` : "",
+    new Date(c.createdAt).toISOString(),
+  ]);
 
   return (
     <div className="admin-v2-section">
@@ -24,6 +34,15 @@ export default async function AdminLinksPage({ searchParams }: Props) {
         <Suspense fallback={null}>
           <AdminSearchBar placeholder="Search title, slug, username…" />
         </Suspense>
+      </div>
+
+      <div className="admin-v2-toolbar">
+        <AdminExportButton
+          filename="linklock-links.csv"
+          headers={["Title", "Creator", "Status", "Views", "Path", "Created"]}
+          rows={exportRows}
+        />
+        <span className="admin-v2-muted text-xs self-center">{campaigns.length} rows</span>
       </div>
 
       <AdminTable>

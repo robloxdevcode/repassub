@@ -1,0 +1,355 @@
+/* Platform UI v3 — Linear/Stripe-inspired slate + indigo (loads last) */
+
+:root {
+  --retro-bg: #070708;
+  --retro-surface: #0f0f12;
+  --retro-surface-2: #16161c;
+  --retro-surface-3: #1c1c24;
+  --retro-ink: #f4f4f5;
+  --retro-border: #2a2a32;
+  --retro-accent: #818cf8;
+  --retro-accent-dim: #6366f1;
+  --retro-neon: #a5b4fc;
+  --retro-glow: rgba(99, 102, 241, 0.16);
+  --retro-lime: #818cf8;
+  --lt-grape-deep: #818cf8;
+  --ui-radius-sm: 0.5rem;
+  --ui-radius: 0.625rem;
+  --ui-radius-lg: 0.75rem;
+  --ui-radius-xl: 1rem;
+  --play-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --play-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --play-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
+  --ui-motion-fast: 80ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ui-motion-base: 120ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Legacy “brutal” → modern cards */
+.brutal-border {
+  border: 1px solid var(--retro-border) !important;
+}
+
+.brutal-shadow,
+.brutal-shadow-sm,
+.brutal-shadow-red,
+.brutal-shadow-blue {
+  box-shadow: var(--play-shadow-sm) !important;
+}
+
+.retro-panel,
+.unlock-preview-card {
+  border: 1px solid var(--retro-border) !important;
+  border-radius: var(--ui-radius-lg) !important;
+  box-shadow: var(--play-shadow-sm) !important;
+  background: var(--retro-surface) !important;
+}
+
+.retro-progress {
+  border: 1px solid var(--retro-border) !important;
+  height: 8px !important;
+  background: var(--retro-surface-2) !important;
+}
+
+.retro-progress-fill {
+  background: linear-gradient(90deg, var(--retro-accent-dim), var(--retro-accent)) !important;
+  transition: width var(--ui-motion-base) !important;
+}
+
+.platform-btn {
+  border-radius: var(--ui-radius-lg) !important;
+  transition: transform var(--ui-motion-fast), opacity var(--ui-motion-fast), border-color var(--ui-motion-fast) !important;
+}
+
+.platform-btn:active {
+  transform: scale(0.985);
+}
+
+.ll-section,
+.ll-section--muted,
+.ll-section--surface {
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+
+.ll-section-title,
+#pricing .ll-section-title {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--retro-text);
+}
+
+.ll-section-header {
+  margin-bottom: 2rem;
+}
+
+.ll-section-label {
+  color: var(--retro-accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Marketing hero atmosphere */
+.llv2-hero {
+  background:
+    radial-gradient(ellipse 70% 55% at 20% -15%, var(--retro-glow), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 10%, rgba(56, 189, 248, 0.08), transparent 50%),
+    var(--retro-bg);
+}
+
+.llv2-cta,
+.ll-nav-auth-link--primary {
+  transition: transform var(--ui-motion-fast), box-shadow var(--ui-motion-fast), opacity var(--ui-motion-fast);
+}
+
+.llv2-cta:hover {
+  box-shadow: 0 8px 28px var(--retro-glow);
+}
+
+.llv2-cta:active {
+  transform: scale(0.98);
+}
+
+.ll-nav {
+  background: rgba(7, 7, 8, 0.82);
+  backdrop-filter: blur(16px);
+}
+
+.ll-nav-link--active {
+  color: var(--retro-accent);
+  background: var(--retro-glow);
+  border: 1px solid rgba(129, 140, 248, 0.25);
+}
+
+/* Instant feedback on all interactive controls */
+.ui-instant,
+a.ll-nav-link,
+button,
+[role="button"],
+.retro-panel a,
+.dash-pro-action,
+.admin-v2-search-btn,
+.admin-v2-nav-link,
+.sidebar-primary-cta,
+.sidebar-nav-item {
+  transition:
+    transform var(--ui-motion-fast),
+    background-color var(--ui-motion-fast),
+    border-color var(--ui-motion-fast),
+    color var(--ui-motion-fast),
+    opacity var(--ui-motion-fast),
+    box-shadow var(--ui-motion-fast);
+}
+
+button:active:not(:disabled),
+[role="button"]:active:not([aria-disabled="true"]),
+.dash-pro-action:active,
+.admin-v2-search-btn:active,
+.llv2-cta:active {
+  transform: scale(0.98);
+}
+
+/* Admin dense tables */
+.admin-v2-table-wrap {
+  max-height: min(70vh, 720px);
+}
+
+.admin-v2-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--retro-surface-2);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 0 var(--retro-border);
+}
+
+.admin-v2-table tbody tr {
+  transition: background var(--ui-motion-fast);
+}
+
+.admin-v2-table tbody tr:hover {
+  background: rgba(129, 140, 248, 0.04);
+}
+
+.admin-v2-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-v2-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--ui-radius);
+  border: 1px solid var(--retro-border);
+  background: var(--retro-surface-2);
+  color: var(--retro-text-dim);
+}
+
+.admin-v2-toolbar-btn:hover {
+  color: var(--retro-text);
+  border-color: rgba(129, 140, 248, 0.35);
+  background: var(--retro-surface-3);
+}
+
+.admin-v2-toolbar-btn--primary {
+  background: var(--retro-accent);
+  color: #fff;
+  border-color: var(--retro-accent-dim);
+}
+
+.admin-v2-toolbar-btn--primary:hover {
+  background: var(--retro-accent-dim);
+  color: #fff;
+}
+
+.admin-v2-kbd {
+  font-family: ui-monospace, monospace;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--retro-border);
+  background: var(--retro-bg);
+  color: var(--retro-text-muted);
+}
+
+/* Command palette */
+.admin-cmd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh 1rem 1rem;
+  animation: admin-cmd-in var(--ui-motion-base) ease;
+}
+
+@keyframes admin-cmd-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.admin-cmd-panel {
+  width: min(100%, 32rem);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-xl);
+  background: var(--retro-surface);
+  box-shadow: var(--play-shadow-lg);
+  overflow: hidden;
+}
+
+.admin-cmd-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 0.9375rem;
+  border: none;
+  border-bottom: 1px solid var(--retro-border);
+  background: var(--retro-surface-2);
+  color: var(--retro-text);
+  outline: none;
+}
+
+.admin-cmd-list {
+  max-height: 16rem;
+  overflow: auto;
+  padding: 0.35rem;
+}
+
+.admin-cmd-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--ui-radius);
+  font-size: 0.875rem;
+  color: var(--retro-text-dim);
+  border: 1px solid transparent;
+}
+
+.admin-cmd-item:hover,
+.admin-cmd-item--active {
+  background: var(--retro-glow);
+  color: var(--retro-text);
+  border-color: rgba(129, 140, 248, 0.2);
+}
+
+.admin-cmd-foot {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.6875rem;
+  color: var(--retro-text-muted);
+  border-top: 1px solid var(--retro-border);
+}
+
+.ll-nav {
+  background: rgba(7, 7, 8, 0.88) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  border-bottom: 1px solid var(--retro-border) !important;
+}
+
+.ll-footer {
+  border-top: 1px solid var(--retro-border) !important;
+  background: var(--retro-surface) !important;
+}
+
+.ll-nav-link--active {
+  color: var(--retro-accent) !important;
+  background: var(--retro-glow) !important;
+  border: 1px solid rgba(129, 140, 248, 0.25) !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
+}
+
+.site-promo-banner {
+  background: var(--retro-surface-2) !important;
+  color: var(--retro-text) !important;
+  border-bottom: 1px solid var(--retro-border);
+}
+
+.site-promo-banner a {
+  color: var(--retro-accent) !important;
+}
+
+.unlock-external-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.unlock-external-dialog {
+  width: min(100%, 24rem);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-xl);
+  background: var(--retro-surface);
+  padding: 1.25rem;
+  box-shadow: var(--play-shadow-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -13,7 +13,6 @@ import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
 import { cn } from "@/lib/utils";
 import { checkoutErrorMessage } from "@/lib/checkout-errors";
-import { FinePrintTrapdoorTrigger } from "@/components/easter-egg/fine-print-trapdoor-trigger";
 
 export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
   const { toast } = useToast();
@@ -141,7 +140,6 @@ export function BillingPageClient({ initialPlan }: { initialPlan: string }) {
           {!isPro ? (
             <p className="mt-4 text-xs text-retro-text-muted">
               Pay with card, PayPal, Apple Pay, or Google Pay (via Stripe).
-              <FinePrintTrapdoorTrigger />
             </p>
           ) : null}
         </div>

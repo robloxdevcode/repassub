@@ -1,4 +1,3 @@
-import { AnalyticsHeaderEgg } from "@/components/easter-egg/analytics-header-egg";
 import Link from "next/link";
 import { getAnalyticsData } from "@/lib/actions/dashboard";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
@@ -13,7 +12,6 @@ export default async function AnalyticsPage() {
 
   return (
     <div>
-      <AnalyticsHeaderEgg />
       <p className="text-sm text-retro-text-dim mb-8">
         {isProAnalytics
           ? "Full funnel stats, traffic sources, and per-link drop-off."

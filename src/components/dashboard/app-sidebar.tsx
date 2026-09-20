@@ -1,43 +1,21 @@
 "use client";
 
-
-
 import Link from "next/link";
-
 import { usePathname } from "next/navigation";
-
 import { useState } from "react";
-
 import { LayoutDashboard, Lock, Plus, Settings, Menu, X, Shield, BarChart3, CreditCard, User } from "lucide-react";
-
 import { cn } from "@/lib/utils";
-
 import { LinklockLogo } from "@/components/brand/linklock-logo";
-
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
-
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
-
 import { isProPlanName } from "@/components/dashboard/plan-badge";
 
-import { EasterEggNavLink } from "@/components/easter-egg/easter-egg-nav-link";
-
-import { useEasterEggTrigger } from "@/components/easter-egg/use-easter-egg-trigger";
-
-
-
 const mainNavItems = [
-
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
-
-  { href: "/unlocks", label: "My links", icon: Lock, eggId: "vault-shelf" as const, clicks: 3 },
-
+  { href: "/unlocks", label: "My links", icon: Lock },
   { href: "/analytics", label: "Stats", icon: BarChart3 },
-
-  { href: "/profile", label: "Profile", icon: User, eggId: "mirror-touch" as const, clicks: 5 },
-
+  { href: "/profile", label: "Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
-
 ];
 
 
@@ -53,12 +31,6 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
   const onBilling = pathname.startsWith("/billing");
 
   const isPro = isProPlanName(plan);
-
-  const grapeTrigger = useEasterEggTrigger("grape-key", 7);
-
-  const boltTrigger = useEasterEggTrigger("bolt-chaser", 5);
-
-
 
   return (
 
@@ -90,21 +62,10 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
         <div className="flex h-full flex-col p-5">
 
           <Link
-
             href="/dashboard"
-
             prefetch
-
             className="mb-6 px-1 block"
-
-            onClick={(event) => {
-
-              void grapeTrigger(event);
-
-              if (!event.defaultPrevented) setOpen(false);
-
-            }}
-
+            onClick={() => setOpen(false)}
           >
 
             <LinklockLogo size={40} showWordmark wordmarkClassName="text-retro-text" />
@@ -114,21 +75,10 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
 
 
           <Link
-
             href="/create"
-
             prefetch
-
-            onClick={(event) => {
-
-              void boltTrigger(event);
-
-              if (!event.defaultPrevented) setOpen(false);
-
-            }}
-
+            onClick={() => setOpen(false)}
             className={cn("sidebar-primary-cta", onCreate && "sidebar-primary-cta--active")}
-
           >
 
             <Plus size={18} strokeWidth={2} />
@@ -142,61 +92,19 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
           <nav className="mt-6 flex flex-1 flex-col gap-0.5">
 
             {mainNavItems.map((item) => {
-
               const active = pathname.startsWith(item.href);
-
-              if (item.eggId) {
-
-                return (
-
-                  <EasterEggNavLink
-
-                    key={item.href}
-
-                    href={item.href}
-
-                    eggId={item.eggId}
-
-                    clicks={item.clicks ?? 3}
-
-                    icon={item.icon}
-
-                    label={item.label}
-
-                    active={active}
-
-                    onNavigate={() => setOpen(false)}
-
-                  />
-
-                );
-
-              }
-
               return (
-
                 <Link
-
                   key={item.href}
-
                   href={item.href}
-
                   prefetch
-
                   onClick={() => setOpen(false)}
-
                   className={cn("sidebar-nav-item", active && "sidebar-nav-active")}
-
                 >
-
                   <item.icon size={17} strokeWidth={2} />
-
                   {item.label}
-
                 </Link>
-
               );
-
             })}
 
 
@@ -314,7 +222,7 @@ export function AppShell({
       <AppSidebar showAdminPanel={showAdminPanel} plan={plan} />
 
       <div className="app-stage dash-pro-stage md:ml-[17.5rem] min-h-screen">
-        <main className="dash-pro-main">{children}</main>
+        <main className="dash-pro-main mx-auto w-full max-w-5xl">{children}</main>
       </div>
 
     </>

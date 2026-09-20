@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { HeroLiveUnlock } from "@/components/marketing/hero-live-unlock";
-
+import { DiscordSupportStrip } from "@/components/marketing/discord-support";
 export function HomeLanding() {
   return (
     <div>
@@ -15,12 +15,12 @@ export function HomeLanding() {
               <span className="llv2-title-accent">one unlock at a time</span>
             </h1>
             <p className="llv2-sub">
-              Minimal subscribe-to-download links. Fans complete your steps once; you grow on every
-              share.
+              Subscribe-to-unlock links with a fast, focused flow. Fans finish your steps once; you
+              grow on every share.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
               <MarketingAuthLink href="/sign-up">
-                <span className="llv2-cta">Start free</span>
+                <span className="llv2-cta ui-instant">Start free — no card</span>
               </MarketingAuthLink>
               <p className="text-sm text-retro-text-muted">
                 <Link href="/sign-in" className="llv2-meta-link">
@@ -46,6 +46,7 @@ export function HomeLanding() {
           <span>70+ platforms</span>
         </div>
       </section>
+      <DiscordSupportStrip />
     </div>
   );
 }

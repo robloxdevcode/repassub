@@ -14,17 +14,7 @@ function hasPaidPro(sub?: Subscription | null) {
 }
 
 export function applyEasterEggProGrant(user: UserWithSubs): UserWithSubs {
-  if (hasPaidPro(user.subscriptions[0])) return user;
-
-  const sub = user.subscriptions[0];
-  if (!sub?.currentPeriodEnd || sub.currentPeriodEnd < new Date()) return user;
-  if (sub.stripeSubscriptionId) return user;
-  if (sub.plan === "PRO" || sub.plan === "BUSINESS") return user;
-
-  return {
-    ...user,
-    subscriptions: [{ ...sub, plan: "PRO", status: "ACTIVE" }],
-  };
+  return user;
 }
 
 export function applyLifetimeProGrant(user: UserWithSubs): UserWithSubs {

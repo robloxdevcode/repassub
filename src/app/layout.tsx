@@ -15,6 +15,7 @@ import { getClerkProviderProps } from "@/lib/clerk-config";
 
 import "./globals.css";
 import "./dashboard-theme.css";
+import "./platform-modern.css";
 
 const inter = Inter({
   subsets: ["latin"],

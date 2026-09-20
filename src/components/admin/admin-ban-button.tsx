@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useOptimistic, useState, useTransition } from "react";
 import { RetroButton, useToast } from "@/components/retro";
 import { banUser } from "@/lib/actions/dashboard";
 
@@ -14,23 +15,28 @@ export function AdminBanButton({
   username: string;
 }) {
   const { toast } = useToast();
+  const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [pending, startTransition] = useTransition();
+  const [optimisticBanned, setOptimisticBanned] = useOptimistic(banned, (_state, next: boolean) => next);
 
   function run(nextBanned: boolean) {
+    setOptimisticBanned(nextBanned);
     startTransition(async () => {
       const result = await banUser(userId, nextBanned);
       if (!result.ok) {
         toast(result.message, "error");
+        setOptimisticBanned(banned);
         return;
       }
       toast(nextBanned ? `${username} suspended` : `${username} unbanned`, "success");
       setConfirming(false);
+      router.refresh();
     });
   }
 
   function onBanClick() {
-    if (banned) {
+    if (optimisticBanned) {
       run(false);
       return;
     }
@@ -43,7 +49,7 @@ export function AdminBanButton({
 
   return (
     <div>
-      {confirming && !banned ? (
+      {confirming && !optimisticBanned ? (
         <p className="text-xs text-retro-text-muted mb-2 max-w-[200px]">
           Ban <strong>{username}</strong>? All their links go offline immediately.
         </p>
@@ -51,14 +57,14 @@ export function AdminBanButton({
       <div className="flex gap-2">
         <RetroButton
           type="button"
-          variant={banned ? "success" : "danger"}
+          variant={optimisticBanned ? "success" : "danger"}
           size="sm"
           loading={pending}
           onClick={onBanClick}
         >
-          {banned ? "Unban user" : confirming ? "Confirm ban" : "Ban user"}
+          {optimisticBanned ? "Unban user" : confirming ? "Confirm ban" : "Ban user"}
         </RetroButton>
-        {confirming && !banned ? (
+        {confirming && !optimisticBanned ? (
           <RetroButton
             type="button"
             variant="secondary"

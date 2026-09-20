@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { EASTER_EGGS, isEasterEggId } from "@/lib/easter-eggs";
 import { getEarnedBadges, type MilestoneStats } from "@/lib/profile-settings";
 import { getUserPlan } from "@/lib/stripe";
 import { campaignViewCountSelect } from "@/lib/analytics";
@@ -20,10 +19,6 @@ export async function getPublicCreatorProfile(username: string) {
           _count: { select: campaignViewCountSelect },
         },
       },
-      notifications: {
-        where: { type: "easter_egg" },
-        select: { payload: true },
-      },
     },
   });
 
@@ -42,12 +37,7 @@ export async function getPublicCreatorProfile(username: string) {
   };
 
   const milestoneBadges = getEarnedBadges(milestoneStats);
-  const secretBadges = user.notifications
-    .map((note) => (note.payload as { eggId?: string })?.eggId)
-    .filter((eggId): eggId is string => !!eggId && isEasterEggId(eggId))
-    .map((eggId) => EASTER_EGGS[eggId as keyof typeof EASTER_EGGS].badgeId);
-
-  const badgeIds = [...new Set([...milestoneBadges, ...secretBadges])];
+  const badgeIds = [...new Set(milestoneBadges)];
 
   return {
     user: {

@@ -1,26 +1,26 @@
-/* Linklock v2 — minimal dark system (lemonade-inspired, distinct palette) */
+/* Linklock v2 — slate + indigo platform shell */
 
 :root {
-  --retro-bg: #050506;
-  --retro-surface: #0c0c0f;
-  --retro-surface-2: #121218;
-  --retro-surface-3: #18181f;
+  --retro-bg: #070708;
+  --retro-surface: #0f0f12;
+  --retro-surface-2: #16161c;
+  --retro-surface-3: #1c1c24;
   --retro-ink: #f4f4f5;
-  --retro-border: #27272a;
-  --retro-accent: #d4ff58;
-  --retro-accent-dim: #b8e040;
-  --retro-neon: #d4ff58;
+  --retro-border: #2a2a32;
+  --retro-accent: #818cf8;
+  --retro-accent-dim: #6366f1;
+  --retro-neon: #a5b4fc;
   --retro-blue: #93c5fd;
   --retro-blue-dim: #60a5fa;
   --retro-yellow: #fde047;
   --retro-yellow-dim: #eab308;
   --retro-pink: #f472b6;
   --retro-cyan: #67e8f9;
-  --retro-lime: #d4ff58;
-  --retro-success: #4ade80;
-  --retro-warning: #fb923c;
+  --retro-lime: #818cf8;
+  --retro-success: #34d399;
+  --retro-warning: #fbbf24;
   --retro-error: #f87171;
-  --retro-glow: rgba(212, 255, 88, 0.12);
+  --retro-glow: rgba(99, 102, 241, 0.16);
   --retro-text: #fafafa;
   --retro-text-dim: #a1a1aa;
   --retro-text-muted: #71717a;
@@ -128,10 +128,10 @@ body {
   padding: 0 1.35rem;
   border-radius: 999px;
   background: var(--retro-accent);
-  color: #0a0a0a;
+  color: #fff;
   font-weight: 600;
   font-size: 0.9375rem;
-  transition: transform 120ms ease, opacity 120ms ease;
+  transition: transform 80ms ease, opacity 80ms ease, box-shadow 80ms ease;
 }
 
 .llv2-cta:hover {
@@ -269,7 +269,7 @@ body {
 }
 
 .admin-v2-nav-link--active {
-  color: #0a0a0a;
+  color: #fff;
   background: var(--retro-accent);
   border-color: var(--retro-accent-dim);
 }
@@ -297,7 +297,7 @@ body {
 
 .app-sidebar .sidebar-primary-cta {
   background: var(--retro-accent);
-  color: #0a0a0a;
+  color: #fff;
   border: 1px solid var(--retro-accent-dim);
   font-weight: 700;
   border-radius: var(--ui-radius-lg);
@@ -324,7 +324,7 @@ body {
 .ll-unlock-btn--interactive.ll-unlock-btn--active,
 .ll-unlock-btn--interactive.ll-unlock-btn--ready {
   background: var(--retro-accent);
-  color: #0a0a0a;
+  color: #fff;
   font-weight: 700;
 }
 
@@ -398,7 +398,8 @@ body {
   padding: 0.4rem 0.75rem;
   border-radius: var(--ui-radius);
   background: var(--retro-accent);
-  color: #0a0a0a;
+  color: #fff;
+  transition: transform 80ms ease, background 80ms ease;
 }
 
 .admin-v2-table-wrap {

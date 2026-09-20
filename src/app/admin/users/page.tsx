@@ -3,6 +3,7 @@ import { getAdminUsers } from "@/lib/actions/dashboard";
 import { AdminBanButton } from "@/components/admin/admin-ban-button";
 import { AdminSearchBar } from "@/components/admin/admin-search";
 import { AdminTable } from "@/components/admin/admin-shell";
+import { AdminExportButton } from "@/components/admin/admin-command-menu";
 import { STAFF_ROLE_LABELS } from "@/lib/admin-access";
 import { UserRole, StaffRole } from "@prisma/client";
 import { getCurrentUser, requireAdminPanel } from "@/lib/auth";
@@ -19,6 +20,18 @@ export default async function AdminUsersPage({ searchParams }: Props) {
   const { q } = await searchParams;
   const users = await getAdminUsers(q);
 
+  const exportRows = users.map((u) => [
+    u.username,
+    u.email ?? "",
+    u.role === UserRole.ADMIN
+      ? "Primary admin"
+      : u.staffRole !== StaffRole.NONE
+        ? STAFF_ROLE_LABELS[u.staffRole]
+        : "Creator",
+    String(u._count.campaigns),
+    u.banned ? "Suspended" : "Active",
+  ]);
+
   return (
     <div className="admin-v2-section">
       <div className="admin-v2-section-head">
@@ -29,6 +42,15 @@ export default async function AdminUsersPage({ searchParams }: Props) {
         <Suspense fallback={null}>
           <AdminSearchBar />
         </Suspense>
+      </div>
+
+      <div className="admin-v2-toolbar">
+        <AdminExportButton
+          filename="linklock-users.csv"
+          headers={["User", "Email", "Access", "Links", "Status"]}
+          rows={exportRows}
+        />
+        <span className="admin-v2-muted text-xs self-center">{users.length} rows</span>
       </div>
 
       <AdminTable>

@@ -11,7 +11,6 @@ import { getBillingData } from "@/lib/actions/payments";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
 import { RetroLoading } from "@/components/retro";
-import { useEasterEggTrigger } from "@/components/easter-egg/use-easter-egg-trigger";
 import { LeaderboardOptIn } from "@/components/dashboard/leaderboard-opt-in";
 
 const TABS = ["Account", "Plan"];
@@ -19,7 +18,6 @@ const TABS = ["Account", "Plan"];
 export default function SettingsPage() {
   const [tab, setTab] = useState("Account");
   const [plan, setPlan] = useState<string | null>(null);
-  const ghostTrigger = useEasterEggTrigger("ghost-tab", 5);
 
   useEffect(() => {
     getBillingData()
@@ -50,13 +48,7 @@ export default function SettingsPage() {
         {TABS.map((t) => (
           <button
             key={t}
-            onClick={(event) => {
-              if (t === "Account") {
-                void ghostTrigger(event);
-                if (event.defaultPrevented) return;
-              }
-              setTab(t);
-            }}
+            onClick={() => setTab(t)}
             className={cn(
               "font-body text-sm font-semibold px-4 py-2 rounded-lg border transition-colors duration-75 whitespace-nowrap",
               tab === t

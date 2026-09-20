@@ -61,9 +61,16 @@ export function RetroFooter() {
             </div>
           ))}
         </div>
-        <div className="mt-12 pt-8 border-t border-retro-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs text-retro-text-muted">
+        <div className="mt-12 pt-8 border-t border-retro-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-retro-text-muted">
           <span>© {new Date().getFullYear()} Linklock</span>
-          <span>linklock.org</span>
+          <a
+            href="https://discord.gg/DQQTf6XXg3"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-retro-accent hover:underline font-medium"
+          >
+            Discord support
+          </a>
         </div>
       </div>
     </footer>

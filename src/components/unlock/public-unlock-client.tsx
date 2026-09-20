@@ -132,6 +132,7 @@ export function PublicUnlockClient({
   const [copied, setCopied] = useState(false);
   const [musicStarted, setMusicStarted] = useState(false);
   const [honeypot, setHoneypot] = useState("");
+  const [externalPrompt, setExternalPrompt] = useState<ActionItem | null>(null);
   const captchaEnabled = themeUsesCaptcha(campaign.theme);
 
   function persistProgress(completedIds: string[], status: string) {
@@ -220,7 +221,7 @@ export function PublicUnlockClient({
     }
   }
 
-  function startAction(action: ActionItem) {
+  function runAction(action: ActionItem) {
     if (verifyingId || completed.includes(action.id)) return;
     if (captchaEnabled && honeypot.trim()) {
       setUnlockError("Something went wrong. Refresh and try again.");
@@ -233,6 +234,23 @@ export function PublicUnlockClient({
     setUnlockError(null);
     tryStartMusic();
     setVerifyingId(action.id);
+  }
+
+  function startAction(action: ActionItem) {
+    if (verifyingId || completed.includes(action.id)) return;
+    const config = action.config as Record<string, string>;
+    if (config?.url) {
+      setExternalPrompt(action);
+      return;
+    }
+    runAction(action);
+  }
+
+  function confirmExternalAction() {
+    if (!externalPrompt) return;
+    const action = externalPrompt;
+    setExternalPrompt(null);
+    runAction(action);
   }
 
   async function onAnimationComplete() {
@@ -259,6 +277,28 @@ export function PublicUnlockClient({
 
   return (
     <div className="unlock-v2 relative min-h-screen flex flex-col">
+      {externalPrompt ? (
+        <div className="unlock-external-overlay" role="dialog" aria-modal="true" aria-labelledby="external-step-title">
+          <div className="unlock-external-dialog">
+            <h2 id="external-step-title" className="text-base font-semibold text-retro-text">
+              Continue to this step?
+            </h2>
+            <p className="mt-2 text-sm text-retro-text-dim leading-relaxed">
+              You&apos;re about to open a third-party site ({externalPrompt.label}). Linklock is{" "}
+              <strong className="text-retro-text">not partnered</strong> with that site — we only help you track
+              unlock progress. Make sure you trust the creator&apos;s link before continuing.
+            </p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <RetroButton type="button" variant="primary" className="flex-1" onClick={confirmExternalAction}>
+                Yes, continue
+              </RetroButton>
+              <RetroButton type="button" variant="secondary" className="flex-1" onClick={() => setExternalPrompt(null)}>
+                Cancel
+              </RetroButton>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <header className="sticky top-0 z-20 border-b border-retro-border bg-retro-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
           <Link href="/" className="shrink-0">

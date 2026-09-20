@@ -51,7 +51,7 @@ export function canManageStaff(user: {
   role: UserRole;
   staffRole: StaffRole;
 }) {
-  if (user.role === UserRole.ADMIN && isSuperAdminEmail(user.email)) return true;
+  if (user.role === UserRole.ADMIN) return true;
   return user.staffRole === StaffRole.OWNER;
 }
 

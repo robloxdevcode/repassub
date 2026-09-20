@@ -11,7 +11,6 @@ import { useToast } from "@/components/retro";
 import { updateProfile } from "@/lib/actions/campaigns";
 
 import { getDashboardStats } from "@/lib/actions/dashboard";
-import { getFoundEasterEggBadges } from "@/lib/actions/easter-eggs";
 
 import { ProfileAvatarField } from "@/components/dashboard/profile-avatar-field";
 
@@ -69,20 +68,12 @@ export default function ProfilePage() {
 
   });
 
-  const [secretBadges, setSecretBadges] = useState<string[]>([]);
-
   const [loadError, setLoadError] = useState<string | null>(null);
 
-
-
   useEffect(() => {
-
-    Promise.all([getDashboardStats(), getFoundEasterEggBadges()])
-
-      .then(([s, badges]) => {
-
+    getDashboardStats()
+      .then((s) => {
         setUser(s.user);
-        setSecretBadges(badges);
 
         setDisplayName(s.user.displayName || "");
 
@@ -277,8 +268,6 @@ export default function ProfilePage() {
         settings={profileSettings}
 
         milestoneStats={milestoneStats}
-
-        secretBadges={secretBadges}
 
         onSave={handleSaveCustomization}
 

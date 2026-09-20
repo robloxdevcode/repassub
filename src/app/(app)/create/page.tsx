@@ -16,7 +16,6 @@ import { isProPlan, PLAN_LIMITS } from "@/lib/stripe";
 import { detectPlatformFromUrl, getPlatform, guessPlatform, UNLOCK_PLATFORMS } from "@/lib/unlock-platforms";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard } from "@/components/dashboard/app-page-header";
-import { EasterEggTrigger } from "@/components/easter-egg/easter-egg-trigger";
 import { applyCaptchaToTheme } from "@/lib/easter-eggs";
 import { ShareKit } from "@/components/dashboard/share-kit";
 import { UnlockPreviewPanel } from "@/components/dashboard/unlock-preview-panel";
@@ -401,14 +400,7 @@ function CreateUnlockWizard() {
       <div className="mb-8">
         <h1 className="font-body text-2xl font-bold">{editId ? "Edit link" : "Create link"}</h1>
         <p className="mt-2 text-sm text-retro-text-dim">
-          Step {step + 1} of {STEPS.length}:{" "}
-          {step === 2 ? (
-            <EasterEggTrigger eggId="publish-wink" clicks={3} className="inline font-medium text-retro-text">
-              Publish
-            </EasterEggTrigger>
-          ) : (
-            STEPS[step]
-          )}
+          Step {step + 1} of {STEPS.length}: {step === 2 ? "Publish" : STEPS[step]}
         </p>
         {plan === "FREE" && (
           <p className="mt-1 text-xs text-retro-text-muted">

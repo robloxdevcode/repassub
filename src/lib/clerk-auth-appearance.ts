@@ -1,32 +1,33 @@
 export const clerkAuthAppearance = {
   variables: {
-    colorPrimary: "#d4ff58",
-    colorBackground: "#0c0c0f",
-    colorInputBackground: "#121218",
+    colorPrimary: "#818cf8",
+    colorBackground: "#0f0f12",
+    colorInputBackground: "#16161c",
     colorText: "#fafafa",
     colorTextSecondary: "#a1a1aa",
     borderRadius: "0.75rem",
   },
   elements: {
     rootBox: "mx-auto w-full max-w-md",
-    card: "bg-[#0c0c0f] border border-[#27272a] shadow-lg rounded-xl font-body",
+    card: "bg-[#0f0f12] border border-[#2a2a32] shadow-lg rounded-xl font-body",
     headerTitle: "font-body text-lg font-semibold text-[#fafafa]",
     headerSubtitle: "font-body text-sm text-[#a1a1aa]",
     formButtonPrimary:
-      "bg-[#d4ff58] hover:bg-[#b8e040] text-[#0a0a0a] font-bold rounded-lg",
+      "bg-[#818cf8] hover:bg-[#6366f1] text-white font-semibold rounded-lg transition-transform active:scale-[0.98]",
     formFieldInput:
-      "bg-[#121218] border border-[#27272a] text-[#fafafa] font-body rounded-lg",
+      "bg-[#16161c] border border-[#2a2a32] text-[#fafafa] font-body rounded-lg",
     formFieldLabel: "font-body text-sm font-medium text-[#fafafa]",
     formFieldErrorText: "font-body text-sm text-retro-error font-medium",
     alertText: "font-body text-sm text-retro-error",
-    footerActionLink: "text-[#d4ff58] font-semibold underline",
+    footerActionLink: "text-[#a5b4fc] font-semibold underline",
     identityPreviewText: "font-body text-sm text-[#fafafa]",
-    formFieldSuccessText: "font-body text-sm text-[#4ade80]",
+    formFieldSuccessText: "font-body text-sm text-[#34d399]",
     captcha: "my-4 flex justify-center",
     captchaWidget: "mx-auto",
     socialButtonsBlockButton:
-      "border border-[#27272a] bg-[#121218] hover:bg-[#18181f] font-body rounded-lg text-[#fafafa]",
-    dividerLine: "bg-[#27272a]",
+      "border border-[#2a2a32] bg-[#16161c] hover:bg-[#1c1c24] font-body rounded-lg text-[#fafafa] [&_*]:text-[#fafafa]",
+    socialButtonsBlockButtonText: "text-[#fafafa] font-medium",
+    dividerLine: "bg-[#2a2a32]",
     dividerText: "text-[#71717a]",
   },
 } as const;
