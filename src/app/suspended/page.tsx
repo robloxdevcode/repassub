@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SignOutButton } from "@clerk/nextjs";
 import { RetroButton } from "@/components/retro";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
+import { SUPPORT_DISCORD_URL } from "@/lib/support-links";
 
 export const metadata = {
   title: "Account suspended — Linklock",
@@ -19,11 +20,16 @@ export default function SuspendedPage() {
           unlocks, or use paid features while suspended.
         </p>
         <p className="text-sm text-retro-text-muted leading-relaxed mb-8">
-          If you think this is a mistake, email{" "}
-          <a href="mailto:support@linklock.org" className="text-retro-accent hover:underline">
-            support@linklock.org
-          </a>{" "}
-          from the address on your account.
+          If you think this is a mistake, contact us on{" "}
+          <a
+            href={SUPPORT_DISCORD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-retro-accent hover:underline font-medium"
+          >
+            Discord support
+          </a>
+          .
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <SignOutButton>

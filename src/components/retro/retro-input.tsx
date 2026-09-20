@@ -22,10 +22,9 @@ export const RetroInput = forwardRef<HTMLInputElement, RetroInputProps>(
             ref={ref}
             type={isPassword && showPassword ? "text" : type}
             className={cn(
-              "w-full bg-white border-2 border-retro-ink/15 rounded-xl px-4 py-3",
+              "w-full bg-retro-surface-2 border border-retro-border rounded-xl px-4 py-3",
               "text-sm text-retro-text placeholder:text-retro-text-muted",
               "focus:outline-none focus:border-retro-accent focus:ring-2 focus:ring-retro-accent/25",
-              "shadow-[2px_2px_0_rgba(30,16,51,0.06)]",
               isPassword && "pr-10",
               error && "border-retro-error",
               className
@@ -58,10 +57,9 @@ export const RetroTextarea = forwardRef<HTMLTextAreaElement, RetroTextareaProps>
       <textarea
         ref={ref}
         className={cn(
-          "w-full bg-white border-2 border-retro-ink/15 rounded-xl px-4 py-3",
+          "w-full bg-retro-surface-2 border border-retro-border rounded-xl px-4 py-3",
           "text-sm text-retro-text placeholder:text-retro-text-muted resize-none",
           "focus:outline-none focus:border-retro-accent focus:ring-2 focus:ring-retro-accent/25",
-          "shadow-[2px_2px_0_rgba(30,16,51,0.06)]",
           error && "border-retro-error",
           className
         )}

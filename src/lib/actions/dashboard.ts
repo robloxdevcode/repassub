@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { clerkClient } from "@clerk/nextjs/server";
 import { requireUser, requireAdmin, requireAdminPanel, requireModerator } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getUserAnalytics, getAnalyticsBreakdown, getBasicCampaignBreakdown, campaignViewCountSelect } from "@/lib/analytics";
@@ -152,6 +153,22 @@ export async function banUser(userId: string, banned: boolean): Promise<AdminBan
         });
       }
     });
+
+    try {
+      const client = await clerkClient();
+      if (banned) {
+        await client.users.banUser(target.clerkId);
+      } else {
+        await client.users.unbanUser(target.clerkId);
+      }
+    } catch (clerkError) {
+      console.error("[banUser] Clerk sync failed", clerkError);
+      await db.user.update({ where: { id: trimmedId }, data: { banned: !banned } });
+      return {
+        ok: false,
+        message: "Could not sync suspension with sign-in — try again.",
+      };
+    }
 
     revalidatePath("/admin/users");
     revalidatePath("/admin");

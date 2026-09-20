@@ -1,31 +1,31 @@
-/* Linklock v2 — slate + indigo platform shell */
+/* Linklock v2 — black / white / orange */
 
 :root {
-  --retro-bg: #070708;
-  --retro-surface: #0f0f12;
-  --retro-surface-2: #16161c;
-  --retro-surface-3: #1c1c24;
-  --retro-ink: #f4f4f5;
-  --retro-border: #2a2a32;
-  --retro-accent: #818cf8;
-  --retro-accent-dim: #6366f1;
-  --retro-neon: #a5b4fc;
+  --retro-bg: #0a0a0a;
+  --retro-surface: #111111;
+  --retro-surface-2: #1a1a1a;
+  --retro-surface-3: #222222;
+  --retro-ink: #f5f5f5;
+  --retro-border: #2e2e2e;
+  --retro-accent: #f97316;
+  --retro-accent-dim: #ea580c;
+  --retro-neon: #fb923c;
   --retro-blue: #93c5fd;
   --retro-blue-dim: #60a5fa;
   --retro-yellow: #fde047;
   --retro-yellow-dim: #eab308;
   --retro-pink: #f472b6;
   --retro-cyan: #67e8f9;
-  --retro-lime: #818cf8;
+  --retro-lime: #f97316;
   --retro-success: #34d399;
   --retro-warning: #fbbf24;
   --retro-error: #f87171;
-  --retro-glow: rgba(99, 102, 241, 0.16);
-  --retro-text: #fafafa;
-  --retro-text-dim: #a1a1aa;
-  --retro-text-muted: #71717a;
-  --retro-text-on-dark: #fafafa;
-  --retro-band: #0c0c0f;
+  --retro-glow: rgba(249, 115, 22, 0.18);
+  --retro-text: #f5f5f5;
+  --retro-text-dim: #a3a3a3;
+  --retro-text-muted: #737373;
+  --retro-text-on-dark: #f5f5f5;
+  --retro-band: #111111;
   --ui-radius-sm: 0.5rem;
   --ui-radius: 0.625rem;
   --ui-radius-lg: 0.75rem;

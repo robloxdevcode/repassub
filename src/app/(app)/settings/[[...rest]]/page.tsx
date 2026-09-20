@@ -73,7 +73,7 @@ export default function SettingsPage() {
                 elements: {
                   ...clerkAuthAppearance.elements,
                   rootBox: "w-full",
-                  card: "bg-retro-surface border-2 border-retro-border shadow-none",
+                  card: "bg-retro-surface border border-retro-border shadow-none rounded-xl",
                 },
               }}
             />

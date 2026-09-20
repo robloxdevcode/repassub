@@ -4,6 +4,7 @@ import { getAdminUsers } from "@/lib/actions/dashboard";
 import { getCurrentUser } from "@/lib/auth";
 import {
   ASSIGNABLE_STAFF_ROLES,
+  canAssignStaffRole,
   canManageStaff,
   STAFF_ROLE_DESCRIPTIONS,
   STAFF_ROLE_LABELS,
@@ -23,6 +24,7 @@ export default async function AdminStaffPage({ searchParams }: Props) {
 
   const { q } = await searchParams;
   const users = await getAdminUsers(q);
+  const canAssignOwner = canAssignStaffRole(user, StaffRole.OWNER);
 
   return (
     <div className="admin-v2-section">
@@ -68,7 +70,12 @@ export default async function AdminStaffPage({ searchParams }: Props) {
                   {u.role === UserRole.ADMIN ? (
                     <span className="admin-v2-muted">Full access</span>
                   ) : (
-                    <StaffRolePicker userId={u.id} username={u.username} current={u.staffRole} />
+                    <StaffRolePicker
+                      userId={u.id}
+                      username={u.username}
+                      current={u.staffRole}
+                      canAssignOwner={canAssignOwner}
+                    />
                   )}
                 </td>
               </tr>

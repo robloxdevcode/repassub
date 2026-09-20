@@ -21,12 +21,13 @@ export function AdminBanButton({
   const [optimisticBanned, setOptimisticBanned] = useOptimistic(banned, (_state, next: boolean) => next);
 
   function run(nextBanned: boolean) {
+    const previous = optimisticBanned;
     setOptimisticBanned(nextBanned);
     startTransition(async () => {
       const result = await banUser(userId, nextBanned);
       if (!result.ok) {
+        setOptimisticBanned(previous);
         toast(result.message, "error");
-        setOptimisticBanned(banned);
         return;
       }
       toast(nextBanned ? `${username} suspended` : `${username} unbanned`, "success");

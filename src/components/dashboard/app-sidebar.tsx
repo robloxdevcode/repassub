@@ -142,7 +142,16 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
 
 
           <div className="sidebar-footer mt-auto pt-4 border-t border-retro-border w-full">
-
+            {!isPro ? (
+              <Link
+                href="/billing"
+                prefetch
+                onClick={() => setOpen(false)}
+                className="sidebar-primary-cta mb-3 w-full justify-center text-sm py-2.5"
+              >
+                Upgrade to Pro
+              </Link>
+            ) : null}
             <Link
 
               href="/billing"

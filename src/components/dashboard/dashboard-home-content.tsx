@@ -133,12 +133,12 @@ export async function DashboardHomeContent() {
           </section>
 
           {!isPro && (
-            <div className="dash-pro-upsell">
+            <div className="dash-pro-upsell mb-4">
               <BarChart3 size={16} className="dash-pro-upsell-icon" aria-hidden />
               <p>
-                Need more steps or custom branding?{" "}
-                <Link href="/billing" prefetch>
-                  Upgrade to Pro
+                Pro: 10 steps, your branding, no ads on unlock pages.{" "}
+                <Link href="/billing" prefetch className="font-semibold text-retro-accent">
+                  Upgrade
                 </Link>
               </p>
             </div>

@@ -40,7 +40,7 @@ export function ShareKit({ url, title }: { url: string; title: string }) {
         {line}
       </p>
       {showQr ? (
-        <div className="flex flex-col items-center gap-2 p-4 bg-white border-2 border-retro-ink rounded-xl">
+        <div className="flex flex-col items-center gap-2 p-4 bg-retro-surface-2 border border-retro-border rounded-xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={qrSrc} alt={`QR code for ${title}`} width={220} height={220} className="rounded-lg" />
           <p className="text-xs text-retro-text-muted">Scan to open your unlock page</p>
