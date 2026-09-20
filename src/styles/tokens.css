@@ -1,0 +1,45 @@
+/* Design tokens — lemonade light */
+
+:root {
+  --lt-cream: #fff9f2;
+  --lt-ink: #141414;
+  --lt-ink-soft: #52525b;
+  --lt-border: #e8e2d9;
+
+  --retro-bg: #fff9f2;
+  --retro-surface: #ffffff;
+  --retro-surface-2: #f5f1ea;
+  --retro-surface-3: #ebe6dc;
+  --retro-ink: #141414;
+  --retro-border: #e8e2d9;
+  --retro-accent: #ffe566;
+  --retro-accent-dim: #f5d547;
+  --retro-neon: #38bdf8;
+  --retro-blue: #7dd3fc;
+  --retro-blue-dim: #0ea5e9;
+  --retro-blue-dim: #0ea5e9;
+  --retro-yellow: #ffe566;
+  --retro-pink: #fb7185;
+  --retro-cyan: #22d3ee;
+  --retro-lime: #84cc16;
+  --retro-success: #16a34a;
+  --retro-warning: #ca8a04;
+  --retro-error: #e11d48;
+  --retro-glow: rgba(255, 229, 102, 0.45);
+  --retro-text: #141414;
+  --retro-text-dim: #52525b;
+  --retro-text-muted: #71717a;
+  --retro-band: #ffffff;
+
+  --platform-youtube: #ff0000;
+  --platform-discord: #5865f2;
+  --platform-spotify: #1db954;
+
+  --ui-radius-sm: 0.625rem;
+  --ui-radius: 0.875rem;
+  --ui-radius-lg: 1.125rem;
+  --ui-radius-xl: 1.5rem;
+  --play-shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.06);
+  --play-shadow: 0 8px 30px rgba(20, 20, 20, 0.08);
+  --play-shadow-lg: 0 20px 50px rgba(20, 20, 20, 0.1);
+}

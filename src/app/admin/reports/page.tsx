@@ -1,6 +1,6 @@
 import { getAdminReports } from "@/lib/actions/reports";
 import { AdminReportActions } from "@/components/admin/admin-report-actions";
-import { AdminTable } from "@/components/admin/admin-shell";
+import { AdminTable } from "@/components/admin/lemonade-admin-shell";
 
 function formatTarget(type: string, id: string) {
   return type === "USER" ? `User · ${id.slice(0, 10)}…` : `Link · ${id.slice(0, 10)}…`;

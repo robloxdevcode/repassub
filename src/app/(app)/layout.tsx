@@ -1,4 +1,4 @@
-import { AppShell } from "@/components/dashboard/app-sidebar";
+import { LemonadeAppShell } from "@/components/dashboard/lemonade-app-shell";
 import { DatabaseSetupRequired } from "@/components/dashboard/database-setup-required";
 import { DatabaseSchemaOutdated } from "@/components/dashboard/database-schema-outdated";
 import { isDatabaseConfigError, isSchemaMigrationError, hasDatabaseUrl } from "@/lib/env";
@@ -37,5 +37,5 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     throw error;
   }
 
-  return <AppShell showAdminPanel={showAdminPanel} plan={plan}>{children}</AppShell>;
+  return <LemonadeAppShell showAdminPanel={showAdminPanel} plan={plan}>{children}</LemonadeAppShell>;
 }

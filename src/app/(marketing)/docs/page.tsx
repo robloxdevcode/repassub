@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildPageMetadata } from "@/lib/seo";
+import {
+  MarketingInlineLink,
+  MarketingPageBody,
+  MarketingPageHero,
+  MarketingProse,
+} from "@/components/marketing/marketing-page-shell";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Documentation",
@@ -10,30 +16,50 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function DocsPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-16">
-      <h1 className="font-display text-4xl tracking-wider glow-text mb-8">DOCS</h1>
-      <div className="retro-panel p-8 prose prose-invert max-w-none">
-        <h2 className="font-display text-lg tracking-wider text-retro-glow">Getting Started</h2>
-        <p className="text-retro-text-dim mt-2">
-          Welcome to Linklock! This guide will help you create your first unlock campaign.
-        </p>
-        <ol className="mt-4 flex flex-col gap-3 text-sm text-retro-text-dim list-decimal list-inside">
-          <li><Link href="/sign-up" className="text-retro-glow hover:underline">Create an account</Link></li>
-          <li>Navigate to Create Unlock in your dashboard</li>
-          <li>Choose your content type (file, URL, or text)</li>
-          <li>Select required actions for your audience</li>
-          <li>Customize your unlock page appearance</li>
-          <li>Publish and share your link</li>
-        </ol>
-        <h2 className="font-display text-lg tracking-wider text-retro-glow mt-8">Action Types</h2>
-        <ul className="mt-4 flex flex-col gap-2 text-sm text-retro-text-dim">
-          <li><strong className="text-retro-text">Follow</strong> — Manual confirmation for social follows</li>
-          <li><strong className="text-retro-text">Subscribe</strong> — Manual confirmation for subscriptions</li>
-          <li><strong className="text-retro-text">Join</strong> — Manual confirmation for community joins</li>
-          <li><strong className="text-retro-text">Email</strong> — Collect email addresses</li>
-          <li><strong className="text-retro-text">Visit</strong> — Track page visits with outbound links</li>
-        </ul>
-      </div>
-    </div>
+    <>
+      <MarketingPageHero
+        label="Docs"
+        title="Creator documentation"
+        description="Create unlock links, add fan steps, customize pages, and track conversions."
+      />
+      <MarketingPageBody width="4xl">
+        <div className="retro-panel p-8">
+          <MarketingProse>
+            <h2 className="text-lg font-bold text-retro-text mb-2">Getting started</h2>
+            <ol className="list-decimal list-inside space-y-2">
+              <li>
+                <MarketingInlineLink href="/sign-up">Create an account</MarketingInlineLink>
+              </li>
+              <li>Open Create link in your dashboard</li>
+              <li>Choose content type (file, URL, or text)</li>
+              <li>Select required fan actions</li>
+              <li>Customize your unlock page</li>
+              <li>Publish and share your URL</li>
+            </ol>
+            <h2 className="text-lg font-bold text-retro-text mt-8 mb-2">Action types</h2>
+            <ul className="space-y-2 list-disc list-inside">
+              <li>
+                <strong>Follow</strong> — social follows (manual confirm)
+              </li>
+              <li>
+                <strong>Subscribe</strong> — YouTube and similar
+              </li>
+              <li>
+                <strong>Join</strong> — Discord and communities
+              </li>
+              <li>
+                <strong>Email</strong> — collect addresses
+              </li>
+              <li>
+                <strong>Visit</strong> — outbound link visits
+              </li>
+            </ul>
+            <p className="mt-8">
+              Need help? <Link href="/support">Support & FAQ</Link>.
+            </p>
+          </MarketingProse>
+        </div>
+      </MarketingPageBody>
+    </>
   );
 }

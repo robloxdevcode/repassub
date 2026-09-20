@@ -4,6 +4,11 @@ import { FAQ_SECTIONS } from "@/lib/faq-content";
 import { buildPageMetadata, faqJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { SeoInternalLinks } from "@/components/marketing/seo-internal-links";
+import {
+  MarketingInlineLink,
+  MarketingPageBody,
+  MarketingPageHero,
+} from "@/components/marketing/marketing-page-shell";
 
 const ALL_FAQS = FAQ_SECTIONS.flatMap((s) => s.items);
 
@@ -23,48 +28,51 @@ export const metadata = buildPageMetadata({
 
 export default function HelpPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 md:py-16">
+    <>
       <JsonLd data={faqJsonLd(ALL_FAQS.map((f) => ({ q: f.q, a: f.a })))} />
-      <p className="text-xs font-semibold uppercase tracking-wider text-retro-accent mb-2">Help center</p>
-      <h1 className="text-3xl md:text-4xl font-bold text-retro-text mb-3">Questions? We got you.</h1>
-      <p className="text-base text-retro-text-dim leading-relaxed mb-10">
-        Short answers to the stuff people ask us most. Still stuck?{" "}
-        <Link href="/support" className="text-retro-accent hover:underline">
-          Contact support
-        </Link>
-        .
-      </p>
+      <MarketingPageHero
+        label="Help center"
+        title="Questions? We got you."
+        description="Short answers to what creators ask most. Still stuck? Contact support on Discord."
+      />
+      <MarketingPageBody width="3xl">
+        <p className="text-sm text-retro-text-dim mb-10">
+          <MarketingInlineLink href="/support">Contact support</MarketingInlineLink> anytime.
+        </p>
 
-      <div className="space-y-10">
-        {FAQ_SECTIONS.map((section) => (
-          <section key={section.title}>
-            <h2 className="text-lg font-bold text-retro-text mb-4">{section.title}</h2>
-            <div className="space-y-4">
-              {section.items.map((item) => (
-                <details key={item.q} className="retro-panel p-5 group">
-                  <summary className="font-semibold text-retro-text cursor-pointer list-none flex items-center justify-between gap-3">
-                    {item.q}
-                    <span className="text-retro-text-muted group-open:rotate-45 transition-transform text-xl leading-none">
-                      +
-                    </span>
-                  </summary>
-                  <p className="mt-3 text-sm text-retro-text-dim leading-relaxed">{item.a}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
+        <div className="space-y-10">
+          {FAQ_SECTIONS.map((section) => (
+            <section key={section.title}>
+              <h2 className="text-lg font-bold mb-4">{section.title}</h2>
+              <div className="space-y-3">
+                {section.items.map((item) => (
+                  <details key={item.q} className="retro-panel group">
+                    <summary className="font-semibold cursor-pointer list-none flex items-center justify-between gap-3 p-4">
+                      {item.q}
+                      <span className="text-retro-text-muted group-open:rotate-45 transition-transform text-xl">
+                        +
+                      </span>
+                    </summary>
+                    <p className="px-4 pb-4 text-sm text-retro-text-dim leading-relaxed border-t border-retro-border pt-3">
+                      {item.a}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
 
-      <div className="mt-12 retro-panel p-6 text-center">
-        <p className="font-semibold text-retro-text mb-2">Ready to try it?</p>
-        <p className="text-sm text-retro-text-dim mb-4">Create your first unlock link in about two minutes.</p>
-        <RetroLink href="/sign-up" variant="primary" size="md">
-          Start free
-        </RetroLink>
-      </div>
+        <div className="mt-12 retro-panel p-6 text-center">
+          <p className="font-semibold mb-2">Ready to try it?</p>
+          <p className="text-sm text-retro-text-dim mb-4">Create your first unlock link in about two minutes.</p>
+          <RetroLink href="/sign-up" variant="primary" size="md">
+            Start free
+          </RetroLink>
+        </div>
 
-      <SeoInternalLinks />
-    </div>
+        <SeoInternalLinks />
+      </MarketingPageBody>
+    </>
   );
 }

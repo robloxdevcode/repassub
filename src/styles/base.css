@@ -1,0 +1,59 @@
+/* Base document + utility aliases */
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--retro-bg);
+  color: var(--retro-text);
+}
+
+::selection {
+  background: rgba(255, 229, 102, 0.55);
+  color: var(--retro-ink);
+}
+
+.font-body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.bg-retro-bg {
+  background-color: var(--retro-bg);
+}
+
+.bg-retro-surface {
+  background-color: var(--retro-surface);
+}
+
+.bg-retro-surface-2 {
+  background-color: var(--retro-surface-2);
+}
+
+.text-retro-text {
+  color: var(--retro-text);
+}
+
+.text-retro-text-dim {
+  color: var(--retro-text-dim);
+}
+
+.text-retro-text-muted {
+  color: var(--retro-text-muted);
+}
+
+.text-retro-accent {
+  color: var(--retro-blue-dim);
+}
+
+.border-retro-border {
+  border-color: var(--retro-border);
+}
+
+.ui-instant {
+  transition-duration: 75ms;
+}
+
+.touch-manipulation {
+  touch-action: manipulation;
+}

@@ -1,0 +1,93 @@
+/* Dashboard sidebar — lemonade app shell */
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--ui-radius-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--retro-text-dim);
+  transition: background 75ms ease, color 75ms ease;
+}
+
+.sidebar-nav-item:hover {
+  background: var(--retro-surface-2);
+  color: var(--retro-text);
+}
+
+.sidebar-billing-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--ui-radius-lg);
+  border: 1px solid var(--retro-border);
+  background: var(--retro-surface-2);
+  transition: border-color 75ms ease;
+}
+
+.sidebar-billing-row:hover,
+.sidebar-billing-row--active {
+  border-color: var(--retro-ink);
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-v2-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-v2-toolbar-btn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--ui-radius-lg);
+  border: 1px solid var(--retro-border);
+  background: var(--retro-surface);
+  color: var(--retro-text);
+}
+
+.admin-v2-toolbar-btn:hover {
+  background: var(--retro-surface-2);
+}
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 229, 102, 0.45), transparent 55%),
+    var(--retro-bg);
+}
+
+.auth-shell-inner {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.auth-shell-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-shell-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.auth-shell-header p {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--retro-text-dim);
+}

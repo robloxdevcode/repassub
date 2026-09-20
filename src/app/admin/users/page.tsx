@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getAdminUsers } from "@/lib/actions/dashboard";
 import { AdminBanButton } from "@/components/admin/admin-ban-button";
 import { AdminSearchBar } from "@/components/admin/admin-search";
-import { AdminTable } from "@/components/admin/admin-shell";
+import { AdminTable } from "@/components/admin/lemonade-admin-shell";
 import { AdminExportButton } from "@/components/admin/admin-command-menu";
 import { STAFF_ROLE_LABELS } from "@/lib/admin-access";
 import { UserRole, StaffRole } from "@prisma/client";

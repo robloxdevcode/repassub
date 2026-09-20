@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { getAdminLinks } from "@/lib/actions/dashboard";
 import { AdminSearchBar } from "@/components/admin/admin-search";
-import { AdminTable } from "@/components/admin/admin-shell";
+import { AdminTable } from "@/components/admin/lemonade-admin-shell";
 import { AdminExportButton } from "@/components/admin/admin-command-menu";
 
 interface Props {

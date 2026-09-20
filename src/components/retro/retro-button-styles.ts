@@ -14,9 +14,9 @@ export type RetroButtonSize = "sm" | "md" | "lg";
 
 const variants: Record<RetroButtonVariant, string> = {
   primary:
-    "bg-retro-accent text-white border border-retro-accent-dim hover:bg-retro-accent-dim font-semibold rounded-[var(--ui-radius-lg)] min-h-[44px] shadow-[0_4px_16px_var(--retro-glow)] active:scale-[0.98]",
+    "bg-[#141414] text-white border border-[#141414] hover:bg-[#2a2a2a] font-bold rounded-[var(--ui-radius-lg)] min-h-[44px] shadow-[0_8px_24px_rgba(20,20,20,0.12)] active:scale-[0.98]",
   secondary:
-    "bg-retro-surface-2 text-retro-text border border-retro-border hover:border-retro-accent font-semibold rounded-[var(--ui-radius-lg)] min-h-[44px] active:scale-[0.98]",
+    "bg-white text-retro-text border border-retro-border hover:border-retro-ink hover:bg-retro-surface-2 font-semibold rounded-[var(--ui-radius-lg)] min-h-[44px] active:scale-[0.98]",
   blue: "bg-retro-blue text-[#0a0a0a] border border-retro-blue-dim font-bold rounded-[var(--ui-radius-lg)] min-h-[44px] active:scale-[0.98]",
   yellow:
     "bg-retro-yellow text-[#0a0a0a] border border-retro-yellow-dim font-bold rounded-[var(--ui-radius-lg)] min-h-[44px] active:scale-[0.98]",

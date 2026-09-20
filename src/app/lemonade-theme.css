@@ -1,0 +1,299 @@
+/**
+ * Linklock Lemonade — full light redesign (loads last).
+ * Cream base, black type, lemon + sky accents across marketing, app, admin, unlock.
+ */
+
+:root {
+  --lt-cream: #fff9f2;
+  --lt-ink: #141414;
+  --lt-ink-soft: #52525b;
+  --lt-border: #e8e2d9;
+
+  --retro-bg: #fff9f2;
+  --retro-surface: #ffffff;
+  --retro-surface-2: #f5f1ea;
+  --retro-surface-3: #ebe6dc;
+  --retro-ink: #141414;
+  --retro-border: #e8e2d9;
+  --retro-accent: #ffe566;
+  --retro-accent-dim: #f5d547;
+  --retro-neon: #38bdf8;
+  --retro-blue: #7dd3fc;
+  --retro-blue-dim: #0ea5e9;
+  --retro-yellow: #ffe566;
+  --retro-yellow-dim: #eab308;
+  --retro-pink: #fb7185;
+  --retro-cyan: #22d3ee;
+  --retro-lime: #84cc16;
+  --retro-success: #16a34a;
+  --retro-warning: #ca8a04;
+  --retro-error: #e11d48;
+  --retro-glow: rgba(255, 229, 102, 0.45);
+  --retro-text: #141414;
+  --retro-text-dim: #52525b;
+  --retro-text-muted: #71717a;
+  --retro-text-on-dark: #141414;
+  --retro-band: #ffffff;
+  --lt-grape-deep: #ffe566;
+
+  --ui-radius-sm: 0.625rem;
+  --ui-radius: 0.875rem;
+  --ui-radius-lg: 1.125rem;
+  --ui-radius-xl: 1.5rem;
+  --play-shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.06);
+  --play-shadow: 0 8px 30px rgba(20, 20, 20, 0.08);
+  --play-shadow-lg: 0 20px 50px rgba(20, 20, 20, 0.1);
+}
+
+html {
+  color-scheme: light;
+}
+
+body,
+.ll-shell,
+.app-stage,
+.dash-pro-stage,
+.admin-v2,
+.unlock-v2 {
+  background: var(--retro-bg) !important;
+  color: var(--retro-text) !important;
+}
+
+/* ——— Nav & footer ——— */
+.ll-nav {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--retro-border) !important;
+  box-shadow: 0 1px 0 rgba(20, 20, 20, 0.04);
+}
+
+.ll-nav-link {
+  color: var(--retro-text-dim) !important;
+}
+
+.ll-nav-link:hover {
+  color: var(--retro-text) !important;
+  background: var(--retro-surface-2) !important;
+}
+
+.ll-nav-link--active {
+  color: var(--retro-ink) !important;
+  background: var(--retro-accent) !important;
+  font-weight: 700;
+  box-shadow: 0 4px 16px var(--retro-glow);
+}
+
+.ll-footer {
+  background: var(--retro-surface) !important;
+  border-top: 1px solid var(--retro-border) !important;
+}
+
+/* ——— Marketing hero ——— */
+.llv2-hero {
+  background:
+    radial-gradient(ellipse 90% 70% at 10% -20%, rgba(255, 229, 102, 0.55), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 95% 0%, rgba(56, 189, 248, 0.35), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(251, 113, 133, 0.12), transparent 55%),
+    var(--retro-bg) !important;
+  border-bottom: 1px solid var(--retro-border) !important;
+}
+
+.llv2-title,
+.llv2-kicker,
+.ll-section-title,
+.ll-page-hero h1 {
+  color: var(--retro-text) !important;
+}
+
+.llv2-title-accent,
+.llv2-title-accent--cycle {
+  color: var(--retro-blue-dim) !important;
+}
+
+.llv2-sub {
+  color: var(--retro-text-dim) !important;
+}
+
+.llv2-cta {
+  background: var(--retro-ink) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 40px rgba(20, 20, 20, 0.15) !important;
+}
+
+.llv2-cta:hover {
+  background: #2a2a2a !important;
+  box-shadow: 0 16px 48px rgba(20, 20, 20, 0.2) !important;
+}
+
+.llv2-strip {
+  background: var(--retro-surface) !important;
+  border-color: var(--retro-border) !important;
+}
+
+.unlock-v2-card,
+.ll-plan-card,
+.ll-use-case,
+.ll-step,
+.ll-bento-card,
+.ll-faq,
+.ll-cta-box {
+  background: var(--retro-surface) !important;
+  border: 1px solid var(--retro-border) !important;
+  box-shadow: var(--play-shadow) !important;
+  color: var(--retro-text) !important;
+}
+
+.ll-section--surface,
+.ll-section--muted {
+  background: var(--retro-surface-2) !important;
+}
+
+.ll-hero--mesh {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(255, 229, 102, 0.4), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 90% 20%, rgba(56, 189, 248, 0.25), transparent 50%),
+    var(--retro-bg) !important;
+}
+
+.ll-cta {
+  background:
+    linear-gradient(135deg, rgba(255, 229, 102, 0.35) 0%, rgba(56, 189, 248, 0.2) 50%, var(--retro-bg) 100%) !important;
+  border-top: 1px solid var(--retro-border) !important;
+}
+
+.ll-cta-box h2,
+.ll-cta-box p {
+  color: var(--retro-text) !important;
+}
+
+.ll-cta-box p {
+  opacity: 0.75;
+}
+
+.ll-hero-glow--1 {
+  background: rgba(255, 229, 102, 0.35) !important;
+}
+
+.ll-hero-glow--2 {
+  background: rgba(56, 189, 248, 0.25) !important;
+}
+
+.ll-marquee-wrap {
+  background: var(--retro-surface) !important;
+  border-color: var(--retro-border) !important;
+}
+
+/* ——— Dashboard ——— */
+.dash-pro-sidebar,
+.app-sidebar {
+  background: var(--retro-surface) !important;
+  border-color: var(--retro-border) !important;
+  box-shadow: 4px 0 24px rgba(20, 20, 20, 0.04) !important;
+}
+
+.dash-pro-sidebar .sidebar-primary-cta,
+.app-sidebar .sidebar-primary-cta {
+  background: var(--retro-ink) !important;
+  color: #fff !important;
+  border-color: var(--retro-ink) !important;
+  box-shadow: 0 8px 24px rgba(20, 20, 20, 0.12) !important;
+}
+
+.dash-pro-sidebar .sidebar-nav-active,
+.sidebar-nav-active {
+  background: rgba(255, 229, 102, 0.35) !important;
+  color: var(--retro-ink) !important;
+  box-shadow: inset 3px 0 0 var(--retro-accent-dim) !important;
+}
+
+.dash-pro-metric,
+.dash-pro-panel,
+.dash-pro-card,
+.dash-pro-empty,
+.retro-panel,
+.unlock-preview-card {
+  background: var(--retro-surface) !important;
+  border-color: var(--retro-border) !important;
+  box-shadow: var(--play-shadow-sm) !important;
+}
+
+.dash-pro-action {
+  background: var(--retro-ink) !important;
+  color: #fff !important;
+}
+
+/* ——— Admin ——— */
+.admin-v2-header {
+  background: var(--retro-surface) !important;
+  border-color: var(--retro-border) !important;
+}
+
+.admin-v2-nav-link--active {
+  background: var(--retro-ink) !important;
+  color: #fff !important;
+}
+
+.admin-v2-table-wrap,
+.admin-v2-stat,
+.admin-v2-role-card {
+  background: var(--retro-surface) !important;
+  border-color: var(--retro-border) !important;
+}
+
+.admin-v2-search {
+  background: var(--retro-surface-2) !important;
+}
+
+.admin-v2-search-btn {
+  background: var(--retro-ink) !important;
+  color: #fff !important;
+}
+
+/* ——— Auth ——— */
+.auth-shell {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 229, 102, 0.45), transparent 55%),
+    var(--retro-bg) !important;
+  min-height: 100vh;
+}
+
+.auth-shell-header h1 {
+  color: var(--retro-text) !important;
+}
+
+.auth-shell-header p {
+  color: var(--retro-text-dim) !important;
+}
+
+/* ——— Public unlock ——— */
+.unlock-v2 {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 229, 102, 0.3), transparent 55%),
+    var(--retro-bg) !important;
+}
+
+/* ——— Kill legacy dark overrides on marketing chrome ——— */
+.dark .ll-nav,
+.dark .bg-white,
+.dark .retro-panel {
+  background: var(--retro-surface) !important;
+  color: var(--retro-text) !important;
+}
+
+.bg-retro-bg {
+  background-color: var(--retro-bg) !important;
+}
+
+.text-retro-text {
+  color: var(--retro-text) !important;
+}
+
+.site-promo-banner {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 229, 102, 0.35),
+    rgba(56, 189, 248, 0.2),
+    rgba(251, 113, 133, 0.15)
+  ) !important;
+  color: var(--retro-text) !important;
+}

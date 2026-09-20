@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { RetroButton, RetroLink } from "@/components/retro";
 import { PlanFeatureList } from "@/components/marketing/plan-feature-list";
+import { MarketingPageBody, MarketingPageHero } from "@/components/marketing/marketing-page-shell";
 import { CurrencyToggle } from "@/components/marketing/currency-toggle";
 import { getBillingData, createCheckoutSession } from "@/lib/actions/payments";
 import { useToast } from "@/components/retro";
@@ -79,22 +80,14 @@ export default function PricingPage() {
 
   return (
     <div>
-      <section className="ll-page-hero border-b border-retro-border">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-            <div>
-              <p className="ll-label">Pricing</p>
-              <h1 className="ll-section-title mt-3">Plans</h1>
-              <p className="mt-4 text-retro-text-dim max-w-lg">
-                Free: unlimited links, 4 steps. Pro: 10 steps, branding, no ads.
-              </p>
-            </div>
-            <CurrencyToggle className="self-start" />
-          </div>
-        </div>
-      </section>
+      <MarketingPageHero
+        label="Pricing"
+        title="Simple plans"
+        description="Free: unlimited links, 4 steps. Pro: 10 steps, branding, no ads."
+        actions={<CurrencyToggle className="self-start" />}
+      />
 
-      <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
+      <MarketingPageBody className="pt-8">
         <div className="ll-toggle mb-10">
           <button
             type="button"
@@ -169,7 +162,7 @@ export default function PricingPage() {
             </article>
           ))}
         </div>
-      </div>
+      </MarketingPageBody>
     </div>
   );
 }

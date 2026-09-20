@@ -232,20 +232,20 @@ export function FaqSection() {
 export function CtaSection() {
   return (
     <section className="ll-cta">
-      <AnimatedDotBackground variant="dark" connectLines density={0.7} />
+      <AnimatedDotBackground variant="light" connectLines density={0.5} />
       <div className="ll-hero-glow ll-hero-glow--1" aria-hidden />
       <div className="relative z-10 mx-auto max-w-3xl px-4 py-16 md:py-20">
-        <div className="ll-cta-box">
-          <Download size={28} className="text-retro-accent mb-4 mx-auto" />
-          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight text-center">
+        <div className="ll-cta-box rounded-2xl p-10 text-center">
+          <Download size={28} className="text-[#0ea5e9] mb-4 mx-auto" aria-hidden />
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-retro-text">
             Ready to turn traffic into followers?
           </h2>
-          <p className="mt-3 text-white/55 text-center text-sm max-w-md mx-auto">
+          <p className="mt-3 text-retro-text-dim text-center text-sm max-w-md mx-auto">
             Join creators using Linklock to grow on YouTube, TikTok, Instagram, and Discord.
           </p>
           <div className="mt-8 flex justify-center">
             <MarketingAuthLink href="/sign-up" className="inline-block">
-              <RetroButton size="lg" variant="white" className="w-full sm:min-w-[200px] ll-btn-glow">
+              <RetroButton size="lg" className="w-full sm:min-w-[200px]">
                 Get started free
               </RetroButton>
             </MarketingAuthLink>

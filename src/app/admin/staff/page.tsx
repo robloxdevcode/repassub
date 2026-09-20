@@ -10,7 +10,7 @@ import {
   STAFF_ROLE_LABELS,
 } from "@/lib/admin-access";
 import { AdminSearchBar } from "@/components/admin/admin-search";
-import { AdminTable } from "@/components/admin/admin-shell";
+import { AdminTable } from "@/components/admin/lemonade-admin-shell";
 import { StaffRolePicker } from "@/components/admin/staff-role-picker";
 import { StaffRole, UserRole } from "@prisma/client";
 

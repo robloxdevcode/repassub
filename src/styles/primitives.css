@@ -1,0 +1,60 @@
+/* Shared cards, panels, unlock primitives */
+
+.brutal-border {
+  border: 1px solid var(--retro-border);
+}
+
+.brutal-shadow {
+  box-shadow: var(--play-shadow);
+}
+
+.brutal-shadow-sm {
+  box-shadow: var(--play-shadow-sm);
+}
+
+.retro-panel {
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--play-shadow-sm);
+}
+
+.retro-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+  overflow: hidden;
+}
+
+.retro-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--retro-accent-dim), var(--retro-accent));
+  border-radius: 999px;
+  transition: width 120ms ease;
+}
+
+.platform-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--ui-radius-lg);
+  border: 1px solid var(--retro-border);
+  background: var(--retro-surface);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--retro-text);
+  transition: transform 75ms ease, border-color 75ms ease, box-shadow 75ms ease;
+}
+
+.platform-btn:hover {
+  border-color: var(--retro-ink);
+  box-shadow: var(--play-shadow-sm);
+}
+
+.ll-btn-glow {
+  box-shadow: 0 8px 28px rgba(20, 20, 20, 0.12);
+}

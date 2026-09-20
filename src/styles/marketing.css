@@ -1,0 +1,290 @@
+/* Marketing layout + sections (lemonade) */
+
+.ll-page-hero {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(255, 229, 102, 0.45), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 10%, rgba(56, 189, 248, 0.25), transparent 50%),
+    var(--retro-bg);
+}
+
+.ll-label,
+.ll-brand-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--retro-text-muted);
+}
+
+.ll-brand-tag--dark {
+  color: var(--retro-blue-dim);
+}
+
+.ll-section {
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+
+.ll-section--surface {
+  background: var(--retro-surface);
+}
+
+.ll-section--muted {
+  background: var(--retro-surface-2);
+}
+
+.ll-section-title {
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--retro-text);
+}
+
+.ll-bento-card,
+.ll-plan-card,
+.ll-use-case,
+.ll-faq {
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-xl);
+  padding: 1.25rem;
+  box-shadow: var(--play-shadow-sm);
+}
+
+.ll-plan-card--pro {
+  border-color: var(--retro-accent-dim);
+  box-shadow: 0 12px 40px var(--retro-glow);
+}
+
+.ll-plan-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--retro-accent);
+  color: var(--retro-ink);
+}
+
+.ll-plan-price {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.ll-plan-compare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--retro-text-dim);
+}
+
+.ll-plan-compare-divider {
+  width: 1px;
+  height: 1rem;
+  background: var(--retro-border);
+}
+
+.ll-bento-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--ui-radius);
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+}
+
+.ll-bento-icon--red {
+  color: var(--retro-pink);
+  background: rgba(251, 113, 133, 0.12);
+}
+
+.ll-bento-icon--blue {
+  color: var(--retro-blue-dim);
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.ll-bento-icon--yellow {
+  color: #ca8a04;
+  background: rgba(255, 229, 102, 0.35);
+}
+
+.ll-bento-icon--green {
+  color: var(--retro-success);
+  background: rgba(22, 163, 74, 0.1);
+}
+
+.ll-steps {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .ll-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.ll-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-xl);
+  box-shadow: var(--play-shadow-sm);
+}
+
+.ll-step-num {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--retro-blue-dim);
+}
+
+.ll-step-arrow {
+  position: absolute;
+  right: -0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--retro-text-muted);
+}
+
+.ll-use-case-icon {
+  display: inline-flex;
+  padding: 0.625rem;
+  border-radius: var(--ui-radius);
+  background: var(--retro-surface-2);
+  border: 1px solid var(--retro-border);
+  color: var(--retro-blue-dim);
+}
+
+.ll-use-case-tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--retro-text-muted);
+}
+
+.ll-marquee-wrap {
+  border-block: 1px solid var(--retro-border);
+  background: var(--retro-surface);
+  padding: 1rem 0;
+  overflow: hidden;
+}
+
+.ll-marquee-label {
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--retro-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.ll-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: ll-marquee 40s linear infinite;
+}
+
+.ll-marquee-group {
+  display: flex;
+  gap: 2rem;
+  padding-inline: 1rem;
+}
+
+@keyframes ll-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ll-faq--clean {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ll-faq-q--clean {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.ll-faq-q--clean::-webkit-details-marker {
+  display: none;
+}
+
+.ll-faq-a--clean {
+  padding: 0 1.25rem 1.25rem;
+  font-size: 0.875rem;
+  color: var(--retro-text-dim);
+  line-height: 1.65;
+  border-top: 1px solid var(--retro-border);
+}
+
+.ll-faq-chevron {
+  transition: transform 150ms ease;
+}
+
+.ll-faq[open] .ll-faq-chevron {
+  transform: rotate(180deg);
+}
+
+.ll-toggle {
+  display: inline-flex;
+  background: var(--retro-surface);
+  border: 1px solid var(--retro-border);
+  border-radius: var(--ui-radius-lg);
+  padding: 0.25rem;
+}
+
+.ll-toggle-btn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--ui-radius);
+  color: var(--retro-text-dim);
+}
+
+.ll-toggle-btn--active {
+  background: var(--retro-ink);
+  color: #fff;
+}
+
+.ll-cta {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 229, 102, 0.35), rgba(56, 189, 248, 0.15)),
+    var(--retro-bg);
+  border-top: 1px solid var(--retro-border);
+}
+
+.ll-cta-box {
+  border-radius: var(--ui-radius-xl);
+}
+
+.ll-marketing-prose {
+  max-width: 42rem;
+  color: var(--retro-text-dim);
+  line-height: 1.7;
+  font-size: 0.9375rem;
+}
+
+.ll-marketing-prose p + p {
+  margin-top: 1rem;
+}

@@ -1,31 +1,31 @@
-/* Linklock v2 — lemonade.gg inspired (bright lemon / sky / pink on deep ink) */
+/* Linklock v2 — light lemonade structure */
 
 :root {
-  --retro-bg: #0c0c14;
-  --retro-surface: #141422;
-  --retro-surface-2: #1c1c2e;
-  --retro-surface-3: #252538;
-  --retro-ink: #fafafa;
-  --retro-border: #2e2e42;
+  --retro-bg: #fff9f2;
+  --retro-surface: #ffffff;
+  --retro-surface-2: #f5f1ea;
+  --retro-surface-3: #ebe6dc;
+  --retro-ink: #141414;
+  --retro-border: #e8e2d9;
   --retro-accent: #ffe566;
   --retro-accent-dim: #f5d547;
-  --retro-neon: #6ee7ff;
+  --retro-neon: #38bdf8;
   --retro-blue: #7dd3fc;
-  --retro-blue-dim: #38bdf8;
+  --retro-blue-dim: #0ea5e9;
   --retro-yellow: #ffe566;
   --retro-yellow-dim: #eab308;
-  --retro-pink: #ff8bc4;
-  --retro-cyan: #67e8f9;
-  --retro-lime: #a3e635;
-  --retro-success: #4ade80;
-  --retro-warning: #fbbf24;
-  --retro-error: #fb7185;
-  --retro-glow: rgba(255, 229, 102, 0.22);
-  --retro-text: #f4f4f5;
-  --retro-text-dim: #b4b4c8;
-  --retro-text-muted: #8b8ba3;
-  --retro-text-on-dark: #fafafa;
-  --retro-band: #141422;
+  --retro-pink: #fb7185;
+  --retro-cyan: #22d3ee;
+  --retro-lime: #84cc16;
+  --retro-success: #16a34a;
+  --retro-warning: #ca8a04;
+  --retro-error: #e11d48;
+  --retro-glow: rgba(255, 229, 102, 0.45);
+  --retro-text: #141414;
+  --retro-text-dim: #52525b;
+  --retro-text-muted: #71717a;
+  --retro-text-on-dark: #141414;
+  --retro-band: #ffffff;
   --ui-radius-sm: 0.5rem;
   --ui-radius: 0.625rem;
   --ui-radius-lg: 0.75rem;
@@ -227,7 +227,7 @@ body {
   border: 1px solid var(--retro-border);
   background: var(--retro-surface);
   border-radius: var(--ui-radius-xl);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--play-shadow-lg);
 }
 
 /* Admin v2 */
