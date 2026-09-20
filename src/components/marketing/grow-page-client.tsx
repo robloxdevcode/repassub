@@ -53,19 +53,17 @@ export function GrowPageClient({ signedIn }: { signedIn: boolean }) {
 
       {!signedIn ? (
         <div className="retro-panel p-4 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-sm">Sign in to get your personal referral link and track invites.</p>
+          <p className="text-sm">Sign in free to create your first unlock link.</p>
           <MarketingAuthLink href="/sign-up">
             <RetroButton size="sm">Create free account</RetroButton>
           </MarketingAuthLink>
         </div>
       ) : (
         <div className="retro-panel p-4 mb-8">
-          <p className="text-sm font-semibold mb-1">Your invite link</p>
-          <p className="text-xs text-retro-text-muted mb-3">
-            Share in DMs — friends who sign up show up in your dashboard.
-          </p>
+          <p className="text-sm font-semibold mb-1">Ready to share</p>
+          <p className="text-xs text-retro-text-muted mb-3">Copy a template below and paste your unlock link from the dashboard.</p>
           <Link href="/dashboard" className="text-sm text-retro-accent hover:underline font-semibold">
-            Open dashboard for your referral link →
+            Open dashboard →
           </Link>
         </div>
       )}

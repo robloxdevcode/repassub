@@ -18,6 +18,7 @@ enum StaffRole {
   TESTER
   SUPPORT
   ADMIN
+  HEAD_ADMIN
   OWNER
 }
 
@@ -125,6 +126,7 @@ model User {
   stripeCustomerId String?
   stripeConnectId  String?
   banned           Boolean  @default(false)
+  banReason        String?
   notifyUnlockEmail    Boolean @default(true)
   notifyWeeklyEmail    Boolean @default(false)
   notifySecurityEmail  Boolean @default(true)

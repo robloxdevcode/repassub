@@ -4,7 +4,6 @@ import { getDashboardStats } from "@/lib/actions/dashboard";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { formatNumber } from "@/lib/utils";
 import { getRequestSiteUrl } from "@/lib/site-url";
-import { ReferralCard } from "@/components/dashboard/referral-card";
 
 export async function DashboardHomeContent() {
   const stats = await getDashboardStats();
@@ -145,8 +144,6 @@ export async function DashboardHomeContent() {
           )}
         </>
       )}
-
-      <ReferralCard />
     </div>
   );
 }

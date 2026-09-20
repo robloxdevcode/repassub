@@ -12,7 +12,7 @@ export async function setUserStaffRole(userId: string, staffRole: StaffRole): Pr
   try {
     const actor = await requireUser();
     if (!canManageStaff(actor)) {
-      return { ok: false, message: "Only Owner or the primary admin can assign staff roles" };
+      return { ok: false, message: "Only Owner can assign staff roles" };
     }
 
     if (!canAssignStaffRole(actor, staffRole)) {

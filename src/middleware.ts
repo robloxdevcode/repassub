@@ -40,8 +40,6 @@ const isPublicRoute = createRouteMatcher([
 
   "/help(.*)",
 
-  "/leaderboard(.*)",
-
   "/support(.*)",
 
   "/suspended(.*)",
@@ -155,11 +153,13 @@ export default clerkMiddleware(async (auth, req) => {
 
   }
 
+  if (pathname === "/leaderboard" || pathname.startsWith("/leaderboard/")) {
+    return NextResponse.redirect(new URL("/", req.url), 301);
+  }
 
-
-  const ref = req.nextUrl.searchParams.get("ref")?.trim().toLowerCase();
-
-  const refValid = ref && /^[a-z0-9_]{3,30}$/.test(ref);
+  if (pathname === "/admin/reports" || pathname.startsWith("/admin/reports/")) {
+    return NextResponse.redirect(new URL("/admin", req.url), 301);
+  }
 
 
 
@@ -225,23 +225,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 
 
-  if (refValid) {
-
-    const res = NextResponse.next();
-
-    res.cookies.set("ll_ref", ref!, {
-
-      maxAge: 60 * 60 * 24 * 30,
-
-      path: "/",
-
-      sameSite: "lax",
-
-    });
-
-    return res;
-
-  }
+  return NextResponse.next();
 
 });
 

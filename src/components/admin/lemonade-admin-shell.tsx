@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdminNav } from "@/components/admin/admin-ui";
-import { AdminCommandMenu } from "@/components/admin/admin-command-menu";
 
 type NavLink = { href: string; label: string };
 
@@ -18,7 +17,6 @@ export function LemonadeAdminShell({
     { href: "/admin", label: "Overview" },
     { href: "/admin/users", label: "People" },
     { href: "/admin/links", label: "Links" },
-    { href: "/admin/reports", label: "Reports" },
     ...(showStaffTab ? [{ href: "/admin/staff", label: "Staff" }] : []),
   ];
 
@@ -34,7 +32,6 @@ export function LemonadeAdminShell({
           </div>
           <AdminNav links={links} />
           <div className="admin-v2-toolbar w-full sm:w-auto sm:ml-auto">
-            <AdminCommandMenu navLinks={links} />
             <Link href="/dashboard" className="admin-v2-toolbar-btn">
               ← Dashboard
             </Link>
@@ -42,7 +39,7 @@ export function LemonadeAdminShell({
         </div>
         {!canModerate ? (
           <p className="admin-v2-banner px-6 pb-3 text-amber-800 bg-amber-50 border-b border-amber-100">
-            Read-only staff — moderation requires Admin or Owner role.
+            Read-only staff — moderation requires Admin, Head admin, or Owner.
           </p>
         ) : null}
       </header>

@@ -3,13 +3,19 @@ import { Suspense } from "react";
 import { getAdminLinks } from "@/lib/actions/dashboard";
 import { AdminSearchBar } from "@/components/admin/admin-search";
 import { AdminTable } from "@/components/admin/lemonade-admin-shell";
-import { AdminExportButton } from "@/components/admin/admin-command-menu";
+import { AdminExportButton } from "@/components/admin/admin-export-button";
+import { AdminDeleteLinkButton } from "@/components/admin/admin-delete-link-button";
+import { canDeleteAdminLinks } from "@/lib/admin-access";
+import { getCurrentUser, requireAdminPanel } from "@/lib/auth";
 
 interface Props {
   searchParams: Promise<{ q?: string }>;
 }
 
 export default async function AdminLinksPage({ searchParams }: Props) {
+  await requireAdminPanel();
+  const actor = await getCurrentUser();
+  const canDelete = actor ? canDeleteAdminLinks(actor) : false;
   const { q } = await searchParams;
   const campaigns = await getAdminLinks(q);
 
@@ -49,15 +55,17 @@ export default async function AdminLinksPage({ searchParams }: Props) {
         <table className="admin-v2-table">
           <thead>
             <tr>
-              {["Title", "Creator", "Status", "Views", "Live link", "Created"].map((col) => (
-                <th key={col}>{col}</th>
-              ))}
+              {["Title", "Creator", "Status", "Views", "Live link", "Created", ...(canDelete ? ["Action"] : [])].map(
+                (col) => (
+                  <th key={col}>{col}</th>
+                ),
+              )}
             </tr>
           </thead>
           <tbody>
             {campaigns.length === 0 ? (
               <tr>
-                <td colSpan={6} className="admin-v2-empty">
+                <td colSpan={canDelete ? 7 : 6} className="admin-v2-empty">
                   No links found.
                 </td>
               </tr>
@@ -82,6 +90,11 @@ export default async function AdminLinksPage({ searchParams }: Props) {
                       )}
                     </td>
                     <td className="admin-v2-muted">{new Date(c.createdAt).toLocaleDateString()}</td>
+                    {canDelete ? (
+                      <td>
+                        <AdminDeleteLinkButton campaignId={c.id} title={c.title} />
+                      </td>
+                    ) : null}
                   </tr>
                 );
               })

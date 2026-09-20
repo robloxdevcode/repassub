@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { UserProfile } from "@clerk/nextjs";
 import { clerkAuthAppearance } from "@/lib/clerk-auth-appearance";
@@ -11,9 +11,24 @@ import { getBillingData } from "@/lib/actions/payments";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
 import { RetroLoading } from "@/components/retro";
-import { LeaderboardOptIn } from "@/components/dashboard/leaderboard-opt-in";
 
 const TABS = ["Account", "Plan"];
+
+const profileAppearance = {
+  ...clerkAuthAppearance,
+  elements: {
+    ...clerkAuthAppearance.elements,
+    rootBox: "w-full max-w-full",
+    cardBox: "w-full max-w-full shadow-none",
+    card: "w-full max-w-full bg-transparent border-0 shadow-none rounded-none p-0",
+    navbar: "hidden",
+    navbarMobileMenuRow: "hidden",
+    headerTitle: "hidden",
+    headerSubtitle: "hidden",
+    pageScrollBox: "p-0 overflow-visible",
+    page: "gap-4",
+  },
+};
 
 export default function SettingsPage() {
   const [tab, setTab] = useState("Account");
@@ -28,7 +43,7 @@ export default function SettingsPage() {
   const isPro = isProPlanName(plan);
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-3xl w-full">
       <AppPageHeader
         title="Settings"
         subtitle={
@@ -50,10 +65,10 @@ export default function SettingsPage() {
             key={t}
             onClick={() => setTab(t)}
             className={cn(
-              "font-body text-sm font-semibold px-4 py-2 rounded-lg border transition-colors duration-75 whitespace-nowrap",
+              "font-body text-sm font-semibold px-4 py-2 border-[2px] border-[#0a0a0a] transition-colors duration-75 whitespace-nowrap shadow-[2px_2px_0_#0a0a0a]",
               tab === t
-                ? "border-retro-accent bg-retro-accent/10 text-retro-accent"
-                : "border-transparent text-retro-text-dim hover:bg-retro-surface-2"
+                ? "bg-retro-accent text-retro-ink"
+                : "bg-retro-surface text-retro-text-dim hover:bg-retro-surface-2",
             )}
           >
             {t}
@@ -61,23 +76,10 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      <AppCard className="p-6">
+      <AppCard className="p-4 md:p-6 overflow-hidden">
         {tab === "Account" && (
-          <div className="flex flex-col gap-4">
-            <p className="font-body text-sm text-retro-text-dim mb-2">Email and password.</p>
-            <UserProfile
-              routing="path"
-              path="/settings"
-              appearance={{
-                ...clerkAuthAppearance,
-                elements: {
-                  ...clerkAuthAppearance.elements,
-                  rootBox: "w-full",
-                  card: "bg-retro-surface border border-retro-border shadow-none rounded-xl",
-                },
-              }}
-            />
-            <LeaderboardOptIn />
+          <div className="w-full min-w-0 [&_.cl-rootBox]:!max-w-none [&_.cl-cardBox]:!max-w-none">
+            <UserProfile routing="hash" appearance={profileAppearance} />
           </div>
         )}
 
@@ -87,16 +89,11 @@ export default function SettingsPage() {
               <RetroLoading message="Loading" />
             ) : (
               <>
-                <div
-                  className={cn(
-                    "simple-plan-card",
-                    !isPro ? "simple-plan-card--popular" : ""
-                  )}
-                >
+                <div className={cn("simple-plan-card", !isPro ? "simple-plan-card--popular" : "")}>
                   <p className="font-body font-bold flex items-center gap-2">
                     Free
                     {!isPro && (
-                      <span className="text-[10px] font-semibold bg-retro-accent text-white px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-semibold bg-retro-accent text-[#0a0a0a] px-2 py-0.5">
                         Current
                       </span>
                     )}
@@ -105,16 +102,11 @@ export default function SettingsPage() {
                     <PlanFeatureList features={PLAN_FEATURES.FREE} finePrint={PLAN_FINE_PRINT.FREE} />
                   </div>
                 </div>
-                <div
-                  className={cn(
-                    "simple-plan-card",
-                    isPro ? "simple-plan-card--popular" : ""
-                  )}
-                >
+                <div className={cn("simple-plan-card", isPro ? "simple-plan-card--popular" : "")}>
                   <p className="font-body font-bold flex items-center gap-2">
                     Pro
                     {isPro && (
-                      <span className="text-[10px] font-semibold bg-retro-accent text-white px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-semibold bg-retro-accent text-[#0a0a0a] px-2 py-0.5">
                         Current
                       </span>
                     )}
@@ -126,15 +118,17 @@ export default function SettingsPage() {
               </>
             )}
             <p className="text-sm text-retro-text-dim">
-              <Link href="/profile" className="text-retro-accent hover:underline">Edit profile &amp; photo</Link>
+              <Link href="/profile" className="text-retro-accent hover:underline">
+                Edit profile &amp; photo
+              </Link>
               {" · "}
-              <Link href="/billing" prefetch className="text-retro-accent hover:underline">Manage billing</Link>
+              <Link href="/billing" prefetch className="text-retro-accent hover:underline">
+                Manage billing
+              </Link>
             </p>
           </div>
         )}
-
       </AppCard>
     </div>
   );
 }
-

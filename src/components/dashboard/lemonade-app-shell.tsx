@@ -15,6 +15,7 @@ import {
   CreditCard,
   User,
 } from "lucide-react";
+import { ClassicAnimatedBackdrop } from "@/components/marketing/classic-animated-backdrop";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
@@ -182,8 +183,9 @@ export function LemonadeAppShell({
     <>
       <AppNavProgress />
       <LemonadeAppSidebar showAdminPanel={showAdminPanel} plan={plan} />
-      <div className="classic-shell app-stage dash-pro-stage min-h-screen bg-retro-bg md:ml-[17.5rem]">
-        <main className="dash-pro-main mx-auto w-full max-w-5xl px-4 md:px-8 pb-12">{children}</main>
+      <div className="classic-shell app-stage dash-pro-stage relative min-h-screen bg-retro-bg md:ml-[17.5rem]">
+        <ClassicAnimatedBackdrop />
+        <main className="dash-pro-main relative z-10 mx-auto w-full max-w-5xl px-4 md:px-8 pb-12">{children}</main>
       </div>
     </>
   );

@@ -6,13 +6,14 @@ import { requireUser, requireAdmin, requireAdminPanel, requireModerator } from "
 import { db } from "@/lib/db";
 import { getUserAnalytics, getAnalyticsBreakdown, getBasicCampaignBreakdown, campaignViewCountSelect } from "@/lib/analytics";
 import { getActionLimit, getUserPlan, hasAdvancedAnalytics } from "@/lib/stripe";
-import { CampaignStatus, UserRole } from "@prisma/client";
+import { CampaignStatus, StaffRole, UserRole } from "@prisma/client";
+import { isProtectedStaff } from "@/lib/admin-access";
 
 export type AdminBanResult =
   | { ok: true; clerkSynced?: boolean }
   | { ok: false; message: string };
 
-async function syncClerkSuspension(clerkId: string, banned: boolean) {
+async function syncClerkSuspension(clerkId: string, banned: boolean, banReason?: string | null) {
   const client = await clerkClient();
   let synced = false;
 
@@ -21,21 +22,12 @@ async function syncClerkSuspension(clerkId: string, banned: boolean) {
     const meta = {
       ...(clerkUser.publicMetadata as Record<string, unknown>),
       linklockBanned: banned,
+      banReason: banned ? (banReason?.trim() || "Suspended by Linklock staff.") : null,
     };
     await client.users.updateUser(clerkId, { publicMetadata: meta });
-  } catch (error) {
-    console.error("[banUser] Clerk metadata update failed", error);
-  }
-
-  try {
-    if (banned) {
-      await client.users.banUser(clerkId);
-    } else {
-      await client.users.unbanUser(clerkId);
-    }
     synced = true;
   } catch (error) {
-    console.error("[banUser] Clerk ban API failed", error);
+    console.error("[banUser] Clerk metadata update failed", error);
   }
 
   try {
@@ -172,7 +164,11 @@ export async function getAdminLinks(search?: string) {
   });
 }
 
-export async function banUser(userId: string, banned: boolean): Promise<AdminBanResult> {
+export async function banUser(
+  userId: string,
+  banned: boolean,
+  banReason?: string,
+): Promise<AdminBanResult> {
   try {
     const admin = await requireModerator();
     const trimmedId = userId?.trim();
@@ -185,12 +181,23 @@ export async function banUser(userId: string, banned: boolean): Promise<AdminBan
 
     const target = await db.user.findUnique({ where: { id: trimmedId } });
     if (!target) return { ok: false, message: "User not found" };
-    if (banned && target.role === UserRole.ADMIN) {
-      return { ok: false, message: "Admin accounts cannot be banned" };
+    if (banned && isProtectedStaff(target)) {
+      return { ok: false, message: "Staff and admin accounts cannot be banned" };
+    }
+    if (banned) {
+      const reason = banReason?.trim();
+      if (!reason || reason.length < 3) {
+        return { ok: false, message: "Enter a suspension reason (at least 3 characters)" };
+      }
     }
 
+    const reasonToStore = banned ? banReason!.trim() : null;
+
     await db.$transaction(async (tx) => {
-      await tx.user.update({ where: { id: trimmedId }, data: { banned } });
+      await tx.user.update({
+        where: { id: trimmedId },
+        data: { banned, banReason: reasonToStore },
+      });
       if (banned) {
         await tx.campaign.updateMany({
           where: { userId: trimmedId },
@@ -199,7 +206,7 @@ export async function banUser(userId: string, banned: boolean): Promise<AdminBan
       }
     });
 
-    const clerkSynced = await syncClerkSuspension(target.clerkId, banned);
+    const clerkSynced = await syncClerkSuspension(target.clerkId, banned, reasonToStore);
 
     revalidatePath("/admin/users");
     revalidatePath("/admin");
@@ -212,5 +219,26 @@ export async function banUser(userId: string, banned: boolean): Promise<AdminBan
       return { ok: false, message: "You do not have permission to do that" };
     }
     return { ok: false, message: "Could not update user. Try again in a moment." };
+  }
+}
+
+export async function deleteAdminCampaign(campaignId: string): Promise<AdminBanResult> {
+  try {
+    const admin = await requireUser();
+    const { canDeleteAdminLinks } = await import("@/lib/admin-access");
+    if (!canDeleteAdminLinks(admin)) {
+      return { ok: false, message: "Only Head admin or Owner can delete links" };
+    }
+    const id = campaignId?.trim();
+    if (!id) return { ok: false, message: "Missing link id" };
+
+    await db.campaign.delete({ where: { id } });
+
+    revalidatePath("/admin/links");
+    revalidatePath("/admin");
+    return { ok: true };
+  } catch (error) {
+    console.error("[deleteAdminCampaign]", error);
+    return { ok: false, message: "Could not delete link" };
   }
 }

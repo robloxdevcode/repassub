@@ -8,7 +8,6 @@ const links = {
     { href: "/how-it-works", label: "How it works" },
     { href: "/use-cases", label: "Use cases" },
     { href: "/help", label: "Help & FAQ" },
-    { href: "/leaderboard", label: "Leaderboard" },
   ],
   Grow: [
     { href: "/creators", label: "For creators" },

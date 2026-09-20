@@ -7,7 +7,6 @@ export default async function AdminPage() {
   const items = [
     { label: "Total users", value: formatNumber(stats.userCount) },
     { label: "Published links", value: formatNumber(stats.campaignCount) },
-    { label: "Open reports", value: formatNumber(stats.reportCount) },
     { label: "Total revenue", value: formatCurrency(stats.revenue) },
     { label: "Suspended users", value: formatNumber(stats.bannedCount) },
   ];

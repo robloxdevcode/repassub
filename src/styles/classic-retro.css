@@ -715,3 +715,99 @@
   height: 3px;
 }
 
+/* Animated grid backdrop */
+.classic-animated-grid {
+  background-color: transparent;
+  background-image:
+    linear-gradient(rgba(10, 10, 10, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10, 10, 10, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.classic-animated-glow {
+  background:
+    radial-gradient(ellipse 80% 55% at 15% -5%, rgba(255, 229, 102, 0.35), transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 15%, rgba(94, 234, 212, 0.25), transparent 50%),
+    radial-gradient(ellipse 45% 40% at 50% 100%, rgba(255, 139, 196, 0.18), transparent 55%);
+}
+
+.classic-landing-hero {
+  min-height: min(88vh, 720px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.25rem 4rem;
+  border-bottom: 3px solid var(--classic-ink);
+}
+
+.classic-landing-card {
+  max-width: 36rem;
+  width: 100%;
+  text-align: center;
+  padding: 2rem 1.5rem 2.5rem;
+  border: 3px solid var(--classic-ink);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 8px 8px 0 var(--classic-ink);
+  transition: transform 120ms ease-out;
+  backdrop-filter: blur(6px);
+}
+
+.classic-landing-float {
+  animation: classic-float 5s ease-in-out infinite;
+}
+
+.classic-cta--pulse {
+  animation: classic-cta-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes classic-cta-pulse {
+  0%,
+  100% {
+    box-shadow: 4px 4px 0 var(--classic-ink);
+  }
+  50% {
+    box-shadow: 6px 6px 0 var(--classic-ink), 0 0 0 4px rgba(255, 229, 102, 0.35);
+  }
+}
+
+.classic-word-pop {
+  animation: classic-word-pop 0.45s ease-out;
+}
+
+@keyframes classic-word-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.classic-landing-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.classic-landing-pills li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.45rem 0.85rem;
+  border: 2px solid var(--classic-ink);
+  background: var(--memphis-teal);
+  box-shadow: 3px 3px 0 var(--classic-ink);
+}
+
+.classic-shell {
+  background-color: var(--retro-bg);
+}
+

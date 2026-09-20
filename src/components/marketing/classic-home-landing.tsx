@@ -1,97 +1,88 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Lock, Share2, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { DiscordSupportStrip } from "@/components/marketing/discord-support";
-import { RetroWindow } from "@/components/retro/memphis-ui";
+import { Lock, Sparkles, Zap } from "lucide-react";
 
-const stripItems = [
-  "★ FREE LINKS",
-  "★ SUB TO UNLOCK",
-  "★ 70+ PLATFORMS",
-  "★ REAL STATS",
-  "★ CLASSIC VIBES",
-  "★ MADE FOR CREATORS",
-];
+const stripItems = ["FREE LINKS", "SUB 2 UNLOCK", "70+ PLATFORMS", "RETRO FUN", "FOR CREATORS"];
 
-const accentWords = ["followers.", "subs.", "fans.", "growth."];
-
-function HeroDemo() {
-  return (
-    <RetroWindow title="UNLOCK.EXE — demo" headerColor="purple">
-      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-retro-blue-dim mb-4">
-        <Sparkles size={14} aria-hidden className="classic-bob" />
-        How it feels
-      </div>
-      <ul className="space-y-3">
-        <li className="classic-step">
-          <span className="classic-step-num">1</span>
-          Pick your unlock steps
-        </li>
-        <li className="classic-step">
-          <span className="classic-step-num">2</span>
-          <Share2 size={16} className="shrink-0" aria-hidden />
-          Share one link everywhere
-        </li>
-        <li className="classic-step">
-          <span className="classic-step-num">3</span>
-          <Lock size={16} className="shrink-0" aria-hidden />
-          They unlock your file
-        </li>
-      </ul>
-      <p className="mt-4 text-xs text-retro-text-muted leading-relaxed">
-        Sign up free — publish in minutes. No card.
-      </p>
-    </RetroWindow>
-  );
-}
+const words = ["followers", "subs", "fans", "growth"];
 
 export function ClassicHomeLanding() {
-  const [wordIndex, setWordIndex] = useState(0);
+  const [word, setWord] = useState(0);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const id = setInterval(() => setWordIndex((i) => (i + 1) % accentWords.length), 2400);
+    const id = setInterval(() => setWord((w) => (w + 1) % words.length), 2200);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    function onMove(e: MouseEvent) {
+      const r = el!.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      setTilt({ x: px * 10, y: py * 8 });
+    }
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
   const items = [...stripItems, ...stripItems];
 
   return (
-    <div>
-      <section className="classic-hero">
-        <div className="classic-hero-inner">
-          <div>
-            <p className="classic-kicker">Linklock classic · retro fun</p>
-            <h1 className="classic-title">
-              Turn downloads into real{" "}
-              <span key={wordIndex} className="classic-title-accent classic-bob">
-                {accentWords[wordIndex]}
-              </span>
-            </h1>
-            <p className="classic-sub">
-              Subscribe-to-unlock links with playful retro style. Set your steps, share one URL, grow
-              your audience — preset packs, beats, mods, whatever you ship.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
-              <MarketingAuthLink href="/sign-up">
-                <span className="classic-cta ui-instant">Start free — let&apos;s go</span>
-              </MarketingAuthLink>
-              <p className="text-sm text-retro-text-muted font-semibold">
-                <Link href="/sign-in" className="underline underline-offset-4 hover:text-retro-text">
-                  Sign in
-                </Link>
-                <span className="mx-2 opacity-40">·</span>
-                <Link href="/pricing" className="underline underline-offset-4 hover:text-retro-text">
-                  Pricing
-                </Link>
-              </p>
-            </div>
+    <div className="classic-landing">
+      <section ref={heroRef} className="classic-landing-hero">
+        <div
+          className="classic-landing-float classic-landing-card"
+          style={{ transform: `perspective(800px) rotateX(${-tilt.y}deg) rotateY(${tilt.x}deg)` }}
+        >
+          <p className="classic-kicker classic-bob inline-flex items-center gap-2">
+            <Sparkles size={14} aria-hidden />
+            Linklock classic
+          </p>
+
+          <h1 className="classic-title mt-6">
+            One link.
+            <br />
+            Real{" "}
+            <span key={word} className="classic-title-accent classic-word-pop">
+              {words[word]}.
+            </span>
+          </h1>
+
+          <p className="classic-sub mt-5 max-w-md mx-auto text-center">
+            Subscribe-to-unlock — playful, fast, built for preset packs, beats, and mods.
+          </p>
+
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <MarketingAuthLink href="/sign-up">
+              <span className="classic-cta classic-cta--pulse ui-instant">Start free</span>
+            </MarketingAuthLink>
+            <Link
+              href="/how-it-works"
+              className="text-sm font-bold text-retro-text-dim underline underline-offset-4 hover:text-retro-text"
+            >
+              How it works
+            </Link>
           </div>
-          <div className="flex justify-center lg:justify-end classic-bob">
-            <HeroDemo />
-          </div>
+
+          <ul className="classic-landing-pills mt-10" aria-label="Highlights">
+            <li>
+              <Zap size={16} aria-hidden /> Live in minutes
+            </li>
+            <li>
+              <Lock size={16} aria-hidden /> Your unlock steps
+            </li>
+          </ul>
         </div>
       </section>
 
@@ -99,28 +90,16 @@ export function ClassicHomeLanding() {
         <div className="classic-strip-track">
           <div className="classic-strip-group">
             {items.map((item, i) => (
-              <span key={`${item}-${i}`}>{item}</span>
+              <span key={`${item}-${i}`}>★ {item}</span>
             ))}
           </div>
-          <div className="classic-strip-group" aria-hidden>
+          <div className="classic-strip-group">
             {items.map((item, i) => (
-              <span key={`dup-${item}-${i}`}>{item}</span>
+              <span key={`dup-${item}-${i}`}>★ {item}</span>
             ))}
           </div>
         </div>
       </div>
-
-      <section className="ll-section ll-section--muted border-b-[3px] border-[#0a0a0a]">
-        <div className="mx-auto max-w-3xl px-5 text-center">
-          <h2 className="font-display text-[0.5625rem] md:text-xs text-retro-text mb-4">
-            SIMPLE. FAST. RETRO.
-          </h2>
-          <p className="text-retro-text-dim leading-relaxed">
-            One link, your rules — YouTube sub, Discord join, Instagram follow, custom visits. Fans
-            complete steps; you get growth. Pro removes ads and adds your branding.
-          </p>
-        </div>
-      </section>
 
       <DiscordSupportStrip />
     </div>
