@@ -539,3 +539,179 @@
   line-height: 1.65 !important;
   text-transform: uppercase;
 }
+
+/* ——— Site-wide Classic (marketing, app, admin, unlock) ——— */
+
+.classic-page-title {
+  font-family: var(--font-pixel);
+  font-size: clamp(0.6875rem, 2.4vw, 0.9375rem);
+  line-height: 1.65;
+  color: var(--classic-ink);
+  text-shadow: 2px 2px 0 rgba(255, 229, 102, 0.85);
+  text-transform: uppercase;
+}
+
+.classic-marketing-hero {
+  border-bottom: 3px solid var(--classic-ink) !important;
+}
+
+.classic-section--muted {
+  border-block: 3px solid var(--classic-ink);
+}
+
+.classic-panel {
+  border: 3px solid var(--classic-ink);
+  background: var(--retro-surface);
+  box-shadow: var(--classic-shadow-lg);
+}
+
+.classic-prose strong {
+  color: var(--classic-ink);
+}
+
+.ll-label {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.5rem;
+  border: 2px solid var(--classic-ink);
+  background: var(--memphis-pink);
+  display: inline-block;
+  color: var(--classic-ink);
+}
+
+.ll-bento-card,
+.ll-plan-card,
+.ll-faq,
+.ll-step,
+.ll-use-case,
+.ll-toggle {
+  border: 3px solid var(--classic-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 var(--classic-ink);
+}
+
+.ll-plan-card--pro {
+  background: linear-gradient(180deg, rgba(255, 229, 102, 0.35), var(--retro-surface));
+}
+
+.ll-page-hero {
+  border-bottom: 3px solid var(--classic-ink);
+}
+
+.ll-marquee-wrap {
+  border-block: 3px solid var(--classic-ink);
+}
+
+.ll-cta {
+  border-top: 3px solid var(--classic-ink);
+}
+
+.llv2-cta {
+  border: 3px solid var(--classic-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 var(--classic-ink) !important;
+  font-family: var(--font-pixel-body) !important;
+  font-weight: 800 !important;
+}
+
+.llv2-cta:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--classic-ink) !important;
+}
+
+.auth-shell {
+  background: transparent;
+}
+
+.auth-shell-header h1 {
+  font-family: var(--font-pixel);
+  font-size: 0.5625rem;
+  line-height: 1.65;
+  text-transform: uppercase;
+}
+
+.admin-v2-header {
+  border-bottom: 3px solid var(--classic-ink) !important;
+  background: var(--retro-surface) !important;
+}
+
+.admin-v2-kicker {
+  font-family: var(--font-pixel);
+}
+
+.admin-v2-nav-link--active {
+  border: 2px solid var(--classic-ink) !important;
+  box-shadow: 3px 3px 0 var(--classic-ink);
+  border-radius: 0 !important;
+}
+
+.admin-v2-table-wrap,
+.admin-v2-role-card,
+.admin-v2-stat,
+.admin-v2-search {
+  border: 3px solid var(--classic-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 var(--classic-ink);
+}
+
+.admin-v2-toolbar-btn {
+  border: 2px solid var(--classic-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 2px 2px 0 var(--classic-ink);
+  font-weight: 700;
+}
+
+.admin-v2-search-btn {
+  border: 2px solid var(--classic-ink);
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--classic-ink);
+}
+
+.unlock-v2-card,
+.brutal-border {
+  border-width: 3px !important;
+  border-color: var(--classic-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 var(--classic-ink);
+}
+
+.unlock-v2 {
+  background-color: var(--retro-bg);
+  background-image:
+    linear-gradient(rgba(20, 20, 20, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 20, 20, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.platform-btn {
+  border: 2px solid var(--classic-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 var(--classic-ink);
+  font-weight: 700;
+}
+
+.retro-progress {
+  border: 2px solid var(--classic-ink) !important;
+  border-radius: 0 !important;
+}
+
+.classic-discord-strip {
+  background: var(--memphis-yellow) !important;
+}
+
+.ll-nav {
+  border-bottom: 3px solid var(--classic-ink) !important;
+  background: var(--retro-surface) !important;
+  backdrop-filter: none !important;
+}
+
+.app-sidebar {
+  border-right: 3px solid var(--classic-ink) !important;
+}
+
+.app-nav-progress-bar {
+  background: var(--memphis-pink);
+  height: 3px;
+}
+

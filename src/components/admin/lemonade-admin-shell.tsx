@@ -23,12 +23,14 @@ export function LemonadeAdminShell({
   ];
 
   return (
-    <div className="admin-v2 min-h-screen bg-retro-bg">
-      <header className="admin-v2-header sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-retro-border">
+    <div className="classic-shell admin-v2 min-h-screen bg-retro-bg">
+      <header className="admin-v2-header sticky top-0 z-40 bg-retro-surface border-b-[3px] border-[#0a0a0a]">
         <div className="admin-v2-header-inner">
           <div className="flex flex-col gap-1">
-            <p className="admin-v2-kicker">Linklock admin</p>
-            <h1 className="admin-v2-title text-xl font-bold tracking-tight">Control center</h1>
+            <p className="admin-v2-kicker font-display text-[0.5rem] uppercase">Linklock admin</p>
+            <h1 className="admin-v2-title text-lg font-bold tracking-tight font-display text-[0.5625rem] uppercase leading-relaxed">
+              Control center
+            </h1>
           </div>
           <AdminNav links={links} />
           <div className="admin-v2-toolbar w-full sm:w-auto sm:ml-auto">

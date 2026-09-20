@@ -15,14 +15,16 @@ export function MarketingPageHero({
   actions?: ReactNode;
 }) {
   return (
-      <section className="ll-page-hero border-b border-retro-border">
+    <section className="classic-marketing-hero ll-page-hero border-b-[3px] border-[#0a0a0a]">
       <div className="mx-auto max-w-[72rem] px-[var(--ll-page-x,1.25rem)] py-14 md:py-20">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-2xl">
-            <p className="ll-label">{label}</p>
-            <h1 className="ll-section-title mt-4">{title}</h1>
+            <p className="classic-kicker">{label}</p>
+            <h1 className="classic-page-title mt-5">{title}</h1>
             {description ? (
-              <p className="mt-5 text-lg text-retro-text-dim leading-relaxed max-w-xl">{description}</p>
+              <p className="mt-5 text-lg text-retro-text-dim leading-relaxed max-w-xl font-semibold">
+                {description}
+              </p>
             ) : null}
           </div>
           {actions ? <div className="shrink-0">{actions}</div> : null}
@@ -69,7 +71,7 @@ export function MarketingPageSection({
 }) {
   return (
     <section
-      className={`ll-section ${muted ? "ll-section--muted" : ""} ${surface ? "ll-section--surface" : ""} ${className}`.trim()}
+      className={`ll-section classic-section ${muted ? "ll-section--muted classic-section--muted" : ""} ${surface ? "ll-section--surface" : ""} ${className}`.trim()}
     >
       {children}
     </section>
@@ -89,24 +91,30 @@ export function MarketingPageCta({
 }) {
   return (
     <MarketingPageBody className="text-center py-16 md:py-20">
-      <h2 className="text-xl md:text-2xl font-bold tracking-tight">{title}</h2>
-      {description ? <p className="mt-2 text-sm text-retro-text-dim max-w-md mx-auto">{description}</p> : null}
-      <div className="mt-8 flex justify-center">
-        <MarketingAuthLink href={href}>
-          <RetroButton size="lg">{buttonLabel}</RetroButton>
-        </MarketingAuthLink>
+      <div className="classic-panel mx-auto max-w-xl p-8 md:p-10">
+        <h2 className="classic-page-title">{title}</h2>
+        {description ? (
+          <p className="mt-4 text-sm text-retro-text-dim max-w-md mx-auto leading-relaxed font-semibold">
+            {description}
+          </p>
+        ) : null}
+        <div className="mt-8 flex justify-center">
+          <MarketingAuthLink href={href}>
+            <span className="classic-cta ui-instant">{buttonLabel}</span>
+          </MarketingAuthLink>
+        </div>
       </div>
     </MarketingPageBody>
   );
 }
 
 export function MarketingProse({ children }: { children: ReactNode }) {
-  return <div className="ll-marketing-prose">{children}</div>;
+  return <div className="ll-marketing-prose classic-prose">{children}</div>;
 }
 
 export function MarketingLegalNote({ children }: { children: ReactNode }) {
   return (
-    <p className="text-xs text-retro-text-muted mt-12 pt-8 border-t border-retro-border">
+    <p className="text-xs text-retro-text-muted mt-12 pt-8 border-t-[3px] border-[#0a0a0a] font-semibold">
       {children}
     </p>
   );
@@ -115,7 +123,7 @@ export function MarketingLegalNote({ children }: { children: ReactNode }) {
 /** Simple inline link for marketing copy */
 export function MarketingInlineLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <Link href={href} className="text-[#0ea5e9] font-medium hover:underline">
+    <Link href={href} className="text-retro-blue-dim font-bold hover:underline underline-offset-4">
       {children}
     </Link>
   );

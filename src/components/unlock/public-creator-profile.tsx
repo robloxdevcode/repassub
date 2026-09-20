@@ -35,8 +35,8 @@ export function PublicCreatorProfile({
   const name = displayName || username;
 
   return (
-    <div className="min-h-screen bg-retro-bg">
-      <header className="border-b-[3px] border-retro-ink bg-retro-surface">
+    <div className="classic-shell unlock-v2 min-h-screen bg-retro-bg">
+      <header className="border-b-[3px] border-[#0a0a0a] bg-retro-surface">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-4">
           <Link href="/" className="text-sm font-semibold text-retro-text hover:text-retro-accent">
             Linklock

@@ -182,7 +182,7 @@ export function LemonadeAppShell({
     <>
       <AppNavProgress />
       <LemonadeAppSidebar showAdminPanel={showAdminPanel} plan={plan} />
-      <div className="app-stage dash-pro-stage min-h-screen bg-retro-bg md:ml-[17.5rem]">
+      <div className="classic-shell app-stage dash-pro-stage min-h-screen bg-retro-bg md:ml-[17.5rem]">
         <main className="dash-pro-main mx-auto w-full max-w-5xl px-4 md:px-8 pb-12">{children}</main>
       </div>
     </>

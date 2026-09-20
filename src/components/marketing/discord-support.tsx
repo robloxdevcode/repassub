@@ -5,13 +5,13 @@ import { SUPPORT_DISCORD_LABEL, SUPPORT_DISCORD_URL } from "@/lib/support-links"
 export function DiscordSupportStrip({ className = "" }: { className?: string }) {
   return (
     <section
-      className={`border-t border-retro-border bg-retro-surface ${className}`.trim()}
+      className={`border-t-[3px] border-[#0a0a0a] bg-memphis-yellow classic-discord-strip ${className}`.trim()}
       aria-label="Community support"
     >
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-retro-accent">Need help?</p>
-          <h2 className="mt-1 text-lg font-semibold text-retro-text">Join our Discord support server</h2>
+          <p className="font-display text-[0.5rem] md:text-[0.5625rem] text-[#0a0a0a] uppercase">Need help?</p>
+          <h2 className="mt-2 text-lg font-bold text-[#0a0a0a]">Join our Discord support server</h2>
           <p className="mt-2 text-sm text-retro-text-dim max-w-md">
             Questions about unlock links, billing, or your account — our team and community respond in Discord.
           </p>
@@ -20,7 +20,7 @@ export function DiscordSupportStrip({ className = "" }: { className?: string }) 
           href={SUPPORT_DISCORD_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="llv2-cta ui-instant inline-flex items-center gap-2 shrink-0"
+          className="classic-cta ui-instant inline-flex items-center gap-2 shrink-0 !bg-white"
         >
           <MessageCircle size={18} aria-hidden />
           {SUPPORT_DISCORD_LABEL}
@@ -43,7 +43,7 @@ export function DiscordSupportCard() {
         href={SUPPORT_DISCORD_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="llv2-cta ui-instant inline-flex items-center justify-center gap-2 min-w-[200px]"
+        className="classic-cta ui-instant inline-flex items-center justify-center gap-2 min-w-[200px]"
       >
         <MessageCircle size={18} aria-hidden />
         Open Discord

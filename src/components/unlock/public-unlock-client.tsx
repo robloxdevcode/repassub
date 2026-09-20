@@ -276,7 +276,7 @@ export function PublicUnlockClient({
   }
 
   return (
-    <div className="unlock-v2 relative min-h-screen flex flex-col">
+    <div className="classic-shell unlock-v2 relative min-h-screen flex flex-col">
       {externalPrompt ? (
         <div className="unlock-external-overlay" role="dialog" aria-modal="true" aria-labelledby="external-step-title">
           <div className="unlock-external-dialog">

@@ -9,7 +9,7 @@ export default function SignInPage() {
     <>
       <div className="auth-shell-header">
         <div className="flex justify-center mb-4">
-          <LinklockLogo size={48} showWordmark wordmarkClassName="text-retro-text font-semibold" />
+          <LinklockLogo size={48} showWordmark wordmarkClassName="font-display text-[0.5rem] text-retro-ink" />
         </div>
         <h1>Welcome back</h1>
         <p>Sign in to manage your unlock links</p>

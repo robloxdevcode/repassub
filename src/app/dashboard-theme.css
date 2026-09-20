@@ -1,32 +1,55 @@
-/* Dashboard — light lemonade (no token overrides) */
+/* Dashboard + app — Linklock Classic chunky retro */
 
 .app-stage.dash-pro-stage,
 .dash-pro-stage {
-  background: var(--retro-bg);
+  background-color: var(--retro-bg);
+  background-image:
+    linear-gradient(rgba(20, 20, 20, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 20, 20, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 .dash-pro-sidebar,
 .dash-pro-sidebar.app-sidebar {
   background: var(--retro-surface) !important;
-  border-right: 1px solid var(--retro-border) !important;
+  border-right: 3px solid #0a0a0a !important;
+  box-shadow: 4px 0 0 rgba(10, 10, 10, 0.04);
 }
 
 .dash-pro-sidebar .sidebar-nav-item {
   color: var(--retro-text-dim);
+  font-weight: 700;
+  border: 2px solid transparent;
+  border-radius: 0;
 }
 
 .dash-pro-sidebar .sidebar-nav-item:hover {
   background: var(--retro-surface-2);
   color: var(--retro-text);
+  border-color: #0a0a0a;
+}
+
+.dash-pro-sidebar .sidebar-nav-active {
+  border-color: #0a0a0a !important;
+  box-shadow: 3px 3px 0 #0a0a0a;
 }
 
 .dash-pro-sidebar .sidebar-billing-row {
-  background: var(--retro-surface-2);
-  border: 1px solid var(--retro-border);
+  background: #5eead4;
+  border: 3px solid #0a0a0a;
+  border-radius: 0;
+  box-shadow: 3px 3px 0 #0a0a0a;
 }
 
 .dash-pro-sidebar .sidebar-billing-row:hover {
-  border-color: var(--retro-ink);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #0a0a0a;
+}
+
+.dash-pro-sidebar .sidebar-primary-cta {
+  border-radius: 0 !important;
+  border: 3px solid #0a0a0a !important;
+  box-shadow: 4px 4px 0 #0a0a0a !important;
 }
 
 .dash-pro-main {
@@ -42,8 +65,16 @@
 .dash-pro-metric,
 .dash-pro-panel,
 .dash-pro-card,
-.dash-pro-empty {
+.dash-pro-empty,
+.retro-panel {
   background: var(--retro-surface) !important;
-  border: 1px solid var(--retro-border) !important;
-  border-radius: var(--ui-radius-lg);
+  border: 3px solid #0a0a0a !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 #0a0a0a;
+}
+
+.dash-pro-metric:hover,
+.dash-pro-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 #0a0a0a;
 }

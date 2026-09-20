@@ -94,18 +94,18 @@ export function NotFoundSnakeGame() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-retro-bg">
-      <div className="text-center max-w-md w-full">
+    <div className="classic-shell min-h-screen flex flex-col items-center justify-center p-4 bg-retro-bg">
+      <div className="classic-panel text-center max-w-md w-full p-8">
         <button
           type="button"
           onClick={startGame}
           disabled={reducedMotion}
-          className="font-display text-6xl font-bold text-retro-accent hover:text-retro-neon transition-colors ui-instant disabled:opacity-60"
+          className="font-display text-[0.75rem] md:text-xs text-retro-accent hover:text-retro-neon transition-colors ui-instant disabled:opacity-60 classic-bob"
           aria-label="404 — click to play snake"
         >
           404
         </button>
-        <h1 className="font-display text-xl font-bold mt-4 text-retro-text">Page not found</h1>
+        <h1 className="font-display text-[0.5625rem] mt-6 text-retro-text uppercase">Page not found</h1>
         <p className="text-retro-text-dim mt-2 text-sm">
           {reducedMotion
             ? "This page does not exist."
@@ -116,7 +116,7 @@ export function NotFoundSnakeGame() {
 
         {playing && !reducedMotion ? (
           <div
-            className="mx-auto mt-6 grid gap-px bg-retro-border border border-retro-border rounded-lg overflow-hidden"
+            className="mx-auto mt-6 grid gap-px bg-[#0a0a0a] border-[3px] border-[#0a0a0a] overflow-hidden shadow-[4px_4px_0_#0a0a0a]"
             style={{
               width: GRID * 14,
               height: GRID * 14,

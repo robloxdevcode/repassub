@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 
+import { ClassicAuthChrome } from "@/components/marketing/classic-auth-chrome";
+
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="auth-shell">
-      <div className="auth-shell-inner">{children}</div>
-    </div>
-  );
+  return <ClassicAuthChrome>{children}</ClassicAuthChrome>;
 }
