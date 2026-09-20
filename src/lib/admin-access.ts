@@ -65,14 +65,14 @@ export function canDeleteAdminLinks(user: { role: UserRole; staffRole: StaffRole
   return user.staffRole === StaffRole.HEAD_ADMIN || user.staffRole === StaffRole.OWNER;
 }
 
-/** Assign staff roles — Owner only (primary admin email can assign Owner role) */
+/** Assign staff roles — site primary admin (UserRole.ADMIN) or Staff Owner */
 export function canManageStaff(user: {
   email: string | null | undefined;
   role: UserRole;
   staffRole: StaffRole;
 }) {
+  if (user.role === UserRole.ADMIN) return true;
   if (user.staffRole === StaffRole.OWNER) return true;
-  if (user.role === UserRole.ADMIN && isSuperAdminEmail(user.email)) return true;
   return false;
 }
 
@@ -81,6 +81,8 @@ export function canAssignStaffRole(
   next: StaffRole,
 ) {
   if (!canManageStaff(actor)) return false;
-  if (next === StaffRole.OWNER && !isSuperAdminEmail(actor.email)) return false;
+  if (next === StaffRole.OWNER) {
+    return actor.role === UserRole.ADMIN || actor.staffRole === StaffRole.OWNER;
+  }
   return true;
 }

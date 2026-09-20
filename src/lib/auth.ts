@@ -1,11 +1,13 @@
 import { cache } from "react";
+import { unstable_noStore as noStore } from "next/cache";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import type { User as ClerkUser } from "@clerk/backend";
-import { UserRole } from "@prisma/client";
+import { StaffRole, UserRole } from "@prisma/client";
 import { hasDatabaseUrl } from "./env";
 import { db } from "./db";
 import { applyLifetimeProGrant, ensureLifetimeProInDb, hasLifetimePro } from "./plan-grants";
-import { canModerateUsers, hasAdminPanelAccess } from "./admin-access";
+import { canModerateUsers, hasAdminPanelAccess, isSuperAdminEmail } from "./admin-access";
+import { syncStaffAccessMetadata } from "./clerk-staff-sync";
 
 const userInclude = {
   subscriptions: {
@@ -53,6 +55,7 @@ function resolveUserRole(email: string | null | undefined, currentRole?: UserRol
 }
 
 export const getCurrentUser = cache(async function getCurrentUser() {
+  noStore();
   if (!hasDatabaseUrl()) return null;
 
   const { userId } = await auth();
@@ -120,15 +123,27 @@ export async function syncClerkUser() {
   if (existing) {
     await ensureLifetimeProInDb(existing.id, email);
     const role = resolveUserRole(email, existing.role);
-    return db.user.update({
+    let staffRole = existing.staffRole;
+    if (isSuperAdminEmail(email) && staffRole === StaffRole.NONE && role === UserRole.ADMIN) {
+      staffRole = StaffRole.OWNER;
+    }
+
+    const updated = await db.user.update({
       where: { clerkId: clerkUser.id },
       data: {
         email,
         displayName: clerkDisplayName(clerkUser, existing.displayName || existing.username),
         avatarUrl: clerkUser.imageUrl || existing.avatarUrl,
         role,
+        ...(staffRole !== existing.staffRole ? { staffRole } : {}),
       },
     });
+
+    if (hasAdminPanelAccess(updated)) {
+      await syncStaffAccessMetadata(updated.clerkId, updated.staffRole, updated.role);
+    }
+
+    return updated;
   }
 
   let finalUsername = username.toLowerCase().replace(/[^a-z0-9_]/g, "");

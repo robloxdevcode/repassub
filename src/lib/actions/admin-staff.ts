@@ -5,6 +5,7 @@ import { StaffRole, UserRole } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { canManageStaff, canAssignStaffRole } from "@/lib/admin-access";
+import { syncStaffAccessMetadata } from "@/lib/clerk-staff-sync";
 
 export type StaffActionResult = { ok: true } | { ok: false; message: string };
 
@@ -12,7 +13,7 @@ export async function setUserStaffRole(userId: string, staffRole: StaffRole): Pr
   try {
     const actor = await requireUser();
     if (!canManageStaff(actor)) {
-      return { ok: false, message: "Only Owner can assign staff roles" };
+      return { ok: false, message: "You need Owner or primary admin access to assign staff roles" };
     }
 
     if (!canAssignStaffRole(actor, staffRole)) {
@@ -29,16 +30,27 @@ export async function setUserStaffRole(userId: string, staffRole: StaffRole): Pr
       return { ok: false, message: "Admins already have full access" };
     }
 
-    await db.user.update({
+    const updated = await db.user.update({
       where: { id: trimmedId },
       data: { staffRole },
     });
 
+    await syncStaffAccessMetadata(updated.clerkId, updated.staffRole, updated.role);
+
     revalidatePath("/admin/staff");
     revalidatePath("/admin/users");
+    revalidatePath("/admin");
+    revalidatePath("/dashboard");
     return { ok: true };
   } catch (error) {
     console.error("[setUserStaffRole]", error);
+    const msg = error instanceof Error ? error.message : "";
+    if (msg.includes("HEAD_ADMIN") || msg.includes("enum")) {
+      return {
+        ok: false,
+        message: "Database needs update — run prisma/migrations/manual_classic_admin.sql on Supabase",
+      };
+    }
     return { ok: false, message: "Could not update staff role" };
   }
 }
