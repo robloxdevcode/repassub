@@ -15,7 +15,7 @@ export function SitePromoBanner() {
   if (hidden) return null;
 
   return (
-    <div className="bg-retro-surface-2 text-retro-text text-center text-sm py-2.5 px-4 relative site-promo-banner border-b border-retro-border">
+    <div className="site-promo-banner bg-gradient-to-r from-[#ffe566]/20 via-[#6ee7ff]/15 to-[#ff8bc4]/20 text-retro-text text-center text-sm py-2.5 px-4 relative border-b border-retro-border">
       <p>
         <strong>Try Linklock free</strong> — unlimited unlock links, no credit card.{" "}
         <Link href="/sign-up" className="underline font-semibold hover:opacity-90">

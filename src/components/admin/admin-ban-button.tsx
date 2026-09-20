@@ -21,16 +21,22 @@ export function AdminBanButton({
   const [optimisticBanned, setOptimisticBanned] = useOptimistic(banned, (_state, next: boolean) => next);
 
   function run(nextBanned: boolean) {
-    const previous = optimisticBanned;
-    setOptimisticBanned(nextBanned);
     startTransition(async () => {
+      setOptimisticBanned(nextBanned);
       const result = await banUser(userId, nextBanned);
       if (!result.ok) {
-        setOptimisticBanned(previous);
+        setOptimisticBanned(banned);
         toast(result.message, "error");
         return;
       }
-      toast(nextBanned ? `${username} suspended` : `${username} unbanned`, "success");
+      const note =
+        result.clerkSynced === false
+          ? " App updated; sign-in may take a moment to catch up."
+          : "";
+      toast(
+        (nextBanned ? `${username} suspended` : `${username} unbanned`) + note,
+        result.clerkSynced === false ? "error" : "success",
+      );
       setConfirming(false);
       router.refresh();
     });

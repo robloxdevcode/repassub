@@ -8,7 +8,52 @@ import { getUserAnalytics, getAnalyticsBreakdown, getBasicCampaignBreakdown, cam
 import { getActionLimit, getUserPlan, hasAdvancedAnalytics } from "@/lib/stripe";
 import { CampaignStatus, UserRole } from "@prisma/client";
 
-export type AdminBanResult = { ok: true } | { ok: false; message: string };
+export type AdminBanResult =
+  | { ok: true; clerkSynced?: boolean }
+  | { ok: false; message: string };
+
+async function syncClerkSuspension(clerkId: string, banned: boolean) {
+  const client = await clerkClient();
+  let synced = false;
+
+  try {
+    const clerkUser = await client.users.getUser(clerkId);
+    const meta = {
+      ...(clerkUser.publicMetadata as Record<string, unknown>),
+      linklockBanned: banned,
+    };
+    await client.users.updateUser(clerkId, { publicMetadata: meta });
+  } catch (error) {
+    console.error("[banUser] Clerk metadata update failed", error);
+  }
+
+  try {
+    if (banned) {
+      await client.users.banUser(clerkId);
+    } else {
+      await client.users.unbanUser(clerkId);
+    }
+    synced = true;
+  } catch (error) {
+    console.error("[banUser] Clerk ban API failed", error);
+  }
+
+  try {
+    let offset = 0;
+    const limit = 100;
+    for (;;) {
+      const { data } = await client.sessions.getSessionList({ userId: clerkId, limit, offset });
+      if (!data.length) break;
+      await Promise.all(data.map((session) => client.sessions.revokeSession(session.id)));
+      if (data.length < limit) break;
+      offset += limit;
+    }
+  } catch (error) {
+    console.error("[banUser] Clerk session revoke failed", error);
+  }
+
+  return synced;
+}
 
 export async function getDashboardStats() {
   const user = await requireUser();
@@ -154,25 +199,12 @@ export async function banUser(userId: string, banned: boolean): Promise<AdminBan
       }
     });
 
-    try {
-      const client = await clerkClient();
-      if (banned) {
-        await client.users.banUser(target.clerkId);
-      } else {
-        await client.users.unbanUser(target.clerkId);
-      }
-    } catch (clerkError) {
-      console.error("[banUser] Clerk sync failed", clerkError);
-      await db.user.update({ where: { id: trimmedId }, data: { banned: !banned } });
-      return {
-        ok: false,
-        message: "Could not sync suspension with sign-in — try again.",
-      };
-    }
+    const clerkSynced = await syncClerkSuspension(target.clerkId, banned);
 
     revalidatePath("/admin/users");
     revalidatePath("/admin");
-    return { ok: true };
+    revalidatePath("/suspended");
+    return { ok: true, clerkSynced };
   } catch (error) {
     console.error("[banUser]", error);
     const message = error instanceof Error ? error.message : "Could not update user";

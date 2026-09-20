@@ -161,9 +161,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 
   if (isAppRoute(req) && !isPublicRoute(req)) {
-
     await auth.protect();
-
   }
 
 

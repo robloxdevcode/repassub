@@ -1,31 +1,31 @@
-/* Linklock v2 — black / white / orange */
+/* Linklock v2 — lemonade.gg inspired (bright lemon / sky / pink on deep ink) */
 
 :root {
-  --retro-bg: #0a0a0a;
-  --retro-surface: #111111;
-  --retro-surface-2: #1a1a1a;
-  --retro-surface-3: #222222;
-  --retro-ink: #f5f5f5;
-  --retro-border: #2e2e2e;
-  --retro-accent: #f97316;
-  --retro-accent-dim: #ea580c;
-  --retro-neon: #fb923c;
-  --retro-blue: #93c5fd;
-  --retro-blue-dim: #60a5fa;
-  --retro-yellow: #fde047;
+  --retro-bg: #0c0c14;
+  --retro-surface: #141422;
+  --retro-surface-2: #1c1c2e;
+  --retro-surface-3: #252538;
+  --retro-ink: #fafafa;
+  --retro-border: #2e2e42;
+  --retro-accent: #ffe566;
+  --retro-accent-dim: #f5d547;
+  --retro-neon: #6ee7ff;
+  --retro-blue: #7dd3fc;
+  --retro-blue-dim: #38bdf8;
+  --retro-yellow: #ffe566;
   --retro-yellow-dim: #eab308;
-  --retro-pink: #f472b6;
+  --retro-pink: #ff8bc4;
   --retro-cyan: #67e8f9;
-  --retro-lime: #f97316;
-  --retro-success: #34d399;
+  --retro-lime: #a3e635;
+  --retro-success: #4ade80;
   --retro-warning: #fbbf24;
-  --retro-error: #f87171;
-  --retro-glow: rgba(249, 115, 22, 0.18);
-  --retro-text: #f5f5f5;
-  --retro-text-dim: #a3a3a3;
-  --retro-text-muted: #737373;
-  --retro-text-on-dark: #f5f5f5;
-  --retro-band: #111111;
+  --retro-error: #fb7185;
+  --retro-glow: rgba(255, 229, 102, 0.22);
+  --retro-text: #f4f4f5;
+  --retro-text-dim: #b4b4c8;
+  --retro-text-muted: #8b8ba3;
+  --retro-text-on-dark: #fafafa;
+  --retro-band: #141422;
   --ui-radius-sm: 0.5rem;
   --ui-radius: 0.625rem;
   --ui-radius-lg: 0.75rem;
@@ -45,8 +45,8 @@ body {
 }
 
 .ll-nav {
-  background: rgba(5, 5, 6, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(12, 12, 20, 0.82);
+  backdrop-filter: blur(16px) saturate(160%);
   border-bottom: 1px solid var(--retro-border);
 }
 
@@ -73,6 +73,11 @@ body {
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--retro-border);
+  background:
+    radial-gradient(ellipse 100% 80% at 15% -25%, rgba(255, 229, 102, 0.38), transparent 52%),
+    radial-gradient(ellipse 70% 55% at 95% 5%, rgba(110, 231, 255, 0.28), transparent 48%),
+    radial-gradient(ellipse 55% 45% at 50% 105%, rgba(255, 139, 196, 0.18), transparent 55%),
+    var(--retro-bg);
 }
 
 .llv2-hero-inner {
@@ -101,15 +106,31 @@ body {
 }
 
 .llv2-title {
-  font-size: clamp(2.25rem, 5vw, 3.75rem);
-  font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.35rem, 5.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
   color: var(--retro-text);
 }
 
 .llv2-title-accent {
   color: var(--retro-accent);
+  display: inline-block;
+}
+
+.llv2-title-accent--cycle {
+  animation: llv2-accent-in 0.45s ease-out;
+}
+
+@keyframes llv2-accent-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .llv2-sub {
@@ -124,19 +145,20 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 0 1.35rem;
+  min-height: 48px;
+  padding: 0 1.5rem;
   border-radius: 999px;
   background: var(--retro-accent);
-  color: #fff;
-  font-weight: 600;
+  color: #141414;
+  font-weight: 700;
   font-size: 0.9375rem;
-  transition: transform 80ms ease, opacity 80ms ease, box-shadow 80ms ease;
+  box-shadow: 0 10px 40px var(--retro-glow);
+  transition: transform 80ms ease, box-shadow 80ms ease;
 }
 
 .llv2-cta:hover {
-  transform: translateY(-1px);
-  opacity: 0.92;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 48px rgba(255, 229, 102, 0.35);
 }
 
 .llv2-cta:active {
@@ -269,7 +291,7 @@ body {
 }
 
 .admin-v2-nav-link--active {
-  color: #fff;
+  color: #141414;
   background: var(--retro-accent);
   border-color: var(--retro-accent-dim);
 }
@@ -297,7 +319,7 @@ body {
 
 .app-sidebar .sidebar-primary-cta {
   background: var(--retro-accent);
-  color: #fff;
+  color: #141414;
   border: 1px solid var(--retro-accent-dim);
   font-weight: 700;
   border-radius: var(--ui-radius-lg);
@@ -394,11 +416,11 @@ body {
 
 .admin-v2-search-btn {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.4rem 0.75rem;
   border-radius: var(--ui-radius);
   background: var(--retro-accent);
-  color: #fff;
+  color: #141414;
   transition: transform 80ms ease, background 80ms ease;
 }
 

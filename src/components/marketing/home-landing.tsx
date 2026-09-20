@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { DiscordSupportStrip } from "@/components/marketing/discord-support";
+import { LemonadeHeroAccent } from "@/components/marketing/lemonade-hero-accent";
 import { Lock, Share2, Sparkles } from "lucide-react";
 
 function HeroVisual() {
@@ -45,11 +46,11 @@ export function HomeLanding() {
       <section className="llv2-hero">
         <div className="llv2-hero-inner">
           <div>
-            <p className="llv2-kicker">Linklock</p>
+            <p className="llv2-kicker">Linklock for creators</p>
             <h1 className="llv2-title">
               Grow your audience
               <br />
-              <span className="llv2-title-accent">one unlock at a time</span>
+              <LemonadeHeroAccent />
             </h1>
             <p className="llv2-sub">
               Subscribe-to-unlock links built for creators. Set your steps, share one URL, and turn

@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
 import { HomeLanding } from "@/components/marketing/home-landing";
+import {
+  CtaSection,
+  FaqSection,
+  HowItWorksSection,
+  PlatformMarquee,
+  PlansSection,
+  UseCasesSection,
+} from "@/components/marketing/home-sections";
 import { HomeStructuredData } from "@/components/marketing/home-structured-data";
 import { buildPageMetadata, HOME_KEYWORDS, HOME_META_DESCRIPTION } from "@/lib/seo";
 
@@ -15,6 +23,12 @@ export default async function HomePage() {
     <>
       <HomeStructuredData />
       <HomeLanding />
+      <PlatformMarquee />
+      <HowItWorksSection />
+      <UseCasesSection />
+      <PlansSection />
+      <FaqSection />
+      <CtaSection />
     </>
   );
 }

@@ -1,18 +1,18 @@
-/* Platform UI v3 — playful black / white / orange (loads last) */
+/* Platform UI v3 — lemonade bright (loads last) */
 
 :root {
-  --retro-bg: #0a0a0a;
-  --retro-surface: #111111;
-  --retro-surface-2: #1a1a1a;
-  --retro-surface-3: #222222;
-  --retro-ink: #f5f5f5;
-  --retro-border: #2e2e2e;
-  --retro-accent: #f97316;
-  --retro-accent-dim: #ea580c;
-  --retro-neon: #fb923c;
-  --retro-glow: rgba(249, 115, 22, 0.18);
-  --retro-lime: #f97316;
-  --lt-grape-deep: #f97316;
+  --retro-bg: #0c0c14;
+  --retro-surface: #141422;
+  --retro-surface-2: #1c1c2e;
+  --retro-surface-3: #252538;
+  --retro-ink: #fafafa;
+  --retro-border: #2e2e42;
+  --retro-accent: #ffe566;
+  --retro-accent-dim: #f5d547;
+  --retro-neon: #6ee7ff;
+  --retro-glow: rgba(255, 229, 102, 0.22);
+  --retro-lime: #a3e635;
+  --lt-grape-deep: #ffe566;
   --ui-radius-sm: 0.5rem;
   --ui-radius: 0.625rem;
   --ui-radius-lg: 0.75rem;
