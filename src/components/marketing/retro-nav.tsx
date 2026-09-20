@@ -22,7 +22,7 @@ export function RetroNav() {
           <LinklockLogo size={44} showWordmark wordmarkClassName="hidden sm:inline font-display text-[0.5rem] md:text-[0.5625rem] text-retro-ink leading-snug" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1 shrink-0">
           {links.map((link) => (
             <Link
               key={link.href}

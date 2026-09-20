@@ -4,83 +4,100 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
 import { DiscordSupportStrip } from "@/components/marketing/discord-support";
-import { Lock, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
-const stripItems = ["FREE LINKS", "SUB 2 UNLOCK", "70+ PLATFORMS", "RETRO FUN", "FOR CREATORS"];
-
-const words = ["followers", "subs", "fans", "growth"];
+const steps = [
+  "Pick your unlock steps",
+  "Share one link everywhere",
+  "Fans unlock — you grow",
+];
 
 export function ClassicHomeLanding() {
-  const [word, setWord] = useState(0);
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setWord((w) => (w + 1) % words.length), 2200);
+    const id = setInterval(() => setStep((s) => (s + 1) % steps.length), 2800);
     return () => clearInterval(id);
   }, []);
 
-  const items = [...stripItems, ...stripItems];
-
   return (
-    <div className="classic-landing">
-      <section className="classic-landing-hero classic-landing-hero--fullscreen">
-        <div className="classic-landing-hero-content">
-          <p className="classic-kicker classic-bob inline-flex items-center gap-2">
-            <Sparkles size={14} aria-hidden />
-            Linklock classic
-          </p>
+    <div className="home-landing">
+      <section className="home-hero">
+        <div className="home-hero-inner">
+          <div className="home-hero-copy">
+            <p className="home-hero-tag">Subscribe-to-unlock · free to start</p>
+            <h1 className="home-hero-title">
+              Turn every download into{" "}
+              <span className="home-hero-title-line">real growth.</span>
+            </h1>
+            <p className="home-hero-lead">
+              One link for YouTube subs, Discord joins, follows, and more. Built for preset packs, beats,
+              mods, and creators who hate sketchy gate sites.
+            </p>
 
-          <h1 className="classic-landing-headline mt-8">
-            One link.
-            <br />
-            Real{" "}
-            <span key={word} className="classic-title-accent classic-word-pop">
-              {words[word]}.
-            </span>
-          </h1>
+            <div className="home-hero-actions">
+              <MarketingAuthLink href="/sign-up">
+                <span className="home-hero-cta">
+                  Create your link — free
+                  <ArrowRight size={18} aria-hidden />
+                </span>
+              </MarketingAuthLink>
+              <Link href="/pricing" className="home-hero-secondary">
+                See pricing
+              </Link>
+            </div>
 
-          <p className="classic-landing-lead mt-6">
-            Subscribe-to-unlock — playful, fast, built for preset packs, beats, and mods.
-          </p>
-
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5">
-            <MarketingAuthLink href="/sign-up">
-              <span className="classic-cta classic-cta--pulse ui-instant text-base px-8 min-h-[56px]">
-                Start free
-              </span>
-            </MarketingAuthLink>
-            <Link
-              href="/how-it-works"
-              className="text-sm font-bold text-retro-text-dim underline underline-offset-4 hover:text-retro-text"
-            >
-              How it works
-            </Link>
+            <ul className="home-hero-checklist">
+              {["Unlimited links on Free", "Live stats", "Retro-fast setup"].map((item) => (
+                <li key={item}>
+                  <Check size={16} strokeWidth={3} aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <ul className="classic-landing-pills mt-12" aria-label="Highlights">
-            <li>
-              <Zap size={18} aria-hidden /> Live in minutes
-            </li>
-            <li>
-              <Lock size={18} aria-hidden /> Your unlock steps
-            </li>
-          </ul>
+          <div className="home-hero-visual" aria-hidden>
+            <div className="home-hero-orbit home-hero-orbit--a" />
+            <div className="home-hero-orbit home-hero-orbit--b" />
+            <div className="home-hero-demo">
+              <div className="home-hero-demo-bar">
+                <span className="home-hero-demo-dot bg-[#fb7185]" />
+                <span className="home-hero-demo-dot bg-[#ffe566]" />
+                <span className="home-hero-demo-dot bg-[#5eead4]" />
+                <span className="home-hero-demo-label font-display text-[0.4375rem] md:text-[0.5rem] uppercase">
+                  unlock.flow
+                </span>
+              </div>
+              <div className="home-hero-demo-body">
+                <p className="home-hero-demo-kicker font-display text-[0.5rem] uppercase text-retro-text-muted">
+                  Step {step + 1} of 3
+                </p>
+                <p key={step} className="home-hero-demo-step">
+                  {steps[step]}
+                </p>
+                <div className="home-hero-demo-progress">
+                  <span
+                    className="home-hero-demo-progress-fill"
+                    style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                  />
+                </div>
+                <div className="home-hero-demo-fake-btn">Unlock content</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <div className="classic-strip" aria-hidden>
-        <div className="classic-strip-track">
-          <div className="classic-strip-group">
-            {items.map((item, i) => (
-              <span key={`${item}-${i}`}>★ {item}</span>
-            ))}
-          </div>
-          <div className="classic-strip-group">
-            {items.map((item, i) => (
-              <span key={`dup-${item}-${i}`}>★ {item}</span>
-            ))}
-          </div>
+      <section className="home-proof">
+        <div className="home-proof-inner">
+          <span>TikTok</span>
+          <span>YouTube</span>
+          <span>Discord</span>
+          <span>Instagram</span>
+          <span>70+ platforms</span>
         </div>
-      </div>
+      </section>
 
       <DiscordSupportStrip />
     </div>
