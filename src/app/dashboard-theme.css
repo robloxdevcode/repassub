@@ -80,3 +80,23 @@
   transform: translate(-1px, -1px);
   box-shadow: 5px 5px 0 #0a0a0a;
 }
+
+.app-stage[data-app-theme="cream"],
+.dash-pro-sidebar[data-app-theme="cream"] {
+  --retro-bg: #f0e9dc;
+  --retro-surface: #faf6ef;
+  --retro-surface-2: #ebe4d4;
+  --retro-text-muted: #5c5348;
+}
+
+.app-stage[data-app-theme="slate"],
+.dash-pro-sidebar[data-app-theme="slate"] {
+  --retro-bg: #e4e8ed;
+  --retro-surface: #f4f6f8;
+  --retro-surface-2: #dce2e9;
+  --retro-text-muted: #4a5568;
+}
+
+.staff-verified-mark {
+  color: #059669;
+}

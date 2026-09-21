@@ -5,7 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { StaffRole, UserRole } from "@prisma/client";
 import { RetroButton, RetroInput, RetroTextarea } from "@/components/retro";
-import { getBadgeLabel, PROFILE_STYLES, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
+import { useRouter } from "next/navigation";
+import { StaffRoleBadge, StaffVerifiedMark } from "@/components/brand/staff-verified-mark";
+import { getBadgeLabel, APP_THEMES, PROFILE_STYLES, PRO_PROFILE_STYLES, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
+import { isProPlanName } from "@/components/dashboard/plan-badge";
 import { getStaffProfileBadgeIds } from "@/lib/admin-access";
 import { cn } from "@/lib/utils";
 import { ProfileAvatarField } from "@/components/dashboard/profile-avatar-field";
@@ -30,8 +33,10 @@ const SOCIAL_FIELDS: { key: keyof SocialLinks; label: string; placeholder: strin
 
 export default function ProfilePage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [customSaving, setCustomSaving] = useState(false);
+  const [isPro, setIsPro] = useState(false);
   const [user, setUser] = useState<{
     username: string;
     displayName: string | null;
@@ -50,6 +55,7 @@ export default function ProfilePage() {
     Promise.all([getDashboardStats(), getProfileCustomization()])
       .then(([s, customization]) => {
         setUser(s.user);
+        setIsPro(isProPlanName(s.plan));
         setDisplayName(s.user.displayName || "");
         setBio(s.user.bio || "");
         setUsername(s.user.username);
@@ -76,7 +82,27 @@ export default function ProfilePage() {
   async function handleSaveProfile() {
     setLoading(true);
     try {
-      await updateProfile({ displayName, bio, username, avatarUrl });
+      const result = await updateProfile({ displayName, bio, username, avatarUrl });
+      if (!result.ok) {
+        toast(result.message, "error");
+        return;
+      }
+      setUsername(result.username);
+      setDisplayName(result.displayName || "");
+      setBio(result.bio || "");
+      setAvatarUrl(result.avatarUrl);
+      setUser((prev) =>
+        prev
+          ? {
+              ...prev,
+              username: result.username,
+              displayName: result.displayName,
+              bio: result.bio,
+              avatarUrl: result.avatarUrl,
+            }
+          : prev,
+      );
+      router.refresh();
       toast("Profile saved", "success");
     } catch (e) {
       toast(e instanceof Error ? e.message : "Could not save profile", "error");
@@ -89,7 +115,9 @@ export default function ProfilePage() {
     if (!local) return;
     setCustomSaving(true);
     try {
-      await updateProfileCustomization(local);
+      const saved = await updateProfileCustomization(local);
+      setLocal(saved);
+      router.refresh();
       toast("Look saved — live on your public page", "success");
     } catch {
       toast("Could not save look", "error");
@@ -146,7 +174,12 @@ export default function ProfilePage() {
               )}
             </div>
             <div className="min-w-0 flex-1 text-left pb-1">
-              <p className="font-bold text-xl md:text-2xl text-white truncate">{displayName || username}</p>
+              <p className="font-bold text-xl md:text-2xl text-white truncate inline-flex items-center gap-2 max-w-full">
+                <span className="truncate">{displayName || username}</span>
+                {previewBadges.length > 0 ? (
+                  <StaffVerifiedMark className="h-5 w-5 shrink-0 text-emerald-300" title="Verified Linklock staff" />
+                ) : null}
+              </p>
               <p className="text-sm text-white/65">@{username}</p>
               {bio ? <p className="mt-2 text-sm text-white/80 leading-relaxed line-clamp-3">{bio}</p> : null}
               {previewBadges.length > 0 ? (
@@ -154,11 +187,7 @@ export default function ProfilePage() {
                   {previewBadges.map((id) => {
                     const badge = getBadgeLabel(id);
                     if (!badge) return null;
-                    return (
-                      <span key={id} className="profile-badge">
-                        {badge.emoji} {badge.label}
-                      </span>
-                    );
+                    return <StaffRoleBadge key={id} label={badge.label} />;
                   })}
                 </div>
               ) : null}
@@ -172,21 +201,31 @@ export default function ProfilePage() {
           <h2 className="font-bold text-retro-text mb-1">Profile style</h2>
           <p className="text-sm text-retro-text-dim mb-4">Tap a theme — preview updates instantly above.</p>
           <div className="profile-style-grid">
-            {PROFILE_STYLES.map((style) => (
+            {PROFILE_STYLES.map((style) => {
+              const locked = !isPro && PRO_PROFILE_STYLES.includes(style.id);
+              return (
               <button
                 key={style.id}
                 type="button"
-                onClick={() => setLocal((p) => (p ? { ...p, style: style.id } : p))}
+                disabled={locked}
+                onClick={() => {
+                  if (locked) return;
+                  setLocal((p) => (p ? { ...p, style: style.id } : p));
+                }}
                 className={cn(
                   "profile-style-option",
                   local.style === style.id && "profile-style-option--active",
+                  locked && "profile-style-option--locked opacity-60",
                 )}
               >
                 <span className={cn("profile-style-swatch", `profile-style-swatch--${style.id}`)} aria-hidden />
                 <span className="font-bold text-sm text-retro-text">{style.label}</span>
-                <span className="text-xs text-retro-text-muted leading-snug">{style.desc}</span>
+                <span className="text-xs text-retro-text-muted leading-snug">
+                  {locked ? "Pro plan required" : style.desc}
+                </span>
               </button>
-            ))}
+            );
+            })}
           </div>
         </div>
 
@@ -206,6 +245,50 @@ export default function ProfilePage() {
           </p>
         </div>
 
+        <div className="profile-custom-panel">
+          <h2 className="font-bold text-retro-text mb-1">Dashboard theme</h2>
+          <p className="text-sm text-retro-text-dim mb-4">
+            {isPro
+              ? "Changes how the app looks for you — sidebar and workspace colors."
+              : "Pro members can pick Cream or Slate. You are on the free plan."}
+          </p>
+          <div className="profile-style-grid">
+            {APP_THEMES.map((theme) => {
+              const locked = !isPro && theme.proOnly;
+              return (
+                <button
+                  key={theme.id}
+                  type="button"
+                  disabled={locked}
+                  onClick={() => {
+                    if (locked) return;
+                    setLocal((p) => (p ? { ...p, appTheme: theme.id } : p));
+                  }}
+                  className={cn(
+                    "profile-style-option",
+                    local.appTheme === theme.id && "profile-style-option--active",
+                    locked && "profile-style-option--locked opacity-60",
+                  )}
+                >
+                  <span className={cn("profile-style-swatch", `profile-app-swatch--${theme.id}`)} aria-hidden />
+                  <span className="font-bold text-sm text-retro-text">{theme.label}</span>
+                  <span className="text-xs text-retro-text-muted leading-snug">
+                    {locked ? "Upgrade to Pro" : theme.desc}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {!isPro ? (
+            <p className="text-xs text-retro-text-muted mt-3">
+              <Link href="/billing" className="text-retro-accent underline">
+                View billing
+              </Link>{" "}
+              to unlock dashboard themes.
+            </p>
+          ) : null}
+        </div>
+
         <div className="profile-custom-panel flex flex-col gap-4">
           <ProfileAvatarField
             avatarUrl={avatarUrl}
@@ -214,7 +297,11 @@ export default function ProfilePage() {
             onUpdated={setAvatarUrl}
           />
           <RetroInput label="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-          <RetroInput label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <RetroInput
+            label="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
+          />
           <RetroTextarea
             label="Bio"
             rows={4}
@@ -261,11 +348,7 @@ export default function ProfilePage() {
               {previewBadges.map((id) => {
                 const badge = getBadgeLabel(id);
                 if (!badge) return null;
-                return (
-                  <span key={id} className="profile-badge profile-badge--earned">
-                    {badge.emoji} {badge.label}
-                  </span>
-                );
+                return <StaffRoleBadge key={id} label={badge.label} />;
               })}
             </div>
           </div>

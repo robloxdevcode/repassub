@@ -6,6 +6,7 @@ import { requireUser, requireAdmin, requireAdminPanel, requireModerator } from "
 import { db } from "@/lib/db";
 import { getUserAnalytics, getAnalyticsBreakdown, getBasicCampaignBreakdown, campaignViewCountSelect } from "@/lib/analytics";
 import { getActionLimit, getUserPlan, hasAdvancedAnalytics } from "@/lib/stripe";
+import { getEffectiveUserPlan } from "@/lib/subscription-access";
 import { CampaignStatus, StaffRole, UserRole } from "@prisma/client";
 import { isProtectedStaff } from "@/lib/admin-access";
 
@@ -49,7 +50,7 @@ async function syncClerkSuspension(clerkId: string, banned: boolean, banReason?:
 
 export async function getDashboardStats() {
   const user = await requireUser();
-  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  const plan = getEffectiveUserPlan(user.subscriptions?.[0]);
 
   const [analytics, campaignCount, recentCampaigns] = await Promise.all([
     getUserAnalytics(user.id),

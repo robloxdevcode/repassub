@@ -40,15 +40,34 @@ export const trackEventSchema = z.object({
 });
 
 export const updateProfileSchema = z.object({
-  displayName: z.string().min(1).max(50).optional(),
-  bio: z.string().max(300).optional(),
+  displayName: z
+    .string()
+    .max(50)
+    .optional()
+    .transform((s) => {
+      if (s === undefined) return undefined;
+      const t = s.trim();
+      return t.length ? t : null;
+    }),
+  bio: z
+    .string()
+    .max(500)
+    .optional()
+    .transform((s) => {
+      if (s === undefined) return undefined;
+      const t = s.trim();
+      return t.length ? t : null;
+    }),
   avatarUrl: z.string().url().optional().nullable(),
   username: z
     .string()
-    .min(3)
-    .max(30)
-    .regex(/^[a-z0-9_]+$/)
-    .optional(),
+    .trim()
+    .toLowerCase()
+    .optional()
+    .refine(
+      (v) => v === undefined || (v.length >= 3 && v.length <= 30 && /^[a-z0-9_]+$/.test(v)),
+      { message: "Username must be 3–30 characters (lowercase letters, numbers, underscore)" },
+    ),
 });
 
 export function isValidUrl(url: string): boolean {

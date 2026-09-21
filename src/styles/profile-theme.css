@@ -169,6 +169,18 @@
   background: linear-gradient(180deg, #4ade80, #14532d);
 }
 
+.profile-app-swatch--classic {
+  background: linear-gradient(135deg, #fef08a 50%, #f5f0e8 50%);
+}
+
+.profile-app-swatch--cream {
+  background: linear-gradient(135deg, #ebe4d4 50%, #faf6ef 50%);
+}
+
+.profile-app-swatch--slate {
+  background: linear-gradient(135deg, #94a3b8 50%, #e4e8ed 50%);
+}
+
 .profile-badge {
   display: inline-flex;
   align-items: center;

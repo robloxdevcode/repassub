@@ -3,7 +3,8 @@ import { DatabaseSetupRequired } from "@/components/dashboard/database-setup-req
 import { DatabaseSchemaOutdated } from "@/components/dashboard/database-schema-outdated";
 import { isDatabaseConfigError, isSchemaMigrationError, hasDatabaseUrl } from "@/lib/env";
 import { getCurrentUser, getSessionAccess } from "@/lib/auth";
-import { getUserPlan } from "@/lib/stripe";
+import { getEffectiveUserPlan } from "@/lib/subscription-access";
+import { parseProfileSettings, type AppTheme } from "@/lib/profile-settings";
 import { hasAdminPanelAccess } from "@/lib/admin-access";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -21,6 +22,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   let showAdminPanel = false;
   let plan = "FREE";
+  let appTheme: AppTheme = "classic";
 
   try {
     const access = await getSessionAccess();
@@ -28,7 +30,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     showAdminPanel = access ? hasAdminPanelAccess(access) : false;
     const user = await getCurrentUser();
     if (user?.banned) redirect("/suspended");
-    plan = getUserPlan(user?.subscriptions?.[0]?.plan);
+    plan = getEffectiveUserPlan(user?.subscriptions?.[0]);
+    const parsedSettings = parseProfileSettings(user?.profileSettings);
+    appTheme = plan === "FREE" ? "classic" : parsedSettings.appTheme;
   } catch (error) {
     if (isSchemaMigrationError(error)) {
       return <DatabaseSchemaOutdated />;
@@ -39,5 +43,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     throw error;
   }
 
-  return <LemonadeAppShell showAdminPanel={showAdminPanel} plan={plan}>{children}</LemonadeAppShell>;
+  return (
+    <LemonadeAppShell showAdminPanel={showAdminPanel} plan={plan} appTheme={appTheme}>
+      {children}
+    </LemonadeAppShell>
+  );
 }

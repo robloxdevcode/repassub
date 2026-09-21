@@ -1,6 +1,7 @@
 "use client";
 
 import { getBadgeLabel, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
+import { StaffRoleBadge, StaffVerifiedMark } from "@/components/brand/staff-verified-mark";
 import { formatNumber } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
@@ -76,7 +77,12 @@ export function PublicCreatorProfile({
           ) : (
             <div className="profile-preview-avatar-fallback mx-auto mb-4 h-24 w-24 text-2xl">{name.slice(0, 1).toUpperCase()}</div>
           )}
-          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{name}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md inline-flex flex-wrap items-center justify-center gap-2">
+            <span>{name}</span>
+            {badgeIds.length > 0 ? (
+              <StaffVerifiedMark className="h-6 w-6 text-emerald-400 drop-shadow" title="Verified Linklock staff" />
+            ) : null}
+          </h1>
           <p className="text-sm text-white/70 mt-1">@{username}</p>
           {bio ? <p className="mt-4 text-sm md:text-base text-white/85 leading-relaxed max-w-md mx-auto">{bio}</p> : null}
           {badgeIds.length > 0 ? (
@@ -84,11 +90,7 @@ export function PublicCreatorProfile({
               {badgeIds.map((id) => {
                 const badge = getBadgeLabel(id);
                 if (!badge) return null;
-                return (
-                  <span key={id} className="profile-badge">
-                    {badge.emoji} {badge.label}
-                  </span>
-                );
+                return <StaffRoleBadge key={id} label={badge.label} />;
               })}
             </div>
           ) : null}

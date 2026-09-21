@@ -1,11 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { RetroButton } from "@/components/retro";
 import { useToast } from "@/components/retro";
 import { updateProfile } from "@/lib/actions/campaigns";
-import { Camera, Loader2 } from "lucide-react";
 
 export function ProfileAvatarField({
   avatarUrl,
@@ -23,6 +22,10 @@ export function ProfileAvatarField({
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(avatarUrl);
+
+  useEffect(() => {
+    setPreview(avatarUrl);
+  }, [avatarUrl]);
 
   const initials = (displayName || username).slice(0, 1).toUpperCase();
 
@@ -47,7 +50,11 @@ export function ProfileAvatarField({
 
       if (!publicUrl) throw new Error("Could not save photo");
 
-      await updateProfile({ avatarUrl: publicUrl });
+      const save = await updateProfile({ avatarUrl: publicUrl });
+      if (!save.ok) {
+        toast(save.message, "error");
+        return;
+      }
       setPreview(publicUrl);
       onUpdated(publicUrl);
       toast("Profile photo updated", "success");
@@ -69,11 +76,11 @@ export function ProfileAvatarField({
             <span className="font-display text-xl text-retro-accent">{initials}</span>
           )}
         </div>
-        {uploading && (
-          <div className="absolute inset-0 bg-retro-ink/60 flex items-center justify-center">
-            <Loader2 size={20} className="animate-spin text-white" />
+        {uploading ? (
+          <div className="absolute inset-0 bg-retro-ink/60 flex items-center justify-center text-xs font-bold text-white">
+            Uploading…
           </div>
-        )}
+        ) : null}
       </div>
 
       <div>
@@ -96,7 +103,6 @@ export function ProfileAvatarField({
           disabled={uploading}
           onClick={() => inputRef.current?.click()}
         >
-          <Camera size={14} />
           Change photo
         </RetroButton>
       </div>

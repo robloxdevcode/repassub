@@ -11,6 +11,7 @@ import {
   type ProfileSettings,
   type SocialLinks,
 } from "@/lib/profile-settings";
+import { StaffRoleBadge } from "@/components/brand/staff-verified-mark";
 import { cn } from "@/lib/utils";
 
 const SOCIAL_FIELDS: { key: keyof SocialLinks; label: string; placeholder: string }[] = [
@@ -77,11 +78,7 @@ export function ProfileCustomization({
                   {staffBadgeIds.map((id) => {
                     const badge = getBadgeLabel(id);
                     if (!badge) return null;
-                    return (
-                      <span key={id} className="profile-badge">
-                        {badge.emoji} {badge.label}
-                      </span>
-                    );
+                    return <StaffRoleBadge key={id} label={badge.label} />;
                   })}
                 </div>
               ) : null}

@@ -1,10 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { createCampaignSchema, contentSchema, actionSchema, updateProfileSchema } from "@/lib/validations";
-import { parseProfileSettings } from "@/lib/profile-settings";
+import { parseProfileSettings, PRO_PROFILE_STYLES, type ProfileSettings } from "@/lib/profile-settings";
+import { getEffectiveUserPlan } from "@/lib/subscription-access";
 import { getUserPlan, isProPlan, getActionLimit, PLAN_LIMITS, getUnlockQuotaWindowStart, getUnlockQuotaResetAt } from "@/lib/stripe";
 import { slugify } from "@/lib/utils";
 import { getUnlockUrlForRequest } from "@/lib/site-url";
@@ -308,28 +310,81 @@ export async function getCampaign(id: string) {
   });
 }
 
+export type UpdateProfileResult =
+  | { ok: true; username: string; displayName: string | null; bio: string | null; avatarUrl: string | null }
+  | { ok: false; message: string };
+
+function formatZodError(error: z.ZodError): string {
+  const first = error.issues[0];
+  return first?.message ?? "Invalid profile data";
+}
+
 export async function updateProfile(data: {
   displayName?: string;
   bio?: string;
   username?: string;
   avatarUrl?: string | null;
-}) {
+}): Promise<UpdateProfileResult> {
   const user = await requireUser();
-  const parsed = updateProfileSchema.parse(data);
-
-  if (parsed.username && parsed.username !== user.username) {
-    const existing = await db.user.findUnique({ where: { username: parsed.username } });
-    if (existing) throw new Error("Username taken");
+  const parsed = updateProfileSchema.safeParse(data);
+  if (!parsed.success) {
+    return { ok: false, message: formatZodError(parsed.error) };
   }
 
-  const updated = await db.user.update({
-    where: { id: user.id },
-    data: parsed,
-  });
+  const fields = parsed.data;
+  const previousUsername = user.username;
 
-  revalidatePath("/profile");
-  revalidatePath("/dashboard");
-  return updated;
+  if (fields.username && fields.username !== user.username) {
+    const existing = await db.user.findUnique({ where: { username: fields.username } });
+    if (existing) return { ok: false, message: "That username is already taken" };
+  }
+
+  const updateData: {
+    displayName?: string | null;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    username?: string;
+  } = {};
+
+  if (fields.displayName !== undefined) updateData.displayName = fields.displayName;
+  if (fields.bio !== undefined) updateData.bio = fields.bio;
+  if (fields.avatarUrl !== undefined) updateData.avatarUrl = fields.avatarUrl;
+  if (fields.username !== undefined) updateData.username = fields.username;
+
+  if (Object.keys(updateData).length === 0) {
+    return {
+      ok: true,
+      username: user.username,
+      displayName: user.displayName,
+      bio: user.bio,
+      avatarUrl: user.avatarUrl,
+    };
+  }
+
+  try {
+    const updated = await db.user.update({
+      where: { id: user.id },
+      data: updateData,
+    });
+
+    revalidatePath("/profile");
+    revalidatePath("/dashboard");
+    revalidatePath(`/u/${previousUsername}`);
+    if (updated.username !== previousUsername) {
+      revalidatePath(`/u/${updated.username}`);
+    }
+
+    return {
+      ok: true,
+      username: updated.username,
+      displayName: updated.displayName,
+      bio: updated.bio,
+      avatarUrl: updated.avatarUrl,
+    };
+  } catch (error) {
+    console.error("[updateProfile]", error);
+    return { ok: false, message: "Could not save profile. Try again in a moment." };
+  }
 }
 
 export async function getProfileCustomization() {
@@ -341,9 +396,21 @@ export async function getProfileCustomization() {
   };
 }
 
-export async function updateProfileCustomization(settings: unknown) {
+export async function updateProfileCustomization(settings: unknown): Promise<ProfileSettings> {
   const user = await requireUser();
-  const parsed = parseProfileSettings(settings);
+  let parsed = parseProfileSettings(settings);
+  const effectivePlan = getEffectiveUserPlan(user.subscriptions?.[0]);
+  const isPro = effectivePlan === "PRO" || effectivePlan === "BUSINESS";
+
+  if (!isPro) {
+    if (PRO_PROFILE_STYLES.includes(parsed.style)) {
+      parsed = { ...parsed, style: "neon" };
+    }
+    if (parsed.appTheme !== "classic") {
+      parsed = { ...parsed, appTheme: "classic" };
+    }
+  }
+
   const toSave = { ...parsed, awardedBadges: [] as string[] };
 
   await db.user.update({
@@ -353,5 +420,7 @@ export async function updateProfileCustomization(settings: unknown) {
 
   revalidatePath("/profile");
   revalidatePath(`/u/${user.username}`);
+  revalidatePath("/dashboard");
+  revalidatePath("/", "layout");
   return toSave;
 }

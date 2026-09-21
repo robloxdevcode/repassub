@@ -22,6 +22,7 @@ import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 import { AdminNavItem } from "@/components/dashboard/admin-nav-item";
 import { isProPlanName } from "@/components/dashboard/plan-badge";
+import type { AppTheme } from "@/lib/profile-settings";
 
 const mainNavItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -61,9 +62,11 @@ function NavItem({
 export function LemonadeAppSidebar({
   showAdminPanel = false,
   plan = "FREE",
+  appTheme = "classic",
 }: {
   showAdminPanel?: boolean;
   plan?: string;
+  appTheme?: AppTheme;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -82,6 +85,7 @@ export function LemonadeAppSidebar({
       </button>
 
       <aside
+        data-app-theme={appTheme}
         className={cn(
           "app-sidebar dash-pro-sidebar fixed inset-y-0 left-0 z-40 w-[17.5rem] border-r border-retro-border bg-white transition-transform duration-200 md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full",
@@ -172,16 +176,21 @@ export function LemonadeAppShell({
   children,
   showAdminPanel = false,
   plan = "FREE",
+  appTheme = "classic",
 }: {
   children: ReactNode;
   showAdminPanel?: boolean;
   plan?: string;
+  appTheme?: AppTheme;
 }) {
   return (
     <>
       <AppNavProgress />
-      <LemonadeAppSidebar showAdminPanel={showAdminPanel} plan={plan} />
-      <div className="classic-shell app-stage dash-pro-stage relative min-h-screen bg-retro-bg md:ml-[17.5rem]">
+      <LemonadeAppSidebar showAdminPanel={showAdminPanel} plan={plan} appTheme={appTheme} />
+      <div
+        data-app-theme={appTheme}
+        className="classic-shell app-stage dash-pro-stage relative min-h-screen bg-retro-bg md:ml-[17.5rem]"
+      >
         <ClassicAnimatedBackdrop />
         <main className="dash-pro-main relative z-10 mx-auto w-full max-w-6xl px-4 md:px-8 pb-12">{children}</main>
       </div>

@@ -2,6 +2,8 @@ import { getStaffBadgeLabel } from "@/lib/admin-access";
 
 export type ProfileStyle = "neon" | "midnight" | "vapor" | "arcade";
 
+export type AppTheme = "classic" | "cream" | "slate";
+
 export type SocialLinks = {
   youtube?: string;
   discord?: string;
@@ -13,6 +15,7 @@ export type SocialLinks = {
 
 export type ProfileSettings = {
   style: ProfileStyle;
+  appTheme: AppTheme;
   bgUrl: string | null;
   socials: SocialLinks;
   awardedBadges: string[];
@@ -20,10 +23,19 @@ export type ProfileSettings = {
 
 export const DEFAULT_PROFILE_SETTINGS: ProfileSettings = {
   style: "neon",
+  appTheme: "classic",
   bgUrl: null,
   socials: {},
   awardedBadges: [],
 };
+
+export const APP_THEMES: { id: AppTheme; label: string; desc: string; proOnly?: boolean }[] = [
+  { id: "classic", label: "Classic", desc: "Default grid and yellow accents" },
+  { id: "cream", label: "Cream", desc: "Warm paper tones", proOnly: true },
+  { id: "slate", label: "Slate", desc: "Cool gray workspace", proOnly: true },
+];
+
+export const PRO_PROFILE_STYLES: ProfileStyle[] = ["midnight", "vapor", "arcade"];
 
 export const PROFILE_STYLES: { id: ProfileStyle; label: string; desc: string }[] = [
   { id: "neon", label: "Neon", desc: "Indigo glow on dark — default creator look" },
@@ -66,24 +78,23 @@ export function parseProfileSettings(raw: unknown): ProfileSettings {
       ? style
       : "neon";
 
+  const appThemeRaw = data.appTheme;
+  const appTheme: AppTheme =
+    appThemeRaw === "cream" || appThemeRaw === "slate" || appThemeRaw === "classic" ? appThemeRaw : "classic";
+
   const awardedBadges = Array.isArray(data.awardedBadges)
     ? data.awardedBadges.filter((b): b is string => typeof b === "string")
     : [];
 
   return {
     style: validStyle,
+    appTheme,
     bgUrl: typeof data.bgUrl === "string" ? data.bgUrl : null,
     socials,
     awardedBadges,
   };
 }
 
-export function getEarnedBadges(stats: MilestoneStats): string[] {
-  return MILESTONE_BADGES.filter((b) => b.check(stats)).map((b) => b.id);
-}
-
-export function getBadgeLabel(id: string): { label: string; emoji: string } | null {
-  const staff = getStaffBadgeLabel(id);
-  if (staff) return staff;
-  return null;
+export function getBadgeLabel(id: string): { label: string } | null {
+  return getStaffBadgeLabel(id);
 }
