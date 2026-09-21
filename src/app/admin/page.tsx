@@ -1,8 +1,10 @@
 import { getAdminStats } from "@/lib/actions/dashboard";
+import { getAdminOpenReportCount } from "@/lib/actions/admin-insights";
 import { formatNumber, formatCurrency } from "@/lib/utils";
+import Link from "next/link";
 
 export default async function AdminPage() {
-  const stats = await getAdminStats();
+  const [stats, openReports] = await Promise.all([getAdminStats(), getAdminOpenReportCount()]);
 
   const items = [
     { label: "Total users", value: formatNumber(stats.userCount) },
@@ -24,6 +26,17 @@ export default async function AdminPage() {
             <p className="admin-v2-stat-label">{item.label}</p>
           </div>
         ))}
+      </div>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link href="/admin/activity" className="admin-v2-toolbar-btn">
+          Recent signups
+        </Link>
+        <Link href="/admin/reports" className="admin-v2-toolbar-btn">
+          Reports {openReports > 0 ? `(${openReports} open)` : ""}
+        </Link>
+        <Link href="/admin/subscriptions" className="admin-v2-toolbar-btn">
+          Subscriptions
+        </Link>
       </div>
     </div>
   );

@@ -52,6 +52,94 @@
   box-shadow: 4px 4px 0 #0a0a0a !important;
 }
 
+.dashboard-theme-preview {
+  border: 3px solid #0a0a0a;
+  box-shadow: 4px 4px 0 #0a0a0a;
+  overflow: hidden;
+  background: var(--retro-bg);
+}
+
+.dashboard-theme-preview-chrome {
+  display: flex;
+  min-height: 9rem;
+}
+
+.dashboard-theme-preview-sidebar {
+  width: 28%;
+  min-width: 5.5rem;
+  border-right: 3px solid #0a0a0a;
+  background: var(--retro-surface);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dashboard-theme-preview-sidebar-label,
+.dashboard-theme-preview-stage-label {
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--retro-text-muted);
+}
+
+.dashboard-theme-preview-nav-line {
+  display: block;
+  height: 0.5rem;
+  background: var(--retro-surface-2);
+  border: 2px solid #0a0a0a;
+}
+
+.dashboard-theme-preview-nav-line--short {
+  width: 70%;
+}
+
+.dashboard-theme-preview-nav-line--active {
+  background: var(--retro-accent);
+}
+
+.dashboard-theme-preview-stage {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background-color: var(--retro-bg);
+  background-image:
+    linear-gradient(rgba(20, 20, 20, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 20, 20, 0.035) 1px, transparent 1px);
+  background-size: 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dashboard-theme-preview-card {
+  height: 2rem;
+  background: var(--retro-surface);
+  border: 2px solid #0a0a0a;
+  box-shadow: 2px 2px 0 #0a0a0a;
+}
+
+.dashboard-theme-preview-card--sm {
+  width: 55%;
+  height: 1.25rem;
+}
+
+.dashboard-theme-preview[data-app-theme="cream"],
+.dashboard-theme-preview[data-app-theme="cream"] .dashboard-theme-preview-sidebar {
+  --retro-bg: #f0e9dc;
+  --retro-surface: #faf6ef;
+  --retro-surface-2: #ebe4d4;
+  --retro-text-muted: #5c5348;
+}
+
+.dashboard-theme-preview[data-app-theme="slate"],
+.dashboard-theme-preview[data-app-theme="slate"] .dashboard-theme-preview-sidebar {
+  --retro-bg: #e4e8ed;
+  --retro-surface: #f4f6f8;
+  --retro-surface-2: #dce2e9;
+  --retro-text-muted: #4a5568;
+}
+
 .dash-pro-main {
   padding-top: 4.5rem;
   padding-bottom: 3rem;

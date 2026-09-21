@@ -156,6 +156,7 @@ model User {
   notifications    Notification[]
   prizeCodesCreated  PrizeCode[]    @relation("PrizeCodeCreatedBy")
   prizeCodesRedeemed PrizeCode[]    @relation("PrizeCodeRedeemedBy")
+  usernameAliases    UsernameAlias[]
 
   @@index([username])
   @@index([clerkId])
@@ -364,4 +365,15 @@ model PrizeCode {
 
   @@index([status, expiresAt])
   @@index([createdById, createdAt])
+}
+
+model UsernameAlias {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

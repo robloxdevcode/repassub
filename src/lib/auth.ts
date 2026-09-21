@@ -169,9 +169,7 @@ export async function syncClerkUser() {
       },
     });
 
-    if (hasAdminPanelAccess(updated)) {
-      await syncStaffAccessMetadata(updated.clerkId, updated.staffRole, updated.role);
-    }
+    await syncStaffAccessMetadata(updated.clerkId, updated.staffRole, updated.role);
 
     return updated;
   }
@@ -207,6 +205,8 @@ export async function syncClerkUser() {
       },
     },
   });
+
+  await syncStaffAccessMetadata(user.clerkId, user.staffRole, user.role);
 
   return user;
 }

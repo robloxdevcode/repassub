@@ -109,33 +109,20 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
 
 
 
-            {showAdminPanel && (
-
+            {showAdminPanel ? (
               <Link
-
                 href="/admin"
-
                 prefetch
-
                 onClick={() => setOpen(false)}
-
                 className={cn(
-
-                  "sidebar-nav-item mt-4 text-retro-error",
-
-                  pathname.startsWith("/admin") && "sidebar-nav-active"
-
+                  "sidebar-nav-item",
+                  pathname.startsWith("/admin") && "sidebar-nav-active",
                 )}
-
               >
-
-                <Shield size={17} strokeWidth={2} />
-
-                Admin
-
+                <Shield size={17} strokeWidth={2} aria-hidden />
+                Staff tools
               </Link>
-
-            )}
+            ) : null}
 
           </nav>
 

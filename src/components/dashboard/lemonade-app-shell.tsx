@@ -14,13 +14,13 @@ import {
   CreditCard,
   User,
   Gift,
+  Shield,
 } from "lucide-react";
 import { ClassicAnimatedBackdrop } from "@/components/marketing/classic-animated-backdrop";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
-import { AdminNavItem } from "@/components/dashboard/admin-nav-item";
 import { isProPlanName } from "@/components/dashboard/plan-badge";
 import type { AppTheme } from "@/lib/profile-settings";
 
@@ -118,11 +118,15 @@ export function LemonadeAppSidebar({
                 onNavigate={close}
               />
             ))}
-            <AdminNavItem
-              initialShow={showAdminPanel}
-              active={pathname.startsWith("/admin")}
-              onNavigate={close}
-            />
+            {showAdminPanel ? (
+              <NavItem
+                href="/admin"
+                label="Staff tools"
+                icon={Shield}
+                active={pathname.startsWith("/admin")}
+                onNavigate={close}
+              />
+            ) : null}
           </nav>
 
           <div className="sidebar-footer mt-auto border-t border-retro-border pt-4">

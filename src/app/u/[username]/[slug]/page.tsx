@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { getPublicCampaign } from "@/lib/actions/unlock";
+import { resolvePublicUsername } from "@/lib/username-resolve";
 import { PublicUnlockClient } from "@/components/unlock/public-unlock-client";
 import { planShowsAds, isProPlan } from "@/lib/stripe";
 import { getUnlockPageAdConfig } from "@/lib/adsense-config";
@@ -36,7 +37,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PublicUnlockPage({ params }: Props) {
   const { username, slug } = await params;
-  const campaign = await getPublicCampaign(username, slug);
+  const resolution = await resolvePublicUsername(username);
+
+  if (resolution.kind === "redirect") {
+    permanentRedirect(`/u/${resolution.to}/${slug}`);
+  }
+  if (resolution.kind === "missing") notFound();
+
+  const campaign = await getPublicCampaign(resolution.username, slug);
   if (!campaign) notFound();
 
   const plan = campaign.user.subscriptions?.[0]?.plan;

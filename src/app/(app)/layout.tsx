@@ -30,6 +30,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     showAdminPanel = access ? hasAdminPanelAccess(access) : false;
     const user = await getCurrentUser();
     if (user?.banned) redirect("/suspended");
+    if (user?.id) {
+      const { maybeSendPrizeProReminderForUser } = await import("@/lib/prize-pro-reminders");
+      void maybeSendPrizeProReminderForUser(user.id).catch(() => {});
+    }
     plan = getEffectiveUserPlan(user?.subscriptions?.[0]);
     const parsedSettings = parseProfileSettings(user?.profileSettings);
     appTheme = plan === "FREE" ? "classic" : parsedSettings.appTheme;

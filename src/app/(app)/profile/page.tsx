@@ -7,11 +7,12 @@ import { StaffRole, UserRole } from "@prisma/client";
 import { RetroButton, RetroInput, RetroTextarea } from "@/components/retro";
 import { useRouter } from "next/navigation";
 import { StaffRoleBadge, StaffVerifiedMark } from "@/components/brand/staff-verified-mark";
-import { getBadgeLabel, APP_THEMES, PROFILE_STYLES, PRO_PROFILE_STYLES, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
+import { getBadgeLabel, APP_THEMES, PROFILE_STYLES, PRO_PROFILE_STYLES, type AppTheme, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
 import { isProPlanName } from "@/components/dashboard/plan-badge";
 import { getStaffProfileBadgeIds } from "@/lib/admin-access";
 import { cn } from "@/lib/utils";
 import { ProfileAvatarField } from "@/components/dashboard/profile-avatar-field";
+import { DashboardThemePreview } from "@/components/dashboard/dashboard-theme-preview";
 import { AppPageHeader } from "@/components/dashboard/app-page-header";
 import {
   getProfileCustomization,
@@ -48,6 +49,7 @@ export default function ProfilePage() {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [local, setLocal] = useState<ProfileSettings | null>(null);
+  const [dashboardPreviewTheme, setDashboardPreviewTheme] = useState<AppTheme>("classic");
   const [access, setAccess] = useState<{ role: UserRole; staffRole: StaffRole } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -61,6 +63,7 @@ export default function ProfilePage() {
         setUsername(s.user.username);
         setAvatarUrl(s.user.avatarUrl);
         setLocal(customization.settings);
+        setDashboardPreviewTheme(customization.settings.appTheme);
         setAccess({ role: customization.role, staffRole: customization.staffRole });
       })
       .catch((e) => setLoadError(e instanceof Error ? e.message : "Could not load profile"));
@@ -117,6 +120,7 @@ export default function ProfilePage() {
     try {
       const saved = await updateProfileCustomization(local);
       setLocal(saved);
+      setDashboardPreviewTheme(saved.appTheme);
       router.refresh();
       toast("Look saved — live on your public page", "success");
     } catch {
@@ -143,6 +147,9 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  const previewOnlyDashboardTheme =
+    !isPro && dashboardPreviewTheme !== "classic" && local.appTheme === "classic";
 
   return (
     <div className="profile-page-layout pb-12">
@@ -255,36 +262,45 @@ export default function ProfilePage() {
           <div className="profile-style-grid">
             {APP_THEMES.map((theme) => {
               const locked = !isPro && theme.proOnly;
+              const selected = dashboardPreviewTheme === theme.id;
               return (
                 <button
                   key={theme.id}
                   type="button"
-                  disabled={locked}
                   onClick={() => {
-                    if (locked) return;
-                    setLocal((p) => (p ? { ...p, appTheme: theme.id } : p));
+                    setDashboardPreviewTheme(theme.id);
+                    if (!locked) {
+                      setLocal((p) => (p ? { ...p, appTheme: theme.id } : p));
+                    }
                   }}
                   className={cn(
                     "profile-style-option",
-                    local.appTheme === theme.id && "profile-style-option--active",
-                    locked && "profile-style-option--locked opacity-60",
+                    selected && "profile-style-option--active",
+                    locked && "profile-style-option--locked",
                   )}
                 >
                   <span className={cn("profile-style-swatch", `profile-app-swatch--${theme.id}`)} aria-hidden />
                   <span className="font-bold text-sm text-retro-text">{theme.label}</span>
                   <span className="text-xs text-retro-text-muted leading-snug">
-                    {locked ? "Upgrade to Pro" : theme.desc}
+                    {locked ? "Preview free · Pro to save" : theme.desc}
                   </span>
                 </button>
               );
             })}
           </div>
+          <DashboardThemePreview theme={dashboardPreviewTheme} className="mt-5" />
+          {previewOnlyDashboardTheme ? (
+            <p className="text-xs text-retro-text-muted mt-3">
+              Previewing <strong>{dashboardPreviewTheme}</strong> — upgrade to Pro and click{" "}
+              <strong>Save look to public page</strong> to keep it on your dashboard.
+            </p>
+          ) : null}
           {!isPro ? (
             <p className="text-xs text-retro-text-muted mt-3">
               <Link href="/billing" className="text-retro-accent underline">
                 View billing
               </Link>{" "}
-              to unlock dashboard themes.
+              to save Cream or Slate on your dashboard.
             </p>
           ) : null}
         </div>

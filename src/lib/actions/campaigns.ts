@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { createCampaignSchema, contentSchema, actionSchema, updateProfileSchema } from "@/lib/validations";
 import { parseProfileSettings, PRO_PROFILE_STYLES, type ProfileSettings } from "@/lib/profile-settings";
 import { getEffectiveUserPlan } from "@/lib/subscription-access";
+import { isUsernameReserved } from "@/lib/username-resolve";
 import { getUserPlan, isProPlan, getActionLimit, PLAN_LIMITS, getUnlockQuotaWindowStart, getUnlockQuotaResetAt } from "@/lib/stripe";
 import { slugify } from "@/lib/utils";
 import { getUnlockUrlForRequest } from "@/lib/site-url";
@@ -335,8 +336,9 @@ export async function updateProfile(data: {
   const previousUsername = user.username;
 
   if (fields.username && fields.username !== user.username) {
-    const existing = await db.user.findUnique({ where: { username: fields.username } });
-    if (existing) return { ok: false, message: "That username is already taken" };
+    if (await isUsernameReserved(fields.username, user.id)) {
+      return { ok: false, message: "That username is already taken" };
+    }
   }
 
   const updateData: {
@@ -362,9 +364,21 @@ export async function updateProfile(data: {
   }
 
   try {
-    const updated = await db.user.update({
-      where: { id: user.id },
-      data: updateData,
+    const updated = await db.$transaction(async (tx) => {
+      const row = await tx.user.update({
+        where: { id: user.id },
+        data: updateData,
+      });
+
+      if (row.username !== previousUsername) {
+        await tx.usernameAlias.upsert({
+          where: { username: previousUsername.toLowerCase() },
+          create: { username: previousUsername.toLowerCase(), userId: user.id },
+          update: { userId: user.id },
+        });
+      }
+
+      return row;
     });
 
     revalidatePath("/profile");
