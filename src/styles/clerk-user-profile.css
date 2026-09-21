@@ -1,0 +1,189 @@
+/* Clerk UserProfile on /settings — full width, centered, nothing clipped */
+
+.settings-clerk-host {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.settings-clerk-host .cl-rootBox {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.settings-clerk-host .cl-cardBox {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-shadow: none !important;
+}
+
+.settings-clerk-host .cl-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+@media (min-width: 640px) {
+  .settings-clerk-host .cl-card {
+    flex-direction: row !important;
+    min-height: 22rem;
+  }
+}
+
+.settings-clerk-host .cl-navbar {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex-shrink: 0 !important;
+  padding: 1rem 1.25rem !important;
+  border-bottom: 2px solid #0a0a0a !important;
+  background: var(--retro-surface-2) !important;
+}
+
+@media (min-width: 640px) {
+  .settings-clerk-host .cl-navbar {
+    width: 11.5rem !important;
+    max-width: 11.5rem !important;
+    border-bottom: none !important;
+    border-right: 2px solid #0a0a0a !important;
+  }
+}
+
+.settings-clerk-host .cl-navbarButtons {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 0.35rem !important;
+}
+
+@media (min-width: 640px) {
+  .settings-clerk-host .cl-navbarButtons {
+    flex-direction: column !important;
+  }
+}
+
+.settings-clerk-host .cl-navbarButton {
+  justify-content: flex-start !important;
+  font-weight: 700 !important;
+  border-radius: 0 !important;
+  border: 2px solid transparent !important;
+}
+
+.settings-clerk-host .cl-navbarButton[data-active="true"] {
+  background: var(--retro-accent) !important;
+  border-color: #0a0a0a !important;
+  color: #0a0a0a !important;
+}
+
+.settings-clerk-host .cl-pageScrollBox {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  padding: 1.25rem 1.25rem 1.5rem !important;
+  overflow: visible !important;
+}
+
+@media (min-width: 640px) {
+  .settings-clerk-host .cl-pageScrollBox {
+    padding: 1.5rem 1.75rem 2rem !important;
+  }
+}
+
+.settings-clerk-host .cl-page,
+.settings-clerk-host .cl-profilePage,
+.settings-clerk-host .cl-scrollBox {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+.settings-clerk-host .cl-profileSection {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-bottom: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
+  border-bottom: 1px solid var(--retro-border) !important;
+}
+
+.settings-clerk-host .cl-profileSection:last-child {
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.settings-clerk-host .cl-profileSectionContent {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 0.75rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+@media (min-width: 480px) {
+  .settings-clerk-host .cl-profileSectionContent {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+  }
+}
+
+.settings-clerk-host .cl-profileSectionPrimaryButton,
+.settings-clerk-host .cl-button {
+  flex-shrink: 0 !important;
+  max-width: 100% !important;
+}
+
+.settings-clerk-host .cl-userPreview,
+.settings-clerk-host .cl-userPreviewMainIdentifier {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.settings-clerk-host .cl-footer {
+  margin-top: 1.5rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px solid var(--retro-border) !important;
+}
+
+.settings-clerk-host .cl-headerTitle {
+  display: block !important;
+}
+
+.settings-clerk-host .cl-headerSubtitle {
+  display: block !important;
+}
+
+.settings-page-card {
+  overflow: visible !important;
+  padding: 0 !important;
+}
+
+.settings-page-card .settings-clerk-host {
+  padding: 0;
+}
+
+.settings-clerk-intro {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid #0a0a0a;
+  background: var(--retro-surface);
+}
+
+@media (min-width: 640px) {
+  .settings-clerk-intro {
+    padding: 1rem 1.75rem;
+  }
+}

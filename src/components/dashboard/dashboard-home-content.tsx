@@ -175,7 +175,7 @@ export async function DashboardHomeContent() {
             </div>
           </section>
 
-          <section className="dash-pro-metrics dash-pro-metrics--muted" aria-label="Stats preview">
+          <section className="dash-pro-metrics-preview dash-pro-metrics--muted" aria-label="Stats preview">
             <p className="dash-pro-metrics-caption">Your stats will show here once a link is live.</p>
             <div className="dash-pro-metrics-grid">
               {metrics.map((metric) => (
