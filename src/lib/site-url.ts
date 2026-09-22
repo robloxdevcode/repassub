@@ -11,7 +11,13 @@ export function getConfiguredSiteUrl() {
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
     process.env.NEXT_PUBLIC_APP_URL?.trim();
 
-  return configured ? normalizeSiteUrl(configured) : null;
+  if (!configured) return null;
+
+  let url = normalizeSiteUrl(configured);
+  if (url.startsWith("http://") && !url.includes("localhost")) {
+    url = `https://${url.slice("http://".length)}`;
+  }
+  return url;
 }
 
 /** Site URL for server actions (no request headers — safe in production). */
@@ -27,8 +33,9 @@ export async function getRequestSiteUrl() {
     headerList.get("host")?.trim();
 
   if (host && !host.startsWith("localhost")) {
-    const proto = headerList.get("x-forwarded-proto")?.split(",")[0]?.trim() || "https";
-    return normalizeSiteUrl(`${proto}://${host}`);
+    const forwarded = headerList.get("x-forwarded-proto")?.split(",")[0]?.trim().toLowerCase();
+    const proto = forwarded === "http" ? "https" : forwarded || "https";
+    return normalizeSiteUrl(`${proto}://${host.split(",")[0]?.trim()}`);
   }
 
   return getConfiguredSiteUrl() || "http://localhost:3000";

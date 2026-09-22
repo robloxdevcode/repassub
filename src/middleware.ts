@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 import { NextResponse } from "next/server";
+import { enforceHttpsRedirect } from "@/lib/enforce-https";
 
 const isPublicRoute = createRouteMatcher([
 
@@ -108,6 +109,9 @@ const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
 
 export default clerkMiddleware(async (auth, req) => {
+  const httpsRedirect = enforceHttpsRedirect(req);
+  if (httpsRedirect) return httpsRedirect;
+
   const host = req.headers.get("host") || "";
   const pathname = req.nextUrl.pathname;
 
