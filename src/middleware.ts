@@ -58,11 +58,22 @@ const isPublicRoute = createRouteMatcher([
 
 const isAuthRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 
-
-
-/** Only the homepage redirects signed-in users to the dashboard. */
-
-const isHomepage = createRouteMatcher(["/"]);
+/** Signed-in users go to the app — no marketing/landing pages. */
+const isSignedInAppRedirectRoute = createRouteMatcher([
+  "/",
+  "/features(.*)",
+  "/how-it-works(.*)",
+  "/pricing(.*)",
+  "/creators(.*)",
+  "/use-cases(.*)",
+  "/alternatives(.*)",
+  "/grow(.*)",
+  "/about(.*)",
+  "/docs(.*)",
+  "/blog(.*)",
+  "/help(.*)",
+  "/support(.*)",
+]);
 
 
 
@@ -143,9 +154,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 
   if (host.startsWith("app.") && pathname === "/") {
-
     return NextResponse.redirect(new URL("/dashboard", req.url));
-
   }
 
 
@@ -168,7 +177,9 @@ export default clerkMiddleware(async (auth, req) => {
 
   const { userId } = await auth();
 
-
+  if (userId && isSignedInAppRedirectRoute(req)) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
 
   if (isAuthRoute(req) && userId) {
 
