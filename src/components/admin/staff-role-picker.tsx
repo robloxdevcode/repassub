@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 import { StaffRole } from "@prisma/client";
 import { setUserStaffRole } from "@/lib/actions/admin-staff";
@@ -19,7 +18,6 @@ export function StaffRolePicker({
   canAssignOwner: boolean;
 }) {
   const { toast } = useToast();
-  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [inlineError, setInlineError] = useState<string | null>(null);
   const [optimisticRole, setOptimisticRole] = useOptimistic(current, (_state, next: StaffRole) => next);
@@ -44,9 +42,8 @@ export function StaffRolePicker({
         next === StaffRole.NONE
           ? `Removed staff role for ${username}`
           : `${username} is now ${STAFF_ROLE_LABELS[next]}`,
-        "success"
+        "success",
       );
-      router.refresh();
     });
   }
 

@@ -65,6 +65,16 @@ export function AdminSearchBar({
       <button type="submit" className="admin-v2-search-btn">
         {pending ? "…" : "Go"}
       </button>
+      {value ? (
+        <button
+          type="button"
+          className="admin-v2-search-clear"
+          onClick={() => setValue("")}
+          aria-label="Clear search"
+        >
+          Clear
+        </button>
+      ) : null}
     </form>
   );
 }

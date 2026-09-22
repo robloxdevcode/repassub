@@ -207,12 +207,15 @@ export async function banUser(
       }
     });
 
-    const clerkSynced = await syncClerkSuspension(target.clerkId, banned, reasonToStore);
-
     revalidatePath("/admin/users");
-    revalidatePath("/admin");
+    revalidatePath("/admin/activity");
     revalidatePath("/suspended");
-    return { ok: true, clerkSynced };
+
+    void syncClerkSuspension(target.clerkId, banned, reasonToStore).catch((error) => {
+      console.error("[banUser] background Clerk sync failed", error);
+    });
+
+    return { ok: true, clerkSynced: true };
   } catch (error) {
     console.error("[banUser]", error);
     const message = error instanceof Error ? error.message : "Could not update user";

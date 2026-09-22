@@ -426,6 +426,33 @@ body {
   transition: transform 80ms ease, background 80ms ease;
 }
 
+.admin-v2-search-clear {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.5rem;
+  color: var(--retro-text-muted);
+}
+
+.admin-v2-search-clear:hover {
+  color: var(--retro-text);
+  text-decoration: underline;
+}
+
+.admin-v2-link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.admin-v2-link:hover {
+  color: var(--retro-accent-dim);
+}
+
+.admin-v2-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
 .admin-v2-table-wrap {
   border: 1px solid var(--retro-border);
   border-radius: var(--ui-radius-lg);

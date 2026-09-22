@@ -1,23 +1,21 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { getAdminUsers } from "@/lib/actions/dashboard";
 import { AdminBanButton } from "@/components/admin/admin-ban-button";
 import { AdminSearchBar } from "@/components/admin/admin-search";
 import { AdminTable } from "@/components/admin/lemonade-admin-shell";
 import { AdminExportButton } from "@/components/admin/admin-export-button";
-import { STAFF_ROLE_LABELS } from "@/lib/admin-access";
+import { STAFF_ROLE_LABELS, canModerateUsers } from "@/lib/admin-access";
 import { UserRole, StaffRole } from "@prisma/client";
-import { getCurrentUser, requireAdminPanel } from "@/lib/auth";
-import { canModerateUsers } from "@/lib/admin-access";
+import { requireAdminPanel } from "@/lib/auth";
 
 interface Props {
   searchParams: Promise<{ q?: string }>;
 }
 
 export default async function AdminUsersPage({ searchParams }: Props) {
-  await requireAdminPanel();
-  const user = await getCurrentUser();
-  const canModerate = user ? canModerateUsers(user) : false;
-  const { q } = await searchParams;
+  const [{ q }, actor] = await Promise.all([searchParams, requireAdminPanel()]);
+  const canModerate = canModerateUsers(actor);
   const users = await getAdminUsers(q);
 
   const exportRows = users.map((u) => [
@@ -73,7 +71,9 @@ export default async function AdminUsersPage({ searchParams }: Props) {
               users.map((u) => (
                 <tr key={u.id}>
                   <td>
-                    <span className="admin-v2-strong">{u.username}</span>
+                    <Link href={`/u/${u.username}`} className="admin-v2-strong admin-v2-link" target="_blank">
+                      {u.username}
+                    </Link>
                   </td>
                   <td className="admin-v2-mono">{u.email || "—"}</td>
                   <td>

@@ -35,13 +35,13 @@ export async function setUserStaffRole(userId: string, staffRole: StaffRole): Pr
       data: { staffRole },
     });
 
-    await syncStaffAccessMetadata(updated.clerkId, updated.staffRole, updated.role);
+    void syncStaffAccessMetadata(updated.clerkId, updated.staffRole, updated.role).catch((error) => {
+      console.error("[setUserStaffRole] Clerk metadata sync failed", error);
+    });
 
     revalidatePath("/admin/staff");
     revalidatePath("/admin/users");
-    revalidatePath("/admin");
-    revalidatePath("/dashboard");
-    revalidatePath("/", "layout");
+    revalidatePath("/admin/activity");
     return { ok: true };
   } catch (error) {
     console.error("[setUserStaffRole]", error);

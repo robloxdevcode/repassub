@@ -1,4 +1,5 @@
 import { unstable_noStore as noStore } from "next/cache";
+import { cache } from "react";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import type { User as ClerkUser } from "@clerk/backend";
 import { StaffRole, UserRole } from "@prisma/client";
@@ -84,7 +85,7 @@ export async function getSessionAccess(): Promise<SessionAccess | null> {
   return row;
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   noStore();
   if (!hasDatabaseUrl()) return null;
 
@@ -107,14 +108,14 @@ export async function getCurrentUser() {
   if (!user) return null;
 
   return applyLifetimeProGrant(user);
-}
+});
 
-export async function requireUser() {
+export const requireUser = cache(async () => {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
   if (user.banned) throw new Error("Account suspended");
   return user;
-}
+});
 
 export async function requireAdmin() {
   const user = await requireUser();
@@ -122,17 +123,17 @@ export async function requireAdmin() {
   return user;
 }
 
-export async function requireAdminPanel() {
+export const requireAdminPanel = cache(async () => {
   const user = await requireUser();
   if (!hasAdminPanelAccess(user)) throw new Error("Forbidden");
   return user;
-}
+});
 
-export async function requireModerator() {
+export const requireModerator = cache(async () => {
   const user = await requireUser();
   if (!canModerateUsers(user)) throw new Error("Forbidden");
   return user;
-}
+});
 
 export async function syncClerkUser() {
   if (!hasDatabaseUrl()) return null;

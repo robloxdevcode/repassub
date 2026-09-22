@@ -64,7 +64,7 @@ export function RewardCodesPanel({
     if (view !== "live") return;
     const t = setInterval(() => {
       void refreshLists();
-    }, 5000);
+    }, 30_000);
     return () => clearInterval(t);
   }, [view, refreshLists]);
 
@@ -104,7 +104,7 @@ export function RewardCodesPanel({
             Generate one-time codes for Discord giveaway winners. Codes expire after 2 minutes if unused.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <button
             type="button"
             className={cn("admin-v2-toolbar-btn", view === "live" && "ring-2 ring-retro-accent")}
@@ -119,6 +119,16 @@ export function RewardCodesPanel({
           >
             History
           </button>
+          {view === "live" ? (
+            <button
+              type="button"
+              className="admin-v2-toolbar-btn"
+              disabled={pending}
+              onClick={() => startTransition(() => refreshLists())}
+            >
+              Refresh list
+            </button>
+          ) : null}
         </div>
       </div>
 
