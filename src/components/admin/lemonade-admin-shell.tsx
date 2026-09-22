@@ -21,7 +21,6 @@ export function LemonadeAdminShell({
     { href: "/admin/activity", label: "Activity" },
     { href: "/admin/users", label: "People" },
     { href: "/admin/links", label: "Links" },
-    { href: "/admin/reports", label: "Reports" },
     { href: "/admin/subscriptions", label: "Subscriptions" },
     ...(showRewardCodesTab ? [{ href: "/admin/reward-codes", label: "Reward codes" }] : []),
     ...(showStaffTab ? [{ href: "/admin/staff", label: "Staff" }] : []),

@@ -15,7 +15,6 @@ export function AdminShell({
     { href: "/admin", label: "Overview" },
     { href: "/admin/users", label: "People" },
     { href: "/admin/links", label: "Links" },
-    { href: "/admin/reports", label: "Reports" },
     ...(showStaffTab ? [{ href: "/admin/staff", label: "Staff roles" }] : []),
   ];
 
