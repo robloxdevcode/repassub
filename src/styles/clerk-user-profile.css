@@ -4,12 +4,21 @@
   width: 100%;
   min-width: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .settings-clerk-host .cl-rootBox {
   width: 100% !important;
   max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+@media (min-width: 640px) {
+  .settings-clerk-host .cl-rootBox {
+    max-width: 36rem !important;
+  }
 }
 
 .settings-clerk-host .cl-cardBox {
@@ -24,9 +33,9 @@
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  background: var(--retro-surface) !important;
+  border: 2px solid #0a0a0a !important;
+  box-shadow: 4px 4px 0 #0a0a0a !important;
   padding: 0 !important;
   overflow: visible !important;
 }
@@ -169,6 +178,9 @@
 .settings-page-card {
   overflow: visible !important;
   padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 .settings-page-card .settings-clerk-host {

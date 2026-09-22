@@ -2,10 +2,11 @@
 
 import { getBadgeLabel, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
 import { StaffRoleBadge, StaffVerifiedMark } from "@/components/brand/staff-verified-mark";
+import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { formatNumber } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
-import { ExternalLink, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type PublicCreatorLink = {
@@ -14,6 +15,15 @@ export type PublicCreatorLink = {
   slug: string;
   description: string | null;
   viewCount: number;
+};
+
+const SOCIAL_LABELS: Record<keyof SocialLinks, string> = {
+  youtube: "YouTube",
+  discord: "Discord",
+  instagram: "Instagram",
+  tiktok: "TikTok",
+  twitter: "X",
+  twitch: "Twitch",
 };
 
 export function PublicCreatorProfile({
@@ -38,6 +48,9 @@ export function PublicCreatorProfile({
 }) {
   const name = displayName || username;
   const style = profileSettings.style;
+  const socialEntries = (Object.entries(profileSettings.socials) as [keyof SocialLinks, string | undefined][]).filter(
+    ([, url]) => typeof url === "string" && url.trim().length > 0,
+  );
   const bgStyle = profileSettings.bgUrl
     ? {
         backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.45)), url(${profileSettings.bgUrl})`,
@@ -48,12 +61,12 @@ export function PublicCreatorProfile({
 
   return (
     <div className="public-creator-page classic-shell unlock-v2 bg-retro-bg">
-      <header className="border-b-[3px] border-[#0a0a0a] bg-retro-surface shrink-0">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-          <Link href="/" className="text-sm font-bold text-retro-text hover:text-retro-accent">
-            Linklock
+      <header className="public-creator-topbar shrink-0">
+        <div className="public-creator-topbar-inner">
+          <Link href="/" className="public-creator-brand" prefetch>
+            <LinklockLogo size={34} showWordmark wordmarkClassName="text-retro-text font-bold text-base sm:text-lg" />
           </Link>
-          <Link href="/sign-up" className="text-sm font-bold text-retro-accent hover:underline">
+          <Link href="/sign-up" className="public-creator-top-cta" prefetch>
             Create your link
           </Link>
         </div>
@@ -69,22 +82,35 @@ export function PublicCreatorProfile({
             <Image
               src={avatarUrl}
               alt=""
-              width={96}
-              height={96}
-              className="h-24 w-24 rounded-2xl mx-auto mb-4 object-cover border-[3px] border-white/90 shadow-lg"
+              width={112}
+              height={112}
+              className="public-creator-avatar mx-auto mb-4 object-cover"
               unoptimized
             />
           ) : (
-            <div className="profile-preview-avatar-fallback mx-auto mb-4 h-24 w-24 text-2xl">{name.slice(0, 1).toUpperCase()}</div>
+            <div className="profile-preview-avatar-fallback public-creator-avatar mx-auto mb-4 text-2xl">
+              {name.slice(0, 1).toUpperCase()}
+            </div>
           )}
-          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md inline-flex flex-wrap items-center justify-center gap-2">
+          <h1 className="public-creator-name">
             <span>{name}</span>
             {badgeIds.length > 0 ? (
               <StaffVerifiedMark className="h-6 w-6 text-emerald-400 drop-shadow" title="Verified Linklock staff" />
             ) : null}
           </h1>
           <p className="text-sm text-white/70 mt-1">@{username}</p>
-          {bio ? <p className="mt-4 text-sm md:text-base text-white/85 leading-relaxed max-w-md mx-auto">{bio}</p> : null}
+          {bio ? <p className="public-creator-bio">{bio}</p> : null}
+          {socialEntries.length > 0 ? (
+            <ul className="public-creator-socials">
+              {socialEntries.map(([key, url]) => (
+                <li key={key}>
+                  <a href={url!} target="_blank" rel="noopener noreferrer" className="public-creator-social-link">
+                    {SOCIAL_LABELS[key]}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
           {badgeIds.length > 0 ? (
             <div className="mt-5 flex flex-wrap gap-2 justify-center">
               {badgeIds.map((id) => {
@@ -98,22 +124,22 @@ export function PublicCreatorProfile({
       </section>
 
       <main className="public-creator-body">
-        <h2 className="font-display text-[0.5rem] md:text-[0.5625rem] uppercase text-retro-text-muted mb-4">
-          Unlock links
-        </h2>
+        <h2 className="public-creator-section-title">Unlock links</h2>
         {links.length === 0 ? (
-          <p className="text-sm text-retro-text-dim">No published links yet.</p>
+          <div className="public-creator-empty">
+            <p className="font-bold text-retro-text">No published links yet</p>
+            <p className="text-sm text-retro-text-dim mt-2 leading-relaxed">
+              When {username} publishes unlock pages, they will show up here.
+            </p>
+          </div>
         ) : (
-          <ul className="space-y-3">
+          <ul className="public-creator-link-list">
             {links.map((link) => {
               const href = `${siteUrl}/u/${username}/${link.slug}`;
               return (
                 <li key={link.id}>
-                  <Link
-                    href={href}
-                    className="retro-panel p-4 flex items-center gap-4 hover:border-retro-accent transition-colors block"
-                  >
-                    <div className="h-10 w-10 rounded-lg bg-retro-accent/15 flex items-center justify-center shrink-0 border-2 border-[#0a0a0a]">
+                  <Link href={href} className="public-creator-link-card">
+                    <div className="public-creator-link-icon" aria-hidden>
                       <Lock size={18} className="text-retro-accent" />
                     </div>
                     <div className="min-w-0 flex-1 text-left">
@@ -123,7 +149,6 @@ export function PublicCreatorProfile({
                       ) : null}
                       <p className="text-xs text-retro-text-dim mt-1">{formatNumber(link.viewCount)} views</p>
                     </div>
-                    <ExternalLink size={16} className="text-retro-text-muted shrink-0" />
                   </Link>
                 </li>
               );
@@ -131,6 +156,15 @@ export function PublicCreatorProfile({
           </ul>
         )}
       </main>
+
+      <footer className="public-creator-footer">
+        <p>
+          Powered by{" "}
+          <Link href="/" className="font-bold text-retro-accent hover:underline">
+            Linklock
+          </Link>
+        </p>
+      </footer>
     </div>
   );
 }

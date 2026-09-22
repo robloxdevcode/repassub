@@ -56,9 +56,10 @@ export default function SettingsPage() {
   const isPro = isProPlanName(plan);
 
   return (
-    <div className="mx-auto max-w-4xl w-full min-w-0">
+    <div className="settings-page">
       <AppPageHeader
         title="Settings"
+        className="text-left sm:text-center sm:items-center"
         subtitle={
           plan === null
             ? "Account and plan."
@@ -69,10 +70,12 @@ export default function SettingsPage() {
       />
 
       {plan !== null ? (
-        <p className="mb-4 text-sm font-semibold text-retro-text-dim">{planDisplayName(plan)} plan</p>
+        <p className="mb-4 text-sm font-semibold text-retro-text-dim text-left sm:text-center">
+          {planDisplayName(plan)} plan
+        </p>
       ) : null}
 
-      <div className="flex gap-1 mb-8 overflow-x-auto">
+      <div className="settings-page-tabs">
         {TABS.map((t) => (
           <button
             key={t}
@@ -89,7 +92,7 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      <AppCard className={cn(tab === "Account" ? "settings-page-card" : "p-4 md:p-6")}>
+      <AppCard className={cn(tab === "Account" ? "settings-page-card settings-account-panel" : "settings-plan-panel")}>
         {tab === "Account" && (
           <div className="settings-clerk-host w-full min-w-0">
             <p className="settings-clerk-intro text-sm text-retro-text-dim leading-relaxed">
