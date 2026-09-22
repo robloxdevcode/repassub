@@ -1,0 +1,148 @@
+/* Site-wide slow directional background pan (up-left) */
+
+:root {
+  --ll-pan-duration: 90s;
+  --ll-pan-duration-gradient: 75s;
+  --ll-pan-duration-photo: 120s;
+}
+
+@keyframes ll-bg-pan {
+  from {
+    background-position: 100% 100%;
+  }
+  to {
+    background-position: 0% 0%;
+  }
+}
+
+@keyframes ll-bg-pan-grid {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: -24px -24px, -24px -24px;
+  }
+}
+
+.ll-bg-pan {
+  background-repeat: no-repeat;
+  background-size: 125% 125%;
+  animation: ll-bg-pan var(--ll-pan-duration-gradient) linear infinite;
+}
+
+.ll-bg-pan--photo {
+  animation-duration: var(--ll-pan-duration-photo);
+}
+
+.ll-bg-pan--slow {
+  animation-duration: var(--ll-pan-duration);
+}
+
+.ll-bg-pan-grid {
+  animation: ll-bg-pan-grid var(--ll-pan-duration) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ll-bg-pan,
+  .ll-bg-pan-grid {
+    animation: none !important;
+    background-position: 50% 50%;
+  }
+}
+
+html.linklock-reduce-motion .ll-bg-pan,
+html.linklock-reduce-motion .ll-bg-pan-grid {
+  animation: none !important;
+  background-position: 50% 50%;
+}
+
+.profile-hero-pan-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: #0f0a1a;
+}
+
+.profile-hero-pan-layer--neon {
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(129, 140, 248, 0.45), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 100% 80%, rgba(56, 189, 248, 0.25), transparent 50%),
+    linear-gradient(160deg, #1e1b4b 0%, #0f172a 55%, #020617 100%);
+}
+
+.profile-hero-pan-layer--midnight {
+  background-color: #020617;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(59, 130, 246, 0.35), transparent 55%),
+    linear-gradient(180deg, #0c1929 0%, #020617 100%);
+}
+
+.profile-hero-pan-layer--vapor {
+  background-color: #1a0a14;
+  background-image:
+    radial-gradient(ellipse 60% 55% at 0% 50%, rgba(244, 114, 182, 0.4), transparent 50%),
+    radial-gradient(ellipse 60% 55% at 100% 30%, rgba(34, 211, 238, 0.35), transparent 50%),
+    linear-gradient(135deg, #2e1065 0%, #831843 50%, #0e7490 100%);
+}
+
+.profile-hero-pan-layer--arcade {
+  background-color: #052e16;
+  background-image:
+    radial-gradient(ellipse 50% 40% at 50% 0%, rgba(74, 222, 128, 0.45), transparent 55%),
+    linear-gradient(180deg, #14532d 0%, #052e16 100%);
+}
+
+.profile-hero-pan-layer--custom {
+  background-color: #07070d;
+  background-size: 120% 120%;
+}
+
+.profile-preview .profile-hero-pan-layer {
+  border-radius: 0;
+}
+
+.public-creator-hero,
+.profile-preview {
+  overflow: hidden;
+}
+
+.public-creator-hero {
+  background: transparent;
+}
+
+.profile-preview {
+  background: transparent;
+}
+
+.create-wizard-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin-bottom: 2rem;
+  padding: 0.75rem 0 1rem;
+  background: color-mix(in srgb, var(--retro-bg) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 2px solid var(--retro-border);
+}
+
+@media (min-width: 768px) {
+  .create-wizard-sticky {
+    position: static;
+    backdrop-filter: none;
+    border-bottom: none;
+    padding: 0;
+  }
+}
+
+.create-publish-success-actions {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 10;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--retro-border);
+}
+
+html.linklock-reduce-motion .ll-dot-canvas {
+  visibility: hidden;
+}

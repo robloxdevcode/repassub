@@ -12,6 +12,7 @@ import { isProPlanName } from "@/components/dashboard/plan-badge";
 import { getStaffProfileBadgeIds } from "@/lib/admin-access";
 import { cn } from "@/lib/utils";
 import { ProfileAvatarField } from "@/components/dashboard/profile-avatar-field";
+import { ProfileHeroPanLayer } from "@/components/profile/profile-hero-pan-layer";
 import { DashboardThemePreview } from "@/components/dashboard/dashboard-theme-preview";
 import { AppPageHeader } from "@/components/dashboard/app-page-header";
 import {
@@ -49,6 +50,7 @@ export default function ProfilePage() {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [local, setLocal] = useState<ProfileSettings | null>(null);
+  const [savedLook, setSavedLook] = useState<ProfileSettings | null>(null);
   const [dashboardPreviewTheme, setDashboardPreviewTheme] = useState<AppTheme>("classic");
   const [access, setAccess] = useState<{ role: UserRole; staffRole: StaffRole } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -63,6 +65,7 @@ export default function ProfilePage() {
         setUsername(s.user.username);
         setAvatarUrl(s.user.avatarUrl);
         setLocal(customization.settings);
+        setSavedLook(customization.settings);
         setDashboardPreviewTheme(customization.settings.appTheme);
         setAccess({ role: customization.role, staffRole: customization.staffRole });
       })
@@ -74,13 +77,8 @@ export default function ProfilePage() {
     [access],
   );
 
-  const previewBg = local?.bgUrl
-    ? {
-        backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.4)), url(${local.bgUrl})`,
-        backgroundSize: "cover" as const,
-        backgroundPosition: "center" as const,
-      }
-    : undefined;
+  const lookDirty =
+    local && savedLook ? JSON.stringify(local) !== JSON.stringify(savedLook) : false;
 
   async function handleSaveProfile() {
     setLoading(true);
@@ -120,6 +118,7 @@ export default function ProfilePage() {
     try {
       const saved = await updateProfileCustomization(local);
       setLocal(saved);
+      setSavedLook(saved);
       setDashboardPreviewTheme(saved.appTheme);
       router.refresh();
       toast("Look saved — live on your public page", "success");
@@ -129,6 +128,15 @@ export default function ProfilePage() {
       setCustomSaving(false);
     }
   }
+
+  useEffect(() => {
+    if (!lookDirty) return;
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [lookDirty]);
 
   if (loadError) {
     return (
@@ -162,8 +170,10 @@ export default function ProfilePage() {
       </div>
 
       <div className="profile-page-preview-bleed mb-8">
-        <div className={cn("profile-preview", `profile-preview--${local.style}`)} style={previewBg}>
-          <div className="profile-preview-inner">
+        <div className={cn("profile-preview", "relative")}>
+          <ProfileHeroPanLayer style={local.style} bgUrl={local.bgUrl} />
+          <div className="public-creator-hero-overlay" aria-hidden />
+          <div className="profile-preview-inner relative z-[1]">
             <div className="profile-preview-avatar">
               {avatarUrl ? (
                 <Image
@@ -368,6 +378,12 @@ export default function ProfilePage() {
               })}
             </div>
           </div>
+        ) : null}
+
+        {lookDirty ? (
+          <p className="rounded-lg border-2 border-[#0a0a0a] bg-retro-accent/30 px-4 py-2 text-sm font-semibold text-retro-text">
+            Unsaved look changes — save before leaving this page.
+          </p>
         ) : null}
 
         <RetroButton onClick={handleSaveLook} loading={customSaving} size="lg" className="w-full sm:w-auto">

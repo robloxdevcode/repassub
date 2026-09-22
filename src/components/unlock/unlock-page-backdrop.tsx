@@ -82,7 +82,7 @@ export function UnlockPageBackdrop({ videoUrl }: { videoUrl?: string | null }) {
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      <div className="unlock-backdrop-stage absolute inset-0" />
+      <div className="unlock-backdrop-stage ll-bg-pan ll-bg-pan--slow absolute inset-0" />
       <div className="unlock-backdrop-grid absolute inset-0" />
       <div className="marketing-grain absolute inset-0" />
 

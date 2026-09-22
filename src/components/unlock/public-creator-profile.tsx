@@ -3,10 +3,12 @@
 import { getBadgeLabel, type ProfileSettings, type SocialLinks } from "@/lib/profile-settings";
 import { StaffRoleBadge, StaffVerifiedMark } from "@/components/brand/staff-verified-mark";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
+import { ProfileHeroPanLayer } from "@/components/profile/profile-hero-pan-layer";
+import { ShareProfileButton } from "@/components/unlock/share-profile-button";
 import { formatNumber } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
-import { Lock } from "lucide-react";
+import { Lock, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type PublicCreatorLink = {
@@ -35,6 +37,7 @@ export function PublicCreatorProfile({
   links,
   siteUrl,
   profileSettings,
+  isOwner = false,
 }: {
   username: string;
   displayName: string | null;
@@ -45,19 +48,14 @@ export function PublicCreatorProfile({
   siteUrl: string;
   isPro?: boolean;
   profileSettings: ProfileSettings;
+  isOwner?: boolean;
 }) {
   const name = displayName || username;
   const style = profileSettings.style;
+  const profileUrl = `${siteUrl}/u/${username}`;
   const socialEntries = (Object.entries(profileSettings.socials) as [keyof SocialLinks, string | undefined][]).filter(
     ([, url]) => typeof url === "string" && url.trim().length > 0,
   );
-  const bgStyle = profileSettings.bgUrl
-    ? {
-        backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.45)), url(${profileSettings.bgUrl})`,
-        backgroundSize: "cover" as const,
-        backgroundPosition: "center" as const,
-      }
-    : undefined;
 
   return (
     <div className="public-creator-page classic-shell unlock-v2 bg-retro-bg">
@@ -66,16 +64,14 @@ export function PublicCreatorProfile({
           <Link href="/" className="public-creator-brand" prefetch>
             <LinklockLogo size={34} showWordmark wordmarkClassName="text-retro-text font-bold text-base sm:text-lg" />
           </Link>
-          <Link href="/sign-up" className="public-creator-top-cta" prefetch>
-            Create your link
+          <Link href={isOwner ? "/create" : "/sign-up"} className="public-creator-top-cta" prefetch>
+            {isOwner ? "New link" : "Create your link"}
           </Link>
         </div>
       </header>
 
-      <section
-        className={cn("public-creator-hero", `public-creator-hero--${style}`, "relative")}
-        style={bgStyle}
-      >
+      <section className={cn("public-creator-hero", "relative")}>
+        <ProfileHeroPanLayer style={style} bgUrl={profileSettings.bgUrl} />
         <div className="public-creator-hero-overlay" aria-hidden />
         <div className="public-creator-hero-content">
           {avatarUrl ? (
@@ -100,6 +96,7 @@ export function PublicCreatorProfile({
           </h1>
           <p className="text-sm text-white/70 mt-1">@{username}</p>
           {bio ? <p className="public-creator-bio">{bio}</p> : null}
+          <ShareProfileButton url={profileUrl} title={`${name} on Linklock`} className="mt-4" />
           {socialEntries.length > 0 ? (
             <ul className="public-creator-socials">
               {socialEntries.map(([key, url]) => (
@@ -129,8 +126,16 @@ export function PublicCreatorProfile({
           <div className="public-creator-empty">
             <p className="font-bold text-retro-text">No published links yet</p>
             <p className="text-sm text-retro-text-dim mt-2 leading-relaxed">
-              When {username} publishes unlock pages, they will show up here.
+              {isOwner
+                ? "Publish your first unlock link and it will appear here for fans."
+                : `When ${username} publishes unlock pages, they will show up here.`}
             </p>
+            {isOwner ? (
+              <Link href="/create" prefetch className="public-creator-empty-cta">
+                <Plus size={16} aria-hidden />
+                Create your first link
+              </Link>
+            ) : null}
           </div>
         ) : (
           <ul className="public-creator-link-list">

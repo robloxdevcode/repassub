@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
   Lock,
@@ -73,13 +73,28 @@ export function LemonadeAppSidebar({
   const close = () => setOpen(false);
   const isPro = isProPlanName(plan);
 
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   return (
     <>
       <button
         type="button"
-        className="fixed left-4 top-4 z-50 md:hidden rounded-[var(--ui-radius-lg)] border border-retro-border bg-white p-2.5 shadow-sm"
+        className="fixed left-4 top-4 z-50 md:hidden rounded-[var(--ui-radius-lg)] border border-retro-border bg-white p-3 shadow-sm"
+        style={{ top: "max(1rem, env(safe-area-inset-top))", left: "max(1rem, env(safe-area-inset-left))" }}
         onClick={() => setOpen(!open)}
         aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
       >
         {open ? <X size={18} /> : <Menu size={18} />}
       </button>
@@ -87,9 +102,10 @@ export function LemonadeAppSidebar({
       <aside
         data-app-theme={appTheme}
         className={cn(
-          "app-sidebar dash-pro-sidebar fixed inset-y-0 left-0 z-40 w-[17.5rem] border-r border-retro-border bg-white transition-transform duration-200 md:translate-x-0",
+          "app-sidebar dash-pro-sidebar fixed inset-y-0 left-0 z-40 w-[17.5rem] border-r border-retro-border bg-white transition-transform duration-200 md:translate-x-0 overscroll-contain",
           open ? "translate-x-0" : "-translate-x-full",
         )}
+        style={{ paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex h-full flex-col p-5">
           <Link href="/dashboard" prefetch className="mb-6 block px-1" onClick={close}>

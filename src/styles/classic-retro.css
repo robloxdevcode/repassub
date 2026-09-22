@@ -31,6 +31,11 @@
     radial-gradient(ellipse 90% 60% at 10% -10%, rgba(255, 229, 102, 0.5), transparent 55%),
     radial-gradient(ellipse 60% 50% at 95% 20%, rgba(94, 234, 212, 0.35), transparent 50%),
     radial-gradient(ellipse 50% 40% at 50% 100%, rgba(255, 139, 196, 0.25), transparent 55%);
+  background-size: 130% 130%;
+}
+
+.unlock-backdrop-stage.ll-bg-pan {
+  animation-duration: var(--ll-pan-duration);
 }
 
 .unlock-backdrop-grid {
@@ -729,6 +734,7 @@
     radial-gradient(ellipse 80% 55% at 15% -5%, rgba(255, 229, 102, 0.35), transparent 55%),
     radial-gradient(ellipse 55% 45% at 95% 15%, rgba(94, 234, 212, 0.25), transparent 50%),
     radial-gradient(ellipse 45% 40% at 50% 100%, rgba(255, 139, 196, 0.18), transparent 55%);
+  background-size: 130% 130%;
 }
 
 .classic-landing-hero {

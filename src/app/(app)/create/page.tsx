@@ -18,6 +18,7 @@ import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard } from "@/components/dashboard/app-page-header";
 import { applyCaptchaToTheme } from "@/lib/easter-eggs";
 import { ShareKit } from "@/components/dashboard/share-kit";
+import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { UnlockPreviewPanel } from "@/components/dashboard/unlock-preview-panel";
 import { UNLOCK_THEMES } from "@/lib/unlock-themes";
 import { PlatformBrandIcon } from "@/components/marketing/platform-brand-icon";
@@ -38,6 +39,15 @@ type ActionDraft = {
 };
 
 const STEPS = ["Your content", "Fan steps", "Publish"];
+
+function slugFromTitle(raw: string): string {
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+}
 
 function actionErrorMessage(error: unknown, fallback: string) {
   if (error instanceof Error) {
@@ -67,6 +77,7 @@ function CreateUnlockWizard() {
   const { toast } = useToast();
   const editId = searchParams.get("id");
   const creatingCampaignRef = useRef<Promise<string> | null>(null);
+  const slugTouchedRef = useRef(false);
 
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState<"publish" | null>(null);
@@ -118,6 +129,7 @@ function CreateUnlockWizard() {
         setButtonText(campaign.buttonText);
         setTheme(campaign.theme);
         setSlug(campaign.slug);
+        slugTouchedRef.current = true;
         setLogoUrl(campaign.logoUrl || "");
         setBackgroundMusicUrl(campaign.backgroundMusicUrl || "");
         setBackgroundVideoUrl(campaign.backgroundVideoUrl || "");
@@ -375,14 +387,19 @@ function CreateUnlockWizard() {
     return (
       <div className="mx-auto max-w-lg text-center">
         <AppCard className="p-8" accent="green">
-          <h1 className="font-body text-2xl font-bold mb-2">Your link is live</h1>
+          <div className="create-publish-success-actions">
+            <h1 className="font-body text-2xl font-bold mb-2">Your link is live</h1>
+            <ShareKit url={url} title={title || "My unlock link"} />
+            <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
+              <RetroButton type="button" onClick={() => window.open(url, "_blank", "noopener,noreferrer")} className="w-full sm:w-auto">
+                Open live page
+              </RetroButton>
+              <CopyLinkButton url={url} />
+            </div>
+          </div>
           <p className="font-body text-sm text-retro-text-dim mb-4">Share this anywhere:</p>
           <p className="font-mono text-sm bg-retro-surface-2 border-2 border-retro-ink p-3 break-all">{url}</p>
-          <ShareKit url={url} title={title || "My unlock link"} />
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <RetroButton type="button" onClick={() => window.open(url, "_blank", "noopener,noreferrer")} className="w-full sm:w-auto">
-              Preview live page
-            </RetroButton>
             <RetroLink href="/create" variant="secondary" className="w-full sm:w-auto">
               Create another
             </RetroLink>
@@ -397,7 +414,7 @@ function CreateUnlockWizard() {
 
   return (
     <div className="create-wizard relative z-10 mx-auto max-w-2xl">
-      <div className="mb-8">
+      <div className="create-wizard-sticky mb-8">
         <h1 className="font-body text-2xl font-bold">{editId ? "Edit link" : "Create link"}</h1>
         <p className="mt-2 text-sm text-retro-text-dim">
           Step {step + 1} of {STEPS.length}: {step === 2 ? "Publish" : STEPS[step]}
@@ -569,7 +586,13 @@ function CreateUnlockWizard() {
             label="Page title"
             placeholder="Free preset pack"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              const next = e.target.value;
+              setTitle(next);
+              if (isPro && !slugTouchedRef.current) {
+                setSlug(slugFromTitle(next));
+              }
+            }}
           />
           <div className="mt-4">
             <RetroTextarea
@@ -624,7 +647,10 @@ function CreateUnlockWizard() {
                 label="Custom URL ending"
                 placeholder="free-preset-pack"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => {
+                  slugTouchedRef.current = true;
+                  setSlug(e.target.value);
+                }}
               />
               {username && slug && (
                 <p className="text-xs text-retro-text-dim font-mono break-all">

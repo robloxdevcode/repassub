@@ -88,10 +88,15 @@ export async function DashboardHomeContent() {
               : "Set up your first unlock link in a few minutes — then share it anywhere you promote content."}
           </p>
         </div>
-        <Link href="/create" prefetch className="dash-pro-action">
-          <Plus size={16} />
-          New link
-        </Link>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+          {hasUnlocks ? (
+            <CopyLinkButton url={`${siteUrl}/u/${stats.user.username}`} className="justify-center" />
+          ) : null}
+          <Link href="/create" prefetch className="dash-pro-action">
+            <Plus size={16} />
+            New link
+          </Link>
+        </div>
       </header>
 
       {!hasUnlocks && (

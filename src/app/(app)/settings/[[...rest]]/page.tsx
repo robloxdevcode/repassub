@@ -11,9 +11,11 @@ import { getBillingData } from "@/lib/actions/payments";
 import { AppCard, AppPageHeader } from "@/components/dashboard/app-page-header";
 import { planDisplayName, isProPlanName } from "@/components/dashboard/plan-badge";
 import { RetroLoading } from "@/components/retro";
+import { SettingsAccessibilityPanel } from "@/components/settings/settings-accessibility-panel";
 import "@/styles/clerk-user-profile.css";
 
-const TABS = ["Account", "Plan"];
+const TABS = ["Account", "Plan", "Accessibility"] as const;
+type SettingsTab = (typeof TABS)[number];
 
 const profileAppearance = {
   ...clerkAuthAppearance,
@@ -44,7 +46,7 @@ const profileAppearance = {
 };
 
 export default function SettingsPage() {
-  const [tab, setTab] = useState("Account");
+  const [tab, setTab] = useState<SettingsTab>("Account");
   const [plan, setPlan] = useState<string | null>(null);
 
   useEffect(() => {
@@ -92,7 +94,12 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      <AppCard className={cn(tab === "Account" ? "settings-page-card settings-account-panel" : "settings-plan-panel")}>
+      <AppCard
+        className={cn(
+          tab === "Account" ? "settings-page-card settings-account-panel" : "settings-plan-panel",
+          tab === "Accessibility" && "settings-plan-panel",
+        )}
+      >
         {tab === "Account" && (
           <div className="settings-clerk-host w-full min-w-0">
             <p className="settings-clerk-intro text-sm text-retro-text-dim leading-relaxed">
@@ -151,6 +158,8 @@ export default function SettingsPage() {
             </p>
           </div>
         )}
+
+        {tab === "Accessibility" && <SettingsAccessibilityPanel />}
       </AppCard>
     </div>
   );

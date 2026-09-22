@@ -199,3 +199,20 @@
     padding: 1rem 1.75rem;
   }
 }
+
+@media (max-width: 639px) {
+  .settings-clerk-host .cl-navbar {
+    width: 100% !important;
+  }
+
+  .settings-clerk-host .cl-navbarButtons {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+  }
+
+  .settings-clerk-host .cl-profilePage,
+  .settings-clerk-host .cl-page {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}

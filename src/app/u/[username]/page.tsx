@@ -1,9 +1,11 @@
 import { notFound, permanentRedirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import { PublicCreatorProfile } from "@/components/unlock/public-creator-profile";
 import { getPublicCreatorProfile } from "@/lib/public-profile";
 import { getRequestSiteUrl } from "@/lib/site-url";
 import { buildPageMetadata } from "@/lib/seo";
 import { resolvePublicUsername } from "@/lib/username-resolve";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
@@ -35,6 +37,15 @@ export default async function PublicCreatorPage({ params }: { params: Promise<{ 
 
   if (!profile) notFound();
 
+  const { userId } = await auth();
+  let isOwner = false;
+  if (userId) {
+    const current = await getCurrentUser();
+    isOwner =
+      !!current?.username &&
+      current.username.toLowerCase() === profile.user.username.toLowerCase();
+  }
+
   return (
     <PublicCreatorProfile
       username={profile.user.username}
@@ -46,6 +57,7 @@ export default async function PublicCreatorPage({ params }: { params: Promise<{ 
       siteUrl={siteUrl}
       isPro={profile.plan === "PRO" || profile.plan === "BUSINESS"}
       profileSettings={profile.profileSettings}
+      isOwner={isOwner}
     />
   );
 }

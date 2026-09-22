@@ -7,6 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { RetroToastProvider } from "@/components/retro";
 
 import { CurrencyProvider } from "@/components/providers/currency-provider";
+import { MotionPreferenceInit } from "@/components/providers/motion-preference-init";
 
 import { buildRootMetadata } from "@/lib/seo";
 import { getAdSenseClient } from "@/lib/adsense-config";
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         >
           <CurrencyProvider>
+            <MotionPreferenceInit />
             <RetroToastProvider>{children}</RetroToastProvider>
           </CurrencyProvider>
         </ClerkProvider>

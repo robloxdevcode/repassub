@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { RetroButton, RetroInput } from "@/components/retro";
 import { AppCard } from "@/components/dashboard/app-page-header";
+import { ProfileHeroPanLayer } from "@/components/profile/profile-hero-pan-layer";
 import {
   DEFAULT_PROFILE_SETTINGS,
   getBadgeLabel,
@@ -22,6 +23,10 @@ const SOCIAL_FIELDS: { key: keyof SocialLinks; label: string; placeholder: strin
   { key: "twitter", label: "X / Twitter", placeholder: "https://x.com/you" },
   { key: "twitch", label: "Twitch", placeholder: "https://twitch.tv/you" },
 ];
+
+function settingsEqual(a: ProfileSettings, b: ProfileSettings) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
 
 export function ProfileCustomization({
   displayName,
@@ -43,23 +48,44 @@ export function ProfileCustomization({
   saving: boolean;
 }) {
   const [local, setLocal] = useState<ProfileSettings>(settings);
+  const [savedFlash, setSavedFlash] = useState(false);
+
+  useEffect(() => {
+    setLocal(settings);
+  }, [settings]);
+
+  const dirty = useMemo(() => !settingsEqual(local, settings), [local, settings]);
+
+  useEffect(() => {
+    if (!dirty) return;
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirty]);
 
   async function handleSaveCustomization() {
     await onSave(local);
+    setSavedFlash(true);
+    window.setTimeout(() => setSavedFlash(false), 2500);
   }
 
   return (
     <div className="space-y-6">
+      {dirty ? (
+        <p className="rounded-lg border-2 border-[#0a0a0a] bg-retro-accent/30 px-4 py-2 text-sm font-semibold text-retro-text">
+          You have unsaved customization changes.
+        </p>
+      ) : savedFlash ? (
+        <p className="text-sm font-semibold text-retro-success">Customization saved.</p>
+      ) : null}
+
       <AppCard className="overflow-hidden p-0">
-        <div
-          className={cn("profile-preview", `profile-preview--${local.style}`)}
-          style={
-            local.bgUrl
-              ? { backgroundImage: `linear-gradient(rgba(7,7,13,0.72), rgba(7,7,13,0.88)), url(${local.bgUrl})` }
-              : undefined
-          }
-        >
-          <div className="profile-preview-inner">
+        <div className={cn("profile-preview", "relative")}>
+          <ProfileHeroPanLayer style={local.style} bgUrl={local.bgUrl} />
+          <div className="public-creator-hero-overlay" aria-hidden />
+          <div className="profile-preview-inner relative z-[1]">
             <div className="profile-preview-avatar">
               {avatarUrl ? (
                 <Image src={avatarUrl} alt="" width={72} height={72} className="h-[72px] w-[72px] rounded-full object-cover" unoptimized />
@@ -89,7 +115,7 @@ export function ProfileCustomization({
 
       <AppCard className="p-6">
         <h2 className="text-base font-semibold text-retro-text mb-1">Profile style</h2>
-        <p className="text-sm text-retro-text-dim mb-4">Pick a look for your public creator profile.</p>
+        <p className="text-sm text-retro-text-dim mb-4">Live preview matches your public page, including motion.</p>
         <div className="grid sm:grid-cols-2 gap-3">
           {PROFILE_STYLES.map((style) => (
             <button
@@ -115,7 +141,7 @@ export function ProfileCustomization({
           onChange={(e) => setLocal((p) => ({ ...p, bgUrl: e.target.value || null }))}
           placeholder="https://... (any image link)"
         />
-        <p className="text-xs text-retro-text-muted -mt-2">Paste a banner or game screenshot — shows behind your profile card.</p>
+        <p className="text-xs text-retro-text-muted -mt-2">Banner images pan slowly behind your profile.</p>
       </AppCard>
 
       <AppCard className="p-6 flex flex-col gap-4">

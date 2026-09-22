@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { getReduceMotionPreference, prefersOsReducedMotion } from "@/lib/motion-preference";
 
 type Dot = {
   x: number;
@@ -32,6 +33,15 @@ function createDots(width: number, height: number, count: number): Dot[] {
   }));
 }
 
+function motionDisabled(): boolean {
+  return getReduceMotionPreference() || prefersOsReducedMotion();
+}
+
+function isMobileCanvas(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(max-width: 640px)").matches;
+}
+
 export function AnimatedDotBackground({
   variant = "dark",
   className,
@@ -50,9 +60,15 @@ export function AnimatedDotBackground({
     if (!ctx) return;
 
     const dark = variant === "dark";
-    const dotCount = Math.floor((dark ? 72 : 48) * density);
-    const linkDist = dark ? 120 : 90;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let running = true;
+
+    const computeDotCount = () => {
+      const mobile = isMobileCanvas();
+      const base = Math.floor((dark ? 72 : 48) * density);
+      return mobile ? Math.max(12, Math.floor(base * 0.5)) : base;
+    };
+
+    const shouldDrawLines = () => connectLines && !isMobileCanvas() && !motionDisabled();
 
     const resize = () => {
       const parent = canvas.parentElement;
@@ -65,7 +81,7 @@ export function AnimatedDotBackground({
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      dotsRef.current = createDots(w, h, dotCount);
+      dotsRef.current = createDots(w, h, computeDotCount());
     };
 
     resize();
@@ -73,23 +89,34 @@ export function AnimatedDotBackground({
     ro.observe(canvas.parentElement!);
 
     const tick = () => {
+      if (!running || document.visibilityState === "hidden") {
+        frameRef.current = requestAnimationFrame(tick);
+        return;
+      }
+
+      if (motionDisabled()) {
+        canvas.style.display = "none";
+        frameRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      canvas.style.display = "";
+
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       const dots = dotsRef.current;
+      const linkDist = dark ? 120 : 90;
       ctx.clearRect(0, 0, w, h);
 
-      if (!reducedMotion) {
-        for (const d of dots) {
-          d.x += d.vx;
-          d.y += d.vy;
-          if (d.x < 0) d.x = w;
-          if (d.x > w) d.x = 0;
-          if (d.y < 0) d.y = h;
-          if (d.y > h) d.y = 0;
-        }
+      for (const d of dots) {
+        d.x += d.vx;
+        d.y += d.vy;
+        if (d.x < 0) d.x = w;
+        if (d.x > w) d.x = 0;
+        if (d.y < 0) d.y = h;
+        if (d.y > h) d.y = 0;
       }
 
-      if (connectLines) {
+      if (shouldDrawLines()) {
         for (let i = 0; i < dots.length; i++) {
           for (let j = i + 1; j < dots.length; j++) {
             const a = dots[i];
@@ -136,8 +163,14 @@ export function AnimatedDotBackground({
 
     frameRef.current = requestAnimationFrame(tick);
 
+    const onVis = () => {
+      running = true;
+    };
+    document.addEventListener("visibilitychange", onVis);
+
     return () => {
       ro.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
       cancelAnimationFrame(frameRef.current);
     };
   }, [variant, connectLines, density]);
