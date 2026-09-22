@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdminNav } from "@/components/admin/admin-ui";
+import { AdminUpdateAnnouncement } from "@/components/admin/admin-update-announcement";
 
 type NavLink = { href: string; label: string };
 
@@ -48,6 +49,7 @@ export function LemonadeAdminShell({
             Read-only staff — moderation requires Admin, Head admin, or Owner.
           </p>
         ) : null}
+        <AdminUpdateAnnouncement />
       </header>
       <main className="admin-v2-main">{children}</main>
     </div>

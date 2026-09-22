@@ -453,6 +453,42 @@ body {
   z-index: 40;
 }
 
+.admin-v2-update-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #ecfdf5;
+  border-bottom: 2px solid #0a0a0a;
+  border-top: 2px solid #0a0a0a;
+}
+
+.admin-v2-update-banner-text {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #0a0a0a;
+  flex: 1;
+  min-width: min(100%, 16rem);
+}
+
+.admin-v2-update-banner-dismiss {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border: 2px solid #0a0a0a;
+  background: var(--retro-accent);
+  box-shadow: 2px 2px 0 #0a0a0a;
+  flex-shrink: 0;
+}
+
+.admin-v2-update-banner-dismiss:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 #0a0a0a;
+}
+
 .admin-v2-table-wrap {
   border: 1px solid var(--retro-border);
   border-radius: var(--ui-radius-lg);
