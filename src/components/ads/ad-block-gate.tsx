@@ -69,7 +69,7 @@ export function AdBlockGate({ enabled = true }: AdBlockGateProps) {
       aria-labelledby="ad-block-gate-title"
     >
       <div className="ad-block-gate-panel mx-auto w-full max-w-md text-center">
-        <LinklockLogo size={40} variant="mark" className="mx-auto mb-4 justify-center" />
+        <LinklockLogo size={44} variant="lockup" className="mx-auto mb-4 justify-center" />
         <div className="ad-block-gate-icon mx-auto mb-4" aria-hidden>
           <ShieldOff size={28} />
         </div>

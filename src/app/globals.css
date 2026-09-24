@@ -15,25 +15,15 @@
 @import "../styles/ad-block-gate.css";
 
 .linklock-logo-lockup {
-  max-height: clamp(2.75rem, 8vw, 4.5rem);
+  max-height: clamp(2.5rem, 10vw, 4.75rem);
   width: auto;
+  max-width: min(100%, 16rem);
 }
 
 @media (min-width: 768px) {
   .linklock-logo-lockup {
-    max-height: clamp(3.25rem, 5.5vw, 5rem);
-  }
-}
-
-.linklock-logo-mark {
-  max-width: 2.75rem;
-  max-height: 2.75rem;
-}
-
-@media (min-width: 640px) {
-  .linklock-logo-mark {
-    max-width: 3.25rem;
-    max-height: 3.25rem;
+    max-height: clamp(3rem, 6vw, 5.25rem);
+    max-width: min(100%, 18rem);
   }
 }
 

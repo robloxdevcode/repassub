@@ -24,15 +24,15 @@ function isYellowMarkPixel(r, g, b, a) {
   return r > 170 && g > 120 && b < 160;
 }
 
+function isLockupForegroundPixel(r, g, b, a) {
+  if (a < 8) return false;
+  if (isYellowMarkPixel(r, g, b, a)) return true;
+  const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+  return luminance < 165;
+}
+
 function isLockupBackgroundPixel(r, g, b, a) {
-  if (a < 8) return true;
-  if (isYellowMarkPixel(r, g, b, a)) return false;
-  const sum = r + g + b;
-  if (sum < 120) return false;
-  if (r > 228 && g > 228 && b > 228) return false;
-  if (sum > 200) return true;
-  if (r > 150 && g > 140 && b > 120) return true;
-  return false;
+  return !isLockupForegroundPixel(r, g, b, a);
 }
 
 async function processLockup(input, output) {
@@ -47,6 +47,9 @@ async function processLockup(input, output) {
     const b = data[i + 2];
     const a = data[i + 3];
     if (isLockupBackgroundPixel(r, g, b, a)) {
+      data[i] = 0;
+      data[i + 1] = 0;
+      data[i + 2] = 0;
       data[i + 3] = 0;
     } else {
       data[i + 3] = 255;
@@ -56,6 +59,7 @@ async function processLockup(input, output) {
   await sharp(Buffer.from(data), {
     raw: { width: info.width, height: info.height, channels: 4 },
   })
+    .trim({ threshold: 2 })
     .png()
     .toFile(output);
 }

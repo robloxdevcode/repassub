@@ -304,7 +304,7 @@ export function PublicUnlockClient({
       <header className="sticky top-0 z-20 border-b border-retro-border bg-retro-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
           <Link href="/" className="shrink-0">
-            <LinklockLogo size={32} />
+            <LinklockLogo size={40} />
           </Link>
           <Link href="/">
             <RetroButton size="sm" variant="primary">
