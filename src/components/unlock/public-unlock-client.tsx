@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   getUnlockSession,
   completeAction,
   unlockContent,
   trackCampaignView,
+  registerActionStart,
 } from "@/lib/actions/unlock";
+import {
+  MIN_STEP_AWAY_MS,
+  MIN_STEP_VERIFY_MS,
+  QUICK_RETURN_MESSAGE,
+  type ActionCompletionProof,
+} from "@/lib/unlock-verification";
 import {
   actionProgressKey,
   completedIdsFromKeys,
@@ -22,11 +29,18 @@ import { UnlockPageAd } from "./unlock-page-ad";
 import { AdBlockGate } from "@/components/ads/ad-block-gate";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { unlockThemeClass, unlockThemeCtaVariant } from "@/lib/unlock-themes";
-import { themeUsesCaptcha } from "@/lib/easter-eggs";
+import { shouldDisableHeavyMotion } from "@/lib/motion-preference";
 import { cn } from "@/lib/utils";
 import { Check, Lock, Play, MessageCircle, Music2, UserPlus, ExternalLink, Loader2, ArrowUpRight, Copy } from "lucide-react";
 
-const VERIFY_SECONDS = 10;
+type VerifyTrack = {
+  actionId: string;
+  startedAt: number;
+  hasExternalUrl: boolean;
+  leftAt: number | null;
+  awayMs: number;
+  awayOk: boolean;
+};
 
 async function withRetry<T>(fn: () => Promise<T>, attempts = 4): Promise<T> {
   let lastError: unknown;
@@ -134,7 +148,7 @@ export function PublicUnlockClient({
   const [musicStarted, setMusicStarted] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [externalPrompt, setExternalPrompt] = useState<ActionItem | null>(null);
-  const captchaEnabled = themeUsesCaptcha(campaign.theme);
+  const verifyTrackRef = useRef<VerifyTrack | null>(null);
 
   function persistProgress(completedIds: string[], status: string) {
     const keys = campaign.actions
@@ -172,37 +186,105 @@ export function PublicUnlockClient({
   const allComplete = total > 0 && campaign.actions.every((a) => completed.includes(a.id));
 
   const finishVerification = useCallback(
-    async (actionId: string) => {
-      setSession((prev) => {
-        const ids = [...(prev?.completedActions || [])];
-        if (!ids.includes(actionId)) ids.push(actionId);
-        const allDone = campaign.actions.every((a) => ids.includes(a.id));
-        const status = allDone ? "COMPLETED" : prev?.status || "IN_PROGRESS";
-        persistProgress(ids, status);
-        return { completedActions: ids, status };
-      });
-      setVerifyingId(null);
+    async (actionId: string, proof?: ActionCompletionProof) => {
       setUnlockError(null);
 
       try {
-        const result = await withRetry(() => completeAction(campaign.id, actionId, visitorId));
+        const result = await withRetry(() => completeAction(campaign.id, actionId, visitorId, proof));
         const completedActions = (result.session.completedActions as string[]) || [];
         setSession({
           completedActions,
           status: result.session.status,
         });
         persistProgress(completedActions, result.session.status);
-      } catch {
-        // Keep optimistic progress — fan already waited; unlock still works if all steps show done.
+      } catch (error) {
+        setUnlockError(error instanceof Error ? error.message : "Could not verify this step.");
+      } finally {
+        verifyTrackRef.current = null;
+        setVerifyingId(null);
       }
     },
-    [campaign.id, campaign.actions, visitorId]
+    [campaign.id, visitorId]
   );
+
+  const cancelVerification = useCallback((message: string) => {
+    verifyTrackRef.current = null;
+    setVerifyingId(null);
+    setUnlockError(message);
+  }, []);
+
+  useEffect(() => {
+    function applyReturnFromAway(track: VerifyTrack) {
+      if (!track.leftAt) return;
+      track.awayMs = Date.now() - track.leftAt;
+      track.leftAt = null;
+
+      if (track.hasExternalUrl && track.awayMs < MIN_STEP_AWAY_MS) {
+        cancelVerification(QUICK_RETURN_MESSAGE);
+        return;
+      }
+
+      if (track.hasExternalUrl) {
+        track.awayOk = true;
+      }
+    }
+
+    function markLeft() {
+      const track = verifyTrackRef.current;
+      if (!track || !track.hasExternalUrl || track.leftAt) return;
+      track.leftAt = Date.now();
+    }
+
+    function onVisibilityChange() {
+      const track = verifyTrackRef.current;
+      if (!track) return;
+
+      if (document.visibilityState === "hidden") {
+        markLeft();
+        return;
+      }
+
+      applyReturnFromAway(track);
+    }
+
+    function onWindowFocus() {
+      const track = verifyTrackRef.current;
+      if (!track) return;
+      applyReturnFromAway(track);
+    }
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", markLeft);
+    window.addEventListener("focus", onWindowFocus);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", markLeft);
+      window.removeEventListener("focus", onWindowFocus);
+    };
+  }, [cancelVerification]);
 
   useEffect(() => {
     if (!verifyingId) return;
-    const timer = setTimeout(() => finishVerification(verifyingId), VERIFY_SECONDS * 1000);
-    return () => clearTimeout(timer);
+
+    const interval = window.setInterval(() => {
+      const track = verifyTrackRef.current;
+      if (!track || track.actionId !== verifyingId) return;
+
+      const elapsed = Date.now() - track.startedAt;
+      const awayReady = !track.hasExternalUrl || track.awayOk;
+
+      if (track.hasExternalUrl && !track.awayOk && elapsed > 90_000) {
+        cancelVerification("Open the link, complete the step, then return to this tab.");
+        return;
+      }
+
+      if (awayReady && elapsed >= MIN_STEP_VERIFY_MS) {
+        window.clearInterval(interval);
+        void finishVerification(verifyingId, { awayMs: track.awayMs });
+      }
+    }, 400);
+
+    return () => window.clearInterval(interval);
   }, [verifyingId, finishVerification]);
 
   function tryStartMusic() {
@@ -222,18 +304,38 @@ export function PublicUnlockClient({
     }
   }
 
-  function runAction(action: ActionItem) {
+  async function runAction(action: ActionItem) {
     if (verifyingId || completed.includes(action.id)) return;
-    if (captchaEnabled && honeypot.trim()) {
+    if (honeypot.trim()) {
       setUnlockError("Something went wrong. Refresh and try again.");
       return;
     }
 
     const config = action.config as Record<string, string>;
-    if (config?.url) window.open(config.url, "_blank", "noopener,noreferrer");
+    const hasExternalUrl = Boolean(config?.url?.trim());
 
     setUnlockError(null);
     tryStartMusic();
+
+    try {
+      await registerActionStart(campaign.id, action.id, visitorId);
+    } catch {
+      setUnlockError("Could not start this step. Refresh and try again.");
+      return;
+    }
+
+    if (hasExternalUrl) {
+      window.open(config.url, "_blank", "noopener,noreferrer");
+    }
+
+    verifyTrackRef.current = {
+      actionId: action.id,
+      startedAt: Date.now(),
+      hasExternalUrl,
+      leftAt: null,
+      awayMs: 0,
+      awayOk: !hasExternalUrl,
+    };
     setVerifyingId(action.id);
   }
 
@@ -348,21 +450,37 @@ export function PublicUnlockClient({
               <p className="text-sm text-retro-text-dim mt-1 mb-3">{campaign.description}</p>
             )}
             <p className="text-sm text-retro-text-dim mb-4">
-              Complete each step below. After you finish the action on the other site, we verify it
-              for about {VERIFY_SECONDS} seconds — then the step turns green.
+              Complete each step below. Finish the action on the other site, come back here, and we&apos;ll verify
+              automatically — you&apos;ll see a loading state until the step turns green.
             </p>
-            {captchaEnabled ? (
-              <input
-                type="text"
-                name="company"
-                value={honeypot}
-                onChange={(e) => setHoneypot(e.target.value)}
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden
-                className="absolute opacity-0 pointer-events-none h-0 w-0"
-              />
-            ) : null}
+            <input
+              type="text"
+              name="company"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden
+              className="absolute opacity-0 pointer-events-none h-0 w-0"
+            />
+
+            <div className="unlock-fan-progress mb-4">
+              <div className="flex items-center justify-between text-xs text-retro-text-dim mb-2">
+                <span>Progress</span>
+                <span>
+                  {progress}/{total} done
+                </span>
+              </div>
+              <div className="retro-progress">
+                <div
+                  className={cn(
+                    "retro-progress-fill transition-all duration-500",
+                    allComplete && "bg-retro-success",
+                  )}
+                  style={{ width: total ? `${(progress / total) * 100}%` : "0%" }}
+                />
+              </div>
+            </div>
 
             <div className="flex flex-col gap-2 mb-4">
               {campaign.actions.map((action) => {
@@ -385,7 +503,7 @@ export function PublicUnlockClient({
                   return (
                     <div key={action.id} className="platform-btn platform-btn--verifying">
                       <Loader2 size={16} className="animate-spin shrink-0" />
-                      <span className="flex-1 text-left">Verifying step… (~{VERIFY_SECONDS}s)</span>
+                      <span className="flex-1 text-left">Verifying step…</span>
                     </div>
                   );
                 }
@@ -415,25 +533,18 @@ export function PublicUnlockClient({
               })}
             </div>
 
-            <div className="flex items-center justify-between text-xs text-retro-text-dim mb-2">
-              <span>Progress</span>
-              <span>{progress}/{total} done</span>
-            </div>
-            <div className="retro-progress mb-4">
-              <div
-                className={cn(
-                  "retro-progress-fill transition-all duration-500",
-                  allComplete && "bg-retro-success"
-                )}
-                style={{ width: total ? `${(progress / total) * 100}%` : "0%" }}
-              />
-            </div>
-
             <RetroButton
               className="w-full"
               size="lg"
               disabled={!allComplete}
-              onClick={() => allComplete && setShowAnimation(true)}
+              onClick={() => {
+                if (!allComplete) return;
+                if (shouldDisableHeavyMotion()) {
+                  void onAnimationComplete();
+                  return;
+                }
+                setShowAnimation(true);
+              }}
               variant={allComplete ? unlockThemeCtaVariant(campaign.theme) : "secondary"}
             >
               {allComplete ? (

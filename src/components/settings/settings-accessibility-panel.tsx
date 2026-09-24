@@ -27,8 +27,8 @@ export function SettingsAccessibilityPanel() {
       <div>
         <h2 className="font-body text-base font-bold text-retro-text">Motion</h2>
         <p className="mt-2 text-sm text-retro-text-dim leading-relaxed">
-          Turn off moving backgrounds and animated dots across Linklock. Your system may also limit motion
-          automatically.
+          Turn off moving backgrounds, animated dots, and the unlock celebration overlay. Your system may also
+          limit motion automatically.
         </p>
         {osReduced ? (
           <p className="mt-2 text-xs font-semibold text-retro-text-muted">
@@ -46,7 +46,7 @@ export function SettingsAccessibilityPanel() {
         />
       </label>
       <p className="text-xs text-retro-text-muted">
-        Stored on this browser only. Panning profile backgrounds, app grid glow, and dot animations pause when
+        Stored on this browser only. Panning backgrounds, grid glow, dot animations, and unlock pop-ups pause when
         on.
       </p>
     </div>

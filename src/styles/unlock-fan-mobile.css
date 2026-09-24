@@ -1,0 +1,29 @@
+@media (max-width: 639px) {
+  .unlock-fan-progress {
+    position: sticky;
+    top: 3.25rem;
+    z-index: 15;
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    padding: 0.65rem 0.25rem 0.75rem;
+    background: color-mix(in srgb, var(--retro-surface) 94%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid var(--classic-ink, #0a0a0a);
+  }
+
+  .unlock-v2 .platform-btn {
+    min-height: 3.35rem;
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .unlock-v2 .platform-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+html.linklock-reduce-motion .unlock-preview-card.animate-pulse-glow {
+  animation: none;
+}

@@ -14,6 +14,7 @@ import { getDashboardStats } from "@/lib/actions/dashboard";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { formatNumber } from "@/lib/utils";
 import { getRequestSiteUrl } from "@/lib/site-url";
+import { PLAN_LIMITS } from "@/lib/stripe";
 
 const ONBOARDING_STEPS = [
   {
@@ -259,7 +260,7 @@ export async function DashboardHomeContent() {
             <div className="dash-pro-upsell mb-4">
               <BarChart3 size={16} className="dash-pro-upsell-icon" aria-hidden />
               <p>
-                Pro: 10 steps, your branding, no ads on unlock pages.{" "}
+                Pro: {PLAN_LIMITS.PRO.actionsPerUnlock} steps, your branding, full analytics, no ads on unlock pages.{" "}
                 <Link href="/billing" prefetch className="font-semibold text-retro-accent">
                   Upgrade
                 </Link>

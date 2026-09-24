@@ -3,6 +3,12 @@
 import { db } from "@/lib/db";
 import { trackEvent } from "@/lib/analytics";
 import { getAnalyticsContext } from "@/lib/analytics-context";
+import {
+  type ActionCompletionProof,
+  type StepVerifyCookie,
+  STEP_VERIFY_COOKIE,
+  validateActionCompletionProof,
+} from "@/lib/unlock-verification";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 import { CampaignStatus } from "@prisma/client";
@@ -43,6 +49,64 @@ export async function getOrCreateVisitorId(clientVisitorId?: string) {
   }
 
   return visitorId;
+}
+
+async function getStepVerifyCookie(): Promise<StepVerifyCookie | null> {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get(STEP_VERIFY_COOKIE)?.value;
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as StepVerifyCookie;
+    if (
+      typeof parsed.campaignId === "string" &&
+      typeof parsed.actionId === "string" &&
+      typeof parsed.startedAt === "number"
+    ) {
+      return parsed;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+async function setStepVerifyCookie(payload: StepVerifyCookie) {
+  const cookieStore = await cookies();
+  cookieStore.set(STEP_VERIFY_COOKIE, JSON.stringify(payload), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 15,
+    path: "/",
+  });
+}
+
+async function clearStepVerifyCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete(STEP_VERIFY_COOKIE);
+}
+
+export async function registerActionStart(
+  campaignId: string,
+  actionId: string,
+  clientVisitorId?: string,
+) {
+  const visitorId = await getOrCreateVisitorId(clientVisitorId);
+  const campaign = await getPublishedCampaign(campaignId);
+  const action = campaign.actions.find((a) => a.id === actionId);
+  if (!action) throw new Error("Action not found");
+
+  const config = action.config as Record<string, string> | null;
+  const hasExternalUrl = Boolean(config?.url?.trim());
+
+  await setStepVerifyCookie({
+    campaignId,
+    actionId,
+    startedAt: Date.now(),
+    hasExternalUrl,
+  });
+
+  return { ok: true as const, visitorId, hasExternalUrl };
 }
 
 export async function getPublicCampaign(username: string, slug: string) {
@@ -103,13 +167,32 @@ export async function getUnlockSession(campaignId: string, clientVisitorId?: str
 export async function completeAction(
   campaignId: string,
   actionId: string,
-  clientVisitorId?: string
+  clientVisitorId?: string,
+  proof?: ActionCompletionProof,
 ) {
   const visitorId = await getOrCreateVisitorId(clientVisitorId);
 
   const campaign = await getPublishedCampaign(campaignId);
   const actionIds = new Set(campaign.actions.map((a) => a.id));
   if (!actionIds.has(actionId)) throw new Error("Action not found");
+
+  const action = campaign.actions.find((a) => a.id === actionId)!;
+  const config = action.config as Record<string, string> | null;
+  const hasExternalUrl = Boolean(config?.url?.trim());
+
+  const verifyCookie = await getStepVerifyCookie();
+  const validation = validateActionCompletionProof(
+    verifyCookie,
+    campaignId,
+    actionId,
+    hasExternalUrl,
+    proof,
+  );
+  if (!validation.ok) {
+    throw new Error(validation.message);
+  }
+
+  await clearStepVerifyCookie();
 
   let session = await db.unlockSession.findFirst({
     where: { campaignId, visitorId },

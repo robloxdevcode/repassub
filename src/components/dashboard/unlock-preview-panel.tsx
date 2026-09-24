@@ -38,7 +38,7 @@ export function UnlockPreviewPanel({
           <p className="text-sm text-retro-text-dim mt-1 mb-3 italic">Your description shows here.</p>
         )}
         <p className="text-sm text-retro-text-dim mb-3">
-          Complete each step below. We verify for ~10 seconds after you finish on the other site.
+          Complete each step below. We verify in the background after you finish on the other site (loading spinner, no countdown).
         </p>
         <div className="flex flex-col gap-2 mb-4">
           {actions.length === 0 ? (

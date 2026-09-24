@@ -87,7 +87,7 @@ function CreateUnlockWizard() {
   const [published, setPublished] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState("");
   const [campaignStatus, setCampaignStatus] = useState<"DRAFT" | "PUBLISHED">("DRAFT");
-  const [actionLimit, setActionLimit] = useState(4);
+  const [actionLimit, setActionLimit] = useState(1);
   const [plan, setPlan] = useState("FREE");
 
   const [contentType, setContentType] = useState<ContentType>("URL");
@@ -262,8 +262,8 @@ function CreateUnlockWizard() {
     if (actions.length === 0) return "Add at least one step for fans";
     if (actions.length > actionLimit) {
       return plan === "FREE"
-        ? `Free plan: max ${actionLimit} steps. Remove ${actions.length - actionLimit} or upgrade to Pro for 10.`
-        : `Pro plan: max ${actionLimit} steps.`;
+        ? `Free plan: max ${actionLimit} step per link. Remove extra steps or upgrade to Pro for up to ${PLAN_LIMITS.PRO.actionsPerUnlock}.`
+        : `Pro plan: max ${actionLimit} steps per link.`;
     }
     for (const action of actions) {
       if (!action.url.trim()) return "Paste a link for each step";
@@ -562,7 +562,7 @@ function CreateUnlockWizard() {
           {plan === "FREE" && actions.length >= actionLimit && (
             <UpgradeNudge
               className="mb-4"
-              title="Free: 4 steps max"
+              title="Free: 1 step per link"
               description={`Pro lets you add up to ${PLAN_LIMITS.PRO.actionsPerUnlock} steps per link.`}
             />
           )}
@@ -702,7 +702,7 @@ function CreateUnlockWizard() {
           ) : (
             <UpgradeNudge
               className="mt-6"
-              title="Want 10 steps and custom branding?"
+              title={`Want ${PLAN_LIMITS.PRO.actionsPerUnlock} steps and custom branding?`}
               description="Pro adds deeper funnels, your logo and colors, analytics, and no ads."
             />
           )}

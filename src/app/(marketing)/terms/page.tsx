@@ -90,8 +90,8 @@ export default function TermsPage() {
             and support level—are described on our Pricing page and may change from time to time.
           </p>
           <p>
-            The Free plan includes unlimited unlock links and up to four steps per link unless stated
-            otherwise on the site. Pro includes up to ten steps per link plus additional features listed on
+            The Free plan includes unlimited unlock links and one step per link unless stated otherwise on the
+            site. Pro includes up to five steps per link plus additional features listed on
             our Pricing page.
           </p>
           <p>

@@ -75,7 +75,7 @@ async function findOrCreateProduct(stripe: Stripe) {
 
   const product = await stripe.products.create({
     name: PRODUCT_NAME,
-    description: "Pro subscription — 10 steps per link, branding, analytics, no ads.",
+    description: "Pro subscription — 5 steps per link, branding, funnel analytics, no ads.",
     metadata: { app: "linklock", plan: "PRO" },
   });
   console.log(`Created product: ${product.id}`);

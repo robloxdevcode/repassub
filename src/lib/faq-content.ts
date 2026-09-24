@@ -5,8 +5,8 @@ export const FAQ_SECTIONS: { title: string; items: FaqItem[] }[] = [
     title: "For fans (unlock pages)",
     items: [
       {
-        q: "Why does it say verifying for about 10 seconds?",
-        a: "After you tap a step and complete the action on YouTube, Instagram, TikTok, or another site, Linklock waits ~10 seconds before marking it complete. That gives you time to actually subscribe, follow, or join — then the step turns green.",
+        q: "Why does a step show “Verifying step…”?",
+        a: "After you tap a step and complete the action on YouTube, Instagram, TikTok, or another site, Linklock checks that you actually visited the link (including time away from this tab) before marking it complete. There’s no countdown — just wait until the step turns green.",
       },
       {
         q: "How do fan steps work?",
@@ -14,7 +14,7 @@ export const FAQ_SECTIONS: { title: string; items: FaqItem[] }[] = [
       },
       {
         q: "A step won't turn green — what do I do?",
-        a: "Make sure you completed the action in the other tab, then wait the full verify timer. Refresh and try the step again if needed.",
+        a: "Complete the action in the other tab, stay there at least a few seconds, then come back. If you return too quickly, you'll be asked to redo the quest. Tap the step again if needed.",
       },
     ],
   },
@@ -31,7 +31,7 @@ export const FAQ_SECTIONS: { title: string; items: FaqItem[] }[] = [
       },
       {
         q: "Free vs Pro — what's the difference?",
-        a: "Free: unlimited links, up to 4 steps per link, views & unlock stats, Linklock ads on pages. Pro: up to 10 steps, your logo/colors/music/video, advanced analytics (sources, devices, countries), and no Linklock branding on unlock pages.",
+        a: "Free: unlimited links, 1 step per link, views & unlock stats, Linklock ads on pages. Pro: up to 5 steps, your logo/colors/music/video, full funnel analytics (sources, devices, countries, drop-off), Pro themes, and no Linklock branding or ads on unlock pages.",
       },
     ],
   },

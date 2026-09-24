@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Lock, Unlock } from "lucide-react";
+import { shouldDisableHeavyMotion } from "@/lib/motion-preference";
 
 interface UnlockAnimationProps {
   onComplete?: () => void;
@@ -13,6 +14,12 @@ export function UnlockAnimation({ onComplete, className }: UnlockAnimationProps)
   const [phase, setPhase] = useState<"shake" | "open" | "burst" | "done">("shake");
 
   useEffect(() => {
+    if (shouldDisableHeavyMotion()) {
+      setPhase("done");
+      onComplete?.();
+      return;
+    }
+
     const timers = [
       setTimeout(() => setPhase("open"), 600),
       setTimeout(() => setPhase("burst"), 1000),
