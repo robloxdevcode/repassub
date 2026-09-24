@@ -62,7 +62,7 @@ export function PublicCreatorProfile({
       <header className="public-creator-topbar shrink-0">
         <div className="public-creator-topbar-inner">
           <Link href="/" className="public-creator-brand" prefetch>
-            <LinklockLogo size={34} showWordmark wordmarkClassName="text-retro-text font-bold text-base sm:text-lg" />
+            <LinklockLogo size={34} />
           </Link>
           <Link href={isOwner ? "/create" : "/sign-up"} className="public-creator-top-cta" prefetch>
             {isOwner ? "New link" : "Create your link"}

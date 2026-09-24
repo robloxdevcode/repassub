@@ -9,11 +9,7 @@ export function LinklockDownPage() {
       <MemphisDecorations />
 
       <main className="classic-down-main">
-        <LinklockLogo
-          size={56}
-          showWordmark
-          wordmarkClassName="font-display text-retro-ink justify-center"
-        />
+        <LinklockLogo size={56} variant="lockup" className="justify-center" />
 
         <p className="classic-down-badge classic-blink">OFFLINE — BE RIGHT BACK</p>
 

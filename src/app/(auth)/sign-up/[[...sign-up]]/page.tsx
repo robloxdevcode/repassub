@@ -9,7 +9,7 @@ export default function SignUpPage() {
     <>
       <div className="auth-shell-header">
         <div className="flex justify-center mb-4">
-          <LinklockLogo size={48} showWordmark wordmarkClassName="font-display text-[0.5rem] text-retro-ink" />
+          <LinklockLogo size={48} variant="lockup" />
         </div>
         <h1>Create your account</h1>
         <p>Free to start · No credit card required</p>

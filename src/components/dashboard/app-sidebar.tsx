@@ -68,7 +68,7 @@ export function AppSidebar({ showAdminPanel = false, plan = "FREE" }: { showAdmi
             onClick={() => setOpen(false)}
           >
 
-            <LinklockLogo size={40} showWordmark wordmarkClassName="text-retro-text" />
+            <LinklockLogo size={40} />
 
           </Link>
 

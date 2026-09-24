@@ -1,50 +1,74 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-export const LOGO_WIDTH = 1024;
-export const LOGO_HEIGHT = 682;
+/** Full lockup asset (304×168). */
+export const LOGO_WIDTH = 304;
+export const LOGO_HEIGHT = 168;
 export const LOGO_ASPECT = LOGO_WIDTH / LOGO_HEIGHT;
 
+export type LinklockLogoVariant = "responsive" | "lockup" | "mark";
+
 type LinklockLogoProps = {
-  /** Logo height in pixels; width scales from the asset aspect ratio. */
+  /** Logo height in pixels; width scales from the asset aspect ratio (lockup) or square (mark). */
   size?: number;
   className?: string;
-  showWordmark?: boolean;
-  wordmarkClassName?: string;
+  variant?: LinklockLogoVariant;
 };
+
+function LockupImage({ size, className }: { size: number; className?: string }) {
+  const height = size;
+  const width = Math.round(size * LOGO_ASPECT);
+
+  return (
+    <Image
+      src="/logo.png"
+      alt="Linklock"
+      width={width}
+      height={height}
+      className={cn("shrink-0 object-contain", className)}
+      priority
+    />
+  );
+}
+
+function MarkImage({ size, className }: { size: number; className?: string }) {
+  return (
+    <Image
+      src="/logo-mark.png"
+      alt="Linklock"
+      width={size}
+      height={size}
+      className={cn("shrink-0 object-contain", className)}
+      priority
+    />
+  );
+}
 
 export function LinklockLogo({
   size = 40,
   className,
-  showWordmark = false,
-  wordmarkClassName,
+  variant = "responsive",
 }: LinklockLogoProps) {
-  const height = size;
-  const width = Math.round(size * LOGO_ASPECT);
-  const wordmarkSize =
-    size >= 44 ? "text-xl" : size >= 36 ? "text-lg" : "text-base";
+  if (variant === "mark") {
+    return (
+      <span className={cn("inline-flex items-center", className)}>
+        <MarkImage size={size} />
+      </span>
+    );
+  }
+
+  if (variant === "lockup") {
+    return (
+      <span className={cn("inline-flex items-center", className)}>
+        <LockupImage size={size} />
+      </span>
+    );
+  }
 
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <Image
-        src="/logo.png"
-        alt="Linklock"
-        width={width}
-        height={height}
-        className="shrink-0 object-contain"
-        priority
-      />
-      {showWordmark ? (
-        <span
-          className={cn(
-            "font-semibold tracking-tight text-retro-text",
-            wordmarkSize,
-            wordmarkClassName
-          )}
-        >
-          Linklock
-        </span>
-      ) : null}
+    <span className={cn("inline-flex items-center", className)}>
+      <MarkImage size={size} className="sm:hidden" />
+      <LockupImage size={size} className="hidden sm:block" />
     </span>
   );
 }

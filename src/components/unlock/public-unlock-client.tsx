@@ -302,7 +302,7 @@ export function PublicUnlockClient({
       <header className="sticky top-0 z-20 border-b border-retro-border bg-retro-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
           <Link href="/" className="shrink-0">
-            <LinklockLogo size={32} showWordmark wordmarkClassName="hidden sm:inline text-retro-ink" />
+            <LinklockLogo size={32} />
           </Link>
           <Link href="/">
             <RetroButton size="sm" variant="primary">
@@ -334,7 +334,7 @@ export function PublicUnlockClient({
             ) : isPro && campaign.user.avatarUrl ? (
               <img src={campaign.user.avatarUrl} alt="" className="h-12 w-12 rounded-xl mb-4 object-cover brutal-border" />
             ) : !isPro ? (
-              <LinklockLogo size={48} className="mb-4" />
+              <LinklockLogo size={48} variant="lockup" className="mb-4" />
             ) : (
               <div className="h-12 w-12 rounded-xl mb-4 brutal-border bg-retro-yellow flex items-center justify-center font-display text-lg">
                 {(campaign.user.displayName || campaign.user.username).slice(0, 1).toUpperCase()}

@@ -21,7 +21,7 @@ export default async function SuspendedPage() {
 
   return (
     <div className="classic-shell min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-retro-bg">
-      <LinklockLogo size={48} className="mb-8" showWordmark wordmarkClassName="font-display text-[0.5rem]" />
+      <LinklockLogo size={48} variant="lockup" className="mb-8" />
       <div className="retro-panel max-w-md w-full p-8 text-center">
         <h1 className="font-display text-[0.5625rem] md:text-xs text-retro-text mb-4 uppercase leading-relaxed">
           Account suspended

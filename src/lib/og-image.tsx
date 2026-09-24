@@ -2,6 +2,52 @@ import { ImageResponse } from "next/og";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
+const DOT = "#ffe566";
+const INK = "#0a0a0a";
+
+function OgFourDotMark({ box = 72 }: { box?: number }) {
+  const unit = Math.round(box * 0.22);
+  const gap = Math.round(unit * 0.35);
+  const arm = unit + gap;
+
+  return (
+    <div
+      style={{
+        width: box,
+        height: box,
+        background: "#faf8f5",
+        border: `3px solid ${INK}`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        boxShadow: "4px 4px 0 rgba(0,0,0,0.25)",
+      }}
+    >
+      <div style={{ position: "relative", width: arm * 2 + unit, height: arm * 2 + unit }}>
+        {[
+          { left: arm, top: 0 },
+          { left: 0, top: arm },
+          { left: arm * 2, top: arm },
+          { left: arm, top: arm * 2 },
+        ].map((pos, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: pos.left,
+              top: pos.top,
+              width: unit,
+              height: unit,
+              background: DOT,
+              border: `2px solid ${INK}`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function buildOgImage(title?: string, subtitle?: string) {
   const headline = title ?? "Linklock";
   const tagline =
@@ -28,22 +74,7 @@ export function buildOgImage(title?: string, subtitle?: string) {
             gap: "16px",
           }}
         >
-          <div
-            style={{
-              width: "72px",
-              height: "72px",
-              background: "#ffffff",
-              borderRadius: "16px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "36px",
-              fontWeight: 900,
-              color: "#f03e3e",
-            }}
-          >
-            L
-          </div>
+          <OgFourDotMark box={72} />
           <span
             style={{
               fontSize: "48px",
