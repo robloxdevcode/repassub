@@ -2,6 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 import { NextResponse } from "next/server";
 import { enforceHttpsRedirect } from "@/lib/enforce-https";
+import { ADS_TXT_HEADERS, getAdsTxtBody } from "@/lib/ads-txt-content";
 
 const isPublicRoute = createRouteMatcher([
 
@@ -114,6 +115,17 @@ export default clerkMiddleware(async (auth, req) => {
 
   const host = req.headers.get("host") || "";
   const pathname = req.nextUrl.pathname;
+  const adsPath = pathname.toLowerCase();
+
+  if (adsPath === "/ads.txt" || adsPath === "/app-ads.txt") {
+    if (adsPath !== pathname) {
+      return NextResponse.redirect(new URL("/ads.txt", req.url), 301);
+    }
+    return new NextResponse(getAdsTxtBody(), {
+      status: 200,
+      headers: ADS_TXT_HEADERS,
+    });
+  }
 
   /* Optional: LINKLOCK_SIMPLE_PUBLIC=true → home + app only */
   const simplePublic = process.env.LINKLOCK_SIMPLE_PUBLIC === "true";
@@ -146,16 +158,6 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(url, 307);
     }
   }
-
-  if (pathname.toLowerCase() === "/ads.txt" && pathname !== "/ads.txt") {
-    return NextResponse.redirect(new URL("/ads.txt", req.url), 301);
-  }
-
-  if (pathname === "/ads.txt") {
-    return NextResponse.next();
-  }
-
-
 
   if (host.startsWith("app.") && pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", req.url));

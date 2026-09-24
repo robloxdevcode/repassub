@@ -10,7 +10,7 @@ export function LinklockLiveLanding() {
       <div className="ll-down-grid" aria-hidden />
 
       <main className="ll-down-main">
-        <LinklockLogo size={56} variant="lockup" className="ll-down-logo-text" />
+        <LinklockLogo size={72} variant="lockup" className="ll-down-logo-text" />
 
         <p className="ll-down-badge ll-down-badge--live">Subscribe-to-unlock links</p>
 

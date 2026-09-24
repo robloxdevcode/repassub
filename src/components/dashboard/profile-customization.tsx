@@ -102,7 +102,7 @@ export function ProfileCustomization({
               {staffBadgeIds.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {staffBadgeIds.map((id) => {
-                    const badge = getBadgeLabel(id);
+                    const badge = getBadgeLabel(id, username);
                     if (!badge) return null;
                     return <StaffRoleBadge key={id} label={badge.label} />;
                   })}

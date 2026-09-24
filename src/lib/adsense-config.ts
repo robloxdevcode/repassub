@@ -1,10 +1,11 @@
 import "server-only";
 
-/** IAB ads.txt certification authority ID for Google AdSense direct lines. */
-const GOOGLE_CERT_ID = "f08c47fec0942fa0";
+import {
+  getAdSensePublisherIdFromEnv,
+  getAdsTxtBody as buildAdsTxtBody,
+} from "@/lib/ads-txt-content";
 
 const DEFAULT_CLIENT = "ca-pub-9505278121058134";
-const DEFAULT_PUBLISHER_ID = "pub-9505278121058134";
 
 function readClientEnv() {
   return (
@@ -19,14 +20,11 @@ export function getAdSenseClient() {
 }
 
 export function getAdSensePublisherId() {
-  const client = readClientEnv();
-  if (client.startsWith("pub-")) return client;
-  return client.replace(/^ca-pub-/i, "pub-") || DEFAULT_PUBLISHER_ID;
+  return getAdSensePublisherIdFromEnv();
 }
 
 export function getAdsTxtBody() {
-  const pubId = getAdSensePublisherId();
-  return `google.com, ${pubId}, DIRECT, ${GOOGLE_CERT_ID}\n`;
+  return buildAdsTxtBody();
 }
 
 export function getUnlockAdSlot(side: "left" | "right" | "bottom") {

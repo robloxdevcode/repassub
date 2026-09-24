@@ -19,6 +19,7 @@ import {
 import { RetroButton, UnlockAnimation } from "@/components/retro";
 import { UnlockPageBackdrop } from "./unlock-page-backdrop";
 import { UnlockPageAd } from "./unlock-page-ad";
+import { AdBlockGate } from "@/components/ads/ad-block-gate";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { unlockThemeClass, unlockThemeCtaVariant } from "@/lib/unlock-themes";
 import { themeUsesCaptcha } from "@/lib/easter-eggs";
@@ -277,6 +278,7 @@ export function PublicUnlockClient({
 
   return (
     <div className="classic-shell unlock-v2 relative min-h-screen flex flex-col">
+      <AdBlockGate enabled={showAds && Boolean(adClient.trim())} />
       {externalPrompt ? (
         <div className="unlock-external-overlay" role="dialog" aria-modal="true" aria-labelledby="external-step-title">
           <div className="unlock-external-dialog">

@@ -24,7 +24,7 @@ export function StaffVerifiedMark({ className = "", title = "Verified Linklock s
 export function StaffRoleBadge({ label }: { label: string }) {
   return (
     <span className="profile-badge profile-badge--staff inline-flex items-center gap-1.5">
-      <StaffVerifiedMark className="h-4 w-4 text-retro-accent-dim" />
+      <StaffVerifiedMark className="h-4 w-4" />
       <span>{label}</span>
     </span>
   );

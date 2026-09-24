@@ -186,5 +186,10 @@
 }
 
 .staff-verified-mark {
-  color: #059669;
+  color: #38bdf8;
+}
+
+.profile-badge--staff {
+  border-color: rgba(56, 189, 248, 0.55);
+  background: rgba(56, 189, 248, 0.12);
 }

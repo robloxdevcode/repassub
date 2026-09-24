@@ -194,7 +194,7 @@ export default function ProfilePage() {
               <p className="font-bold text-xl md:text-2xl text-white truncate inline-flex items-center gap-2 max-w-full">
                 <span className="truncate">{displayName || username}</span>
                 {previewBadges.length > 0 ? (
-                  <StaffVerifiedMark className="h-5 w-5 shrink-0 text-emerald-300" title="Verified Linklock staff" />
+                  <StaffVerifiedMark className="h-5 w-5 shrink-0" title="Verified Linklock staff" />
                 ) : null}
               </p>
               <p className="text-sm text-white/65">@{username}</p>
@@ -202,7 +202,7 @@ export default function ProfilePage() {
               {previewBadges.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {previewBadges.map((id) => {
-                    const badge = getBadgeLabel(id);
+                    const badge = getBadgeLabel(id, username);
                     if (!badge) return null;
                     return <StaffRoleBadge key={id} label={badge.label} />;
                   })}
@@ -372,7 +372,7 @@ export default function ProfilePage() {
             </p>
             <div className="flex flex-wrap gap-2">
               {previewBadges.map((id) => {
-                const badge = getBadgeLabel(id);
+                const badge = getBadgeLabel(id, username);
                 if (!badge) return null;
                 return <StaffRoleBadge key={id} label={badge.label} />;
               })}

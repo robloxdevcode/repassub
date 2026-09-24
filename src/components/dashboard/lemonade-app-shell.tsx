@@ -109,7 +109,7 @@ export function LemonadeAppSidebar({
       >
         <div className="flex h-full flex-col p-5">
           <Link href="/dashboard" prefetch className="mb-6 block px-1" onClick={close}>
-            <LinklockLogo size={40} />
+            <LinklockLogo size={56} />
           </Link>
 
           <Link

@@ -95,6 +95,6 @@ export function parseProfileSettings(raw: unknown): ProfileSettings {
   };
 }
 
-export function getBadgeLabel(id: string): { label: string } | null {
-  return getStaffBadgeLabel(id);
+export function getBadgeLabel(id: string, username?: string | null): { label: string } | null {
+  return getStaffBadgeLabel(id, username);
 }

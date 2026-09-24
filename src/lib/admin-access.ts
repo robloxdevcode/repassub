@@ -9,6 +9,11 @@ export const STAFF_ROLE_LABELS: Record<StaffRole, string> = {
   OWNER: "Owner",
 };
 
+/** Public profile badge text overrides (username → label). Team role in admin stays unchanged. */
+export const PUBLIC_STAFF_BADGE_LABEL_BY_USERNAME: Record<string, string> = {
+  iamdoom: "Co-founder",
+};
+
 export const STAFF_ROLE_DESCRIPTIONS: Record<Exclude<StaffRole, "NONE">, string> = {
   TESTER: "Preview admin — read-only, no bans or deletes.",
   SUPPORT: "Help users — view people and links only.",
@@ -112,7 +117,12 @@ export function isStaffProfile(user: { role: UserRole; staffRole: StaffRole }): 
   return getStaffProfileBadgeIds(user).length > 0;
 }
 
-export function getStaffBadgeLabel(id: string): { label: string } | null {
+export function getStaffBadgeLabel(id: string, username?: string | null): { label: string } | null {
+  const normalizedUsername = username?.trim().toLowerCase();
+  if (normalizedUsername && PUBLIC_STAFF_BADGE_LABEL_BY_USERNAME[normalizedUsername]) {
+    return { label: PUBLIC_STAFF_BADGE_LABEL_BY_USERNAME[normalizedUsername] };
+  }
+
   if (id === "staff:SITE_ADMIN") {
     return { label: "Staff" };
   }

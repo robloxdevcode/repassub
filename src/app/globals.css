@@ -12,5 +12,29 @@
 @import "../styles/profile-theme.css";
 @import "../styles/settings-page.css";
 @import "../styles/directional-bg-motion.css";
+@import "../styles/ad-block-gate.css";
+
+.linklock-logo-lockup {
+  max-height: clamp(2.75rem, 8vw, 4.5rem);
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  .linklock-logo-lockup {
+    max-height: clamp(3.25rem, 5.5vw, 5rem);
+  }
+}
+
+.linklock-logo-mark {
+  max-width: 2.75rem;
+  max-height: 2.75rem;
+}
+
+@media (min-width: 640px) {
+  .linklock-logo-mark {
+    max-width: 3.25rem;
+    max-height: 3.25rem;
+  }
+}
 
 /* Linklock Classic — one retro stack for marketing + app */

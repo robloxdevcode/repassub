@@ -33,7 +33,7 @@ export function RetroFooter() {
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
-            <LinklockLogo size={36} variant="lockup" />
+            <LinklockLogo size={52} variant="lockup" />
             <p className="mt-4 text-sm text-retro-text-dim leading-relaxed max-w-xs">
               Free subscribe-to-download links for creators — gate preset packs, beats, and mods behind
               follow, sub, and join steps.

@@ -4,10 +4,12 @@ import { MemphisDecorations } from "@/components/retro/memphis-ui";
 import { ClassicAnimatedBackdrop } from "@/components/marketing/classic-animated-backdrop";
 import { RetroFooter } from "@/components/marketing/retro-footer";
 import { RetroNav } from "@/components/marketing/retro-nav";
+import { AdBlockGate } from "@/components/ads/ad-block-gate";
 
 export function ClassicMarketingChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="classic-shell ll-shell relative flex min-h-screen flex-col">
+      <AdBlockGate enabled />
       <ClassicAnimatedBackdrop />
       <MemphisDecorations />
       <div className="classic-nav relative z-10">

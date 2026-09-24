@@ -91,7 +91,7 @@ export function PublicCreatorProfile({
           <h1 className="public-creator-name">
             <span>{name}</span>
             {badgeIds.length > 0 ? (
-              <StaffVerifiedMark className="h-6 w-6 text-emerald-400 drop-shadow" title="Verified Linklock staff" />
+              <StaffVerifiedMark className="h-6 w-6 drop-shadow" title="Verified Linklock staff" />
             ) : null}
           </h1>
           <p className="text-sm text-white/70 mt-1">@{username}</p>
@@ -111,7 +111,7 @@ export function PublicCreatorProfile({
           {badgeIds.length > 0 ? (
             <div className="mt-5 flex flex-wrap gap-2 justify-center">
               {badgeIds.map((id) => {
-                const badge = getBadgeLabel(id);
+                const badge = getBadgeLabel(id, username);
                 if (!badge) return null;
                 return <StaffRoleBadge key={id} label={badge.label} />;
               })}
