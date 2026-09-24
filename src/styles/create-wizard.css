@@ -1,0 +1,53 @@
+.step-card {
+  border: 2px solid var(--classic-ink, #0a0a0a);
+  background: var(--retro-surface-2);
+  padding: 1rem;
+  box-shadow: 3px 3px 0 var(--classic-ink, #0a0a0a);
+}
+
+.step-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.step-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--retro-text-dim);
+  padding: 0.35rem 0.5rem;
+  border: 2px solid transparent;
+  border-radius: 0;
+}
+
+.step-remove-btn:hover {
+  color: var(--retro-error, #dc2626);
+  border-color: var(--classic-ink, #0a0a0a);
+  background: var(--retro-surface);
+}
+
+.wizard-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--retro-border);
+}
+
+@media (min-width: 640px) {
+  .wizard-footer--split {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.create-wizard .step-card + .step-card {
+  margin-top: 0;
+}

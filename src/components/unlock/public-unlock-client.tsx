@@ -27,6 +27,7 @@ import { RetroButton, UnlockAnimation } from "@/components/retro";
 import { UnlockPageBackdrop } from "./unlock-page-backdrop";
 import { UnlockPageAd } from "./unlock-page-ad";
 import { AdBlockGate } from "@/components/ads/ad-block-gate";
+import { ExternalStepConfirmModal } from "@/components/unlock/external-step-confirm-modal";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { unlockThemeClass, unlockThemeCtaVariant } from "@/lib/unlock-themes";
 import { shouldDisableHeavyMotion } from "@/lib/motion-preference";
@@ -382,26 +383,12 @@ export function PublicUnlockClient({
     <div className="classic-shell unlock-v2 relative min-h-screen flex flex-col">
       <AdBlockGate enabled={showAds && Boolean(adClient.trim())} />
       {externalPrompt ? (
-        <div className="unlock-external-overlay" role="dialog" aria-modal="true" aria-labelledby="external-step-title">
-          <div className="unlock-external-dialog">
-            <h2 id="external-step-title" className="text-base font-semibold text-retro-text">
-              Continue to this step?
-            </h2>
-            <p className="mt-2 text-sm text-retro-text-dim leading-relaxed">
-              You&apos;re about to open a third-party site ({externalPrompt.label}). Linklock is{" "}
-              <strong className="text-retro-text">not partnered</strong> with that site — we only help you track
-              unlock progress. Make sure you trust the creator&apos;s link before continuing.
-            </p>
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <RetroButton type="button" variant="primary" className="flex-1" onClick={confirmExternalAction}>
-                Yes, continue
-              </RetroButton>
-              <RetroButton type="button" variant="secondary" className="flex-1" onClick={() => setExternalPrompt(null)}>
-                Cancel
-              </RetroButton>
-            </div>
-          </div>
-        </div>
+        <ExternalStepConfirmModal
+          stepLabel={externalPrompt.label}
+          destinationUrl={(externalPrompt.config as Record<string, string>)?.url}
+          onConfirm={confirmExternalAction}
+          onCancel={() => setExternalPrompt(null)}
+        />
       ) : null}
       <header className="sticky top-0 z-20 border-b border-retro-border bg-retro-surface/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">

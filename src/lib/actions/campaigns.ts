@@ -130,7 +130,7 @@ export async function updateCampaignActions(
   });
   if (!campaign) throw new Error("Campaign not found");
 
-  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  const plan = getEffectiveUserPlan(user.subscriptions?.[0]);
   const actionLimit = getActionLimit(plan);
   if (actions.length > actionLimit) {
     throw new Error(
@@ -181,7 +181,7 @@ export async function updateCampaignCustomization(
   });
   if (!campaign) throw new Error("Campaign not found");
 
-  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
+  const plan = getEffectiveUserPlan(user.subscriptions?.[0]);
   const pro = isProPlan(plan);
 
   let slug = data.slug;
@@ -234,6 +234,16 @@ export async function publishCampaign(campaignId: string) {
   if (!campaign) throw new Error("Campaign not found");
   if (!campaign.content) throw new Error("Add content before publishing");
   if (campaign.actions.length === 0) throw new Error("Add at least one action");
+
+  const plan = getEffectiveUserPlan(user.subscriptions?.[0]);
+  const actionLimit = getActionLimit(plan);
+  if (campaign.actions.length > actionLimit) {
+    throw new Error(
+      plan === "FREE"
+        ? `Free plan allows ${actionLimit} step per link. Remove extra steps or upgrade to Pro.`
+        : `Pro plan allows up to ${actionLimit} steps per link.`,
+    );
+  }
 
   const updated = await db.campaign.update({
     where: { id: campaignId },

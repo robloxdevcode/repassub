@@ -78,6 +78,7 @@ function CreateUnlockWizard() {
   const editId = searchParams.get("id");
   const creatingCampaignRef = useRef<Promise<string> | null>(null);
   const slugTouchedRef = useRef(false);
+  const editStepAppliedRef = useRef(false);
 
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState<"publish" | null>(null);
@@ -89,6 +90,10 @@ function CreateUnlockWizard() {
   const [campaignStatus, setCampaignStatus] = useState<"DRAFT" | "PUBLISHED">("DRAFT");
   const [actionLimit, setActionLimit] = useState(1);
   const [plan, setPlan] = useState("FREE");
+  const [planReady, setPlanReady] = useState(false);
+  const [editLoaded, setEditLoaded] = useState(!editId);
+  const [editInitialStep, setEditInitialStep] = useState(0);
+  const [stepBusy, setStepBusy] = useState(false);
 
   const [contentType, setContentType] = useState<ContentType>("URL");
   const [externalUrl, setExternalUrl] = useState("");
@@ -111,86 +116,112 @@ function CreateUnlockWizard() {
 
   useEffect(() => {
     import("@/lib/actions/dashboard").then(({ getDashboardStats }) =>
-      getDashboardStats().then((s) => {
-        setUsername(s.user.username);
-        setActionLimit(s.actionLimit);
-        setPlan(s.plan);
-      })
+      getDashboardStats()
+        .then((s) => {
+          setUsername(s.user.username);
+          setActionLimit(s.actionLimit);
+          setPlan(s.plan);
+        })
+        .finally(() => setPlanReady(true)),
     );
   }, []);
 
   useEffect(() => {
-    if (editId) {
-      getCampaign(editId).then((campaign) => {
-        if (!campaign) return;
-        setCampaignId(campaign.id);
-        setTitle(campaign.title);
-        setDescription(campaign.description || "");
-        setButtonText(campaign.buttonText);
-        setTheme(campaign.theme);
-        setSlug(campaign.slug);
-        slugTouchedRef.current = true;
-        setLogoUrl(campaign.logoUrl || "");
-        setBackgroundMusicUrl(campaign.backgroundMusicUrl || "");
-        setBackgroundVideoUrl(campaign.backgroundVideoUrl || "");
-        if (campaign.content) {
-          if (campaign.content.type === "FILE") {
-            setContentType("URL");
-            setExternalUrl(campaign.content.fileUrl || campaign.content.externalUrl || "");
-          } else {
-            setContentType(campaign.content.type);
-            setExternalUrl(campaign.content.externalUrl || "");
-            setTextBody(campaign.content.textBody || "");
-          }
-        }
-        if (campaign.actions.length) {
-          setActions(
-            campaign.actions.map((a) => {
-              const config = a.config as Record<string, string>;
-              const platform = config?.platform
-                ? getPlatform(config.platform) || guessPlatform(a.type, a.label)
-                : guessPlatform(a.type, a.label);
-              return {
-                id: a.id,
-                platformId: platform.id,
-                url: config?.url || "",
-                label: a.label,
-                labelTouched: true,
-              };
-            })
-          );
-        }
-        setCampaignStatus(campaign.status as "DRAFT" | "PUBLISHED");
-        if (campaign.content && campaign.actions.length) {
-          setStep(2);
-        } else if (campaign.content) {
-          setStep(1);
-          if (!campaign.actions.length) {
-            setActions([newActionDraft()]);
-          }
-        }
-      });
+    if (!editId) {
+      setEditLoaded(true);
+      return;
     }
-  }, [editId]);
+    setEditLoaded(false);
+    editStepAppliedRef.current = false;
+    getCampaign(editId).then((campaign) => {
+      if (!campaign) {
+        toast("Link not found", "error");
+        return;
+      }
+      setCampaignId(campaign.id);
+      setTitle(campaign.title);
+      setDescription(campaign.description || "");
+      setButtonText(campaign.buttonText);
+      setTheme(campaign.theme);
+      setSlug(campaign.slug);
+      slugTouchedRef.current = true;
+      setLogoUrl(campaign.logoUrl || "");
+      setBackgroundMusicUrl(campaign.backgroundMusicUrl || "");
+      setBackgroundVideoUrl(campaign.backgroundVideoUrl || "");
+      if (campaign.content) {
+        if (campaign.content.type === "FILE") {
+          setContentType("URL");
+          setExternalUrl(campaign.content.fileUrl || campaign.content.externalUrl || "");
+        } else {
+          setContentType(campaign.content.type);
+          setExternalUrl(campaign.content.externalUrl || "");
+          setTextBody(campaign.content.textBody || "");
+        }
+      }
+      if (campaign.actions.length) {
+        setActions(
+          campaign.actions.slice(0, PLAN_LIMITS.PRO.actionsPerUnlock).map((a) => {
+            const config = a.config as Record<string, string>;
+            const platform = config?.platform
+              ? getPlatform(config.platform) || guessPlatform(a.type, a.label)
+              : guessPlatform(a.type, a.label);
+            return {
+              id: a.id,
+              platformId: platform.id,
+              url: config?.url || "",
+              label: a.label,
+              labelTouched: true,
+            };
+          }),
+        );
+      }
+      setCampaignStatus(campaign.status as "DRAFT" | "PUBLISHED");
+      if (campaign.content && campaign.actions.length) {
+        setEditInitialStep(2);
+      } else if (campaign.content) {
+        setEditInitialStep(1);
+        if (!campaign.actions.length) {
+          setActions([newActionDraft()]);
+        }
+      } else {
+        setEditInitialStep(0);
+      }
+    }).finally(() => setEditLoaded(true));
+  }, [editId, toast]);
+
+  useEffect(() => {
+    if (!editId || !planReady || !editLoaded || editStepAppliedRef.current) return;
+    editStepAppliedRef.current = true;
+    setStep(editInitialStep);
+    setActions((prev) => (prev.length > actionLimit ? prev.slice(0, actionLimit) : prev));
+  }, [editId, planReady, editLoaded, editInitialStep, actionLimit]);
+
+  useEffect(() => {
+    if (step !== 1 || !planReady) return;
+    setActions((prev) => {
+      if (prev.length === 0) return [newActionDraft()];
+      if (prev.length > actionLimit) return prev.slice(0, actionLimit);
+      return prev;
+    });
+  }, [step, actionLimit, planReady]);
 
   const ensureCampaign = useCallback(async () => {
     if (campaignId) return campaignId;
     if (!creatingCampaignRef.current) {
-      creatingCampaignRef.current = createCampaign({ title: title || "My unlock" }).then((campaign) => {
-        setCampaignId(campaign.id);
-        setSlug(campaign.slug);
-        return campaign.id;
-      });
+      creatingCampaignRef.current = createCampaign({ title: title.trim() || "My unlock" })
+        .then((campaign) => {
+          setCampaignId(campaign.id);
+          setSlug(campaign.slug);
+          if (!title.trim()) setTitle(campaign.title);
+          return campaign.id;
+        })
+        .catch((error) => {
+          creatingCampaignRef.current = null;
+          throw error;
+        });
     }
     return creatingCampaignRef.current;
   }, [campaignId, title]);
-
-  useEffect(() => {
-    if (editId || campaignId) return;
-    void ensureCampaign().catch(() => {
-      creatingCampaignRef.current = null;
-    });
-  }, [editId, campaignId, ensureCampaign]);
 
   const saveContentToServer = useCallback(
     async (id: string) => {
@@ -208,36 +239,23 @@ function CreateUnlockWizard() {
       await updateCampaignActions(
         id,
         actions.map((action) => {
-          const platform = getPlatform(action.platformId)!;
+          const platform = getPlatform(action.platformId) ?? getPlatform("website")!;
           return {
             type: platform.type,
             label: action.label.trim(),
             config: { url: action.url.trim(), platform: platform.id },
             verificationMode: "MANUAL" as const,
           };
-        })
+        }),
       );
     },
-    [actions]
+    [actions],
   );
 
-  const persistContentStep = useCallback(async () => {
-    try {
-      const id = await ensureCampaign();
-      await saveContentToServer(id);
-    } catch (e) {
-      toast(actionErrorMessage(e, "Could not save"), "error");
-    }
-  }, [ensureCampaign, saveContentToServer, toast]);
-
-  const persistActionsStep = useCallback(async () => {
-    try {
-      const id = await ensureCampaign();
-      await saveActionsToServer(id);
-    } catch (e) {
-      toast(actionErrorMessage(e, "Could not save steps"), "error");
-    }
-  }, [ensureCampaign, saveActionsToServer, toast]);
+  useEffect(() => {
+    if (!planReady) return;
+    setActions((prev) => (prev.length > actionLimit ? prev.slice(0, actionLimit) : prev));
+  }, [planReady, actionLimit]);
 
   function validateContent(): string | null {
     if (contentType === "URL" && !externalUrl.trim()) return "Paste your download link";
@@ -247,15 +265,26 @@ function CreateUnlockWizard() {
   }
 
   function handleContentNext() {
+    if (!planReady || stepBusy) return;
     const err = validateContent();
     if (err) {
       toast(err, "error");
       return;
     }
 
-    setActions((prev) => (prev.length === 0 ? [newActionDraft()] : prev));
-    setStep(1);
-    void persistContentStep();
+    setStepBusy(true);
+    void (async () => {
+      try {
+        const id = await ensureCampaign();
+        await saveContentToServer(id);
+        setActions((prev) => (prev.length === 0 ? [newActionDraft()] : prev.slice(0, actionLimit)));
+        setStep(1);
+      } catch (e) {
+        toast(actionErrorMessage(e, "Could not save"), "error");
+      } finally {
+        setStepBusy(false);
+      }
+    })();
   }
 
   function validateActions(): string | null {
@@ -269,23 +298,35 @@ function CreateUnlockWizard() {
       if (!action.url.trim()) return "Paste a link for each step";
       if (!/^https?:\/\/.+/i.test(action.url.trim())) return "Each link must start with http:// or https://";
       if (!action.label.trim()) return "Name the button fans will tap";
-      if (!getPlatform(action.platformId)) return "Could not detect platform on one step — check the link";
     }
     return null;
   }
 
   function handleActionsNext() {
+    if (!planReady || stepBusy) return;
     const err = validateActions();
     if (err) {
       toast(err, "error");
       return;
     }
 
-    setStep(2);
-    void persistActionsStep();
+    setStepBusy(true);
+    void (async () => {
+      try {
+        const id = await ensureCampaign();
+        await saveActionsToServer(id);
+        setStep(2);
+        if (!title.trim()) setTitle("My unlock");
+      } catch (e) {
+        toast(actionErrorMessage(e, "Could not save steps"), "error");
+      } finally {
+        setStepBusy(false);
+      }
+    })();
   }
 
   async function handleFinishStep() {
+    if (stepBusy || saving === "publish") return;
     if (!title.trim()) {
       toast("Give your link a name", "error");
       return;
@@ -360,6 +401,14 @@ function CreateUnlockWizard() {
   }
 
   function removeAction(id: string) {
+    if (actionLimit === 1 && actions.length <= 1) {
+      toast("Your plan requires at least one fan step on this link.", "error");
+      return;
+    }
+    if (actions.length <= 1) {
+      toast("Add at least one step for fans.", "error");
+      return;
+    }
     setActions((prev) => prev.filter((a) => a.id !== id));
   }
 
@@ -367,7 +416,10 @@ function CreateUnlockWizard() {
     const platform = getPlatform(platformId);
     if (!platform) return;
     if (actions.length >= actionLimit) {
-      toast(`Free plan allows ${actionLimit} steps. Upgrade for more.`, "error");
+      toast(
+        `${plan === "FREE" ? "Free" : "Pro"} plan: max ${actionLimit} step${actionLimit === 1 ? "" : "s"}.`,
+        "error",
+      );
       return;
     }
     setActions((prev) => [
@@ -380,6 +432,14 @@ function CreateUnlockWizard() {
         labelTouched: false,
       },
     ]);
+  }
+
+  if (!planReady || !editLoaded) {
+    return (
+      <div className="mx-auto max-w-2xl py-12">
+        <RetroLoading message="Loading creator" />
+      </div>
+    );
   }
 
   if (published) {
@@ -421,7 +481,7 @@ function CreateUnlockWizard() {
         </p>
         {plan === "FREE" && (
           <p className="mt-1 text-xs text-retro-text-muted">
-            Free · unlimited links · up to {actionLimit} steps ({PLAN_LIMITS.PRO.actionsPerUnlock} on Pro)
+            Free · unlimited links · {actionLimit} step per link ({PLAN_LIMITS.PRO.actionsPerUnlock} on Pro)
           </p>
         )}
         <RetroProgressBar value={step + 1} max={STEPS.length} showPercent={false} className="mt-4" />
@@ -468,7 +528,7 @@ function CreateUnlockWizard() {
           )}
 
           <div className="wizard-footer">
-            <RetroButton type="button" onClick={handleContentNext} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
+            <RetroButton type="button" onClick={handleContentNext} loading={stepBusy} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
               Next
             </RetroButton>
           </div>
@@ -491,7 +551,7 @@ function CreateUnlockWizard() {
 
           <div className="flex flex-col gap-4 mb-4">
             {actions.map((action, index) => {
-              const platform = getPlatform(action.platformId);
+              const platform = getPlatform(action.platformId) ?? getPlatform("website");
               return (
                 <div key={action.id} className="step-card">
                   <div className="step-card-header">
@@ -504,15 +564,17 @@ function CreateUnlockWizard() {
                         </span>
                       )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeAction(action.id)}
-                      className="step-remove-btn"
-                      aria-label="Remove step"
-                    >
-                      <Trash2 size={16} />
-                      Remove
-                    </button>
+                    {actionLimit > 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => removeAction(action.id)}
+                        className="step-remove-btn"
+                        aria-label="Remove step"
+                      >
+                        <Trash2 size={16} />
+                        Remove
+                      </button>
+                    ) : null}
                   </div>
                   <RetroInput
                     label="Paste link"
@@ -539,39 +601,49 @@ function CreateUnlockWizard() {
             </p>
           )}
 
-          <div className="flex flex-wrap gap-2 mb-4">
-            {UNLOCK_PLATFORMS.filter((p) => ["tiktok", "instagram", "youtube", "website"].includes(p.id)).map((p) => (
-              <RetroButton key={p.id} type="button" variant="secondary" size="sm" onClick={() => quickAddPlatform(p.id)}>
-                + {p.shortName}
+          {actionLimit > 1 && actions.length < actionLimit ? (
+            <>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {UNLOCK_PLATFORMS.filter((p) => ["tiktok", "instagram", "youtube", "website"].includes(p.id)).map((p) => (
+                  <RetroButton key={p.id} type="button" variant="secondary" size="sm" onClick={() => quickAddPlatform(p.id)}>
+                    + {p.shortName}
+                  </RetroButton>
+                ))}
+              </div>
+
+              <RetroButton
+                type="button"
+                variant="secondary"
+                onClick={addAction}
+                disabled={actions.length >= actionLimit}
+                className="w-full mb-8"
+                size="lg"
+              >
+                <Plus size={16} />
+                Add step
               </RetroButton>
-            ))}
-          </div>
+            </>
+          ) : (
+            <p className="text-xs text-retro-text-muted mb-6">
+              {actionLimit === 1
+                ? "Free includes one fan step on this link. Upgrade to Pro for up to 5 steps."
+                : `You can add up to ${actionLimit} steps on this link.`}
+            </p>
+          )}
 
-          <RetroButton
-            type="button"
-            variant="secondary"
-            onClick={addAction}
-            disabled={actions.length >= actionLimit}
-            className="w-full mb-8"
-            size="lg"
-          >
-            <Plus size={16} />
-            Add step
-          </RetroButton>
-
-          {plan === "FREE" && actions.length >= actionLimit && (
+          {plan === "FREE" ? (
             <UpgradeNudge
               className="mb-4"
               title="Free: 1 step per link"
               description={`Pro lets you add up to ${PLAN_LIMITS.PRO.actionsPerUnlock} steps per link.`}
             />
-          )}
+          ) : null}
 
           <div className="wizard-footer wizard-footer--split">
             <RetroButton type="button" variant="ghost" onClick={() => setStep(0)} size="lg" className="w-full sm:w-auto">
               Back
             </RetroButton>
-            <RetroButton type="button" onClick={handleActionsNext} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
+            <RetroButton type="button" onClick={handleActionsNext} loading={stepBusy} size="lg" className="w-full sm:w-auto sm:min-w-[140px]">
               Next
             </RetroButton>
           </div>
@@ -636,7 +708,11 @@ function CreateUnlockWizard() {
               description={description}
               buttonText={buttonText}
               theme={theme}
-              actions={actions}
+              actions={actions.map((a) => ({
+                platformId: a.platformId,
+                label: a.label,
+                url: a.url,
+              }))}
             />
           ) : null}
 
