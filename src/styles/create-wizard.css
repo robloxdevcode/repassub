@@ -51,3 +51,9 @@
 .create-wizard .step-card + .step-card {
   margin-top: 0;
 }
+
+.create-autosave-status {
+  font-size: 0.75rem;
+  color: var(--retro-text-muted);
+  min-height: 1.125rem;
+}

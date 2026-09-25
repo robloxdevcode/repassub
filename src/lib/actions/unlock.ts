@@ -8,7 +8,11 @@ import {
   type StepVerifyCookie,
   STEP_VERIFY_COOKIE,
   validateActionCompletionProof,
+  timingForStrict,
+  SOFT_QUICK_RETURN_MESSAGE,
+  QUICK_RETURN_MESSAGE,
 } from "@/lib/unlock-verification";
+import { themeUsesStrictVerification } from "@/lib/unlock-campaign-theme";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 import { CampaignStatus } from "@prisma/client";
@@ -99,11 +103,14 @@ export async function registerActionStart(
   const config = action.config as Record<string, string> | null;
   const hasExternalUrl = Boolean(config?.url?.trim());
 
+  const strict = themeUsesStrictVerification(campaign.theme);
+
   await setStepVerifyCookie({
     campaignId,
     actionId,
     startedAt: Date.now(),
     hasExternalUrl,
+    strict,
   });
 
   return { ok: true as const, visitorId, hasExternalUrl };
@@ -151,6 +158,17 @@ export async function getUnlockSession(campaignId: string, clientVisitorId?: str
     return session;
   }
 
+  if (existing.status === "UNLOCKED") {
+    return db.unlockSession.update({
+      where: { id: existing.id },
+      data: {
+        status: "STARTED",
+        completedActions: [],
+        unlockedAt: null,
+      },
+    });
+  }
+
   const rawCompleted = (existing.completedActions as string[]) || [];
   const completedActions = rawCompleted.filter((id) => actionIds.has(id));
 
@@ -181,12 +199,16 @@ export async function completeAction(
   const hasExternalUrl = Boolean(config?.url?.trim());
 
   const verifyCookie = await getStepVerifyCookie();
+  const strict = verifyCookie?.strict ?? themeUsesStrictVerification(campaign.theme);
+  const timing = timingForStrict(Boolean(strict));
   const validation = validateActionCompletionProof(
     verifyCookie,
     campaignId,
     actionId,
     hasExternalUrl,
     proof,
+    Date.now(),
+    timing,
   );
   if (!validation.ok) {
     throw new Error(validation.message);
@@ -221,10 +243,16 @@ export async function completeAction(
     },
   });
 
+  const stepIndex = campaign.actions.findIndex((a) => a.id === actionId);
+
   await trackEvent({
     campaignId,
     type: "ACTION_COMPLETE",
-    metadata: { actionId },
+    metadata: {
+      actionId,
+      stepIndex: stepIndex >= 0 ? stepIndex + 1 : undefined,
+      stepTotal: campaign.actions.length,
+    },
     ...(await getAnalyticsContext()),
   });
 

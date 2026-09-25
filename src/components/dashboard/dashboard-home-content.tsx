@@ -116,9 +116,12 @@ export async function DashboardHomeContent() {
               you are ready to share.
             </p>
             <div className="dash-pro-onboarding-actions">
-              <Link href="/create" prefetch className="dash-pro-action">
+              <Link href="/create?template=youtube" prefetch className="dash-pro-action">
                 <Plus size={16} aria-hidden />
-                Create your first link
+                Create first link
+              </Link>
+              <Link href="/create?template=youtube" prefetch className="dash-pro-action-secondary text-sm">
+                Use YouTube template (1 step)
               </Link>
               <Link href={`/u/${stats.user.username}`} prefetch className="dash-pro-action-secondary">
                 <User size={16} aria-hidden />

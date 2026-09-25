@@ -42,6 +42,11 @@ export function writeUnlockProgress(campaignId: string, data: UnlockProgressCach
   localStorage.setItem(progressKey(campaignId), JSON.stringify(data));
 }
 
+export function clearUnlockProgress(campaignId: string) {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(progressKey(campaignId));
+}
+
 export function completedIdsFromKeys<T extends { id: string; type: string; label: string; config: unknown }>(
   actions: T[],
   keys: string[]

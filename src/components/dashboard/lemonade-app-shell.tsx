@@ -19,6 +19,7 @@ import {
 import { ClassicAnimatedBackdrop } from "@/components/marketing/classic-animated-backdrop";
 import { cn } from "@/lib/utils";
 import { LinklockLogo } from "@/components/brand/linklock-logo";
+import { PlanSyncBanner } from "@/components/dashboard/plan-sync-banner";
 import { AppNavProgress } from "@/components/dashboard/app-nav-progress";
 import { ClerkUserMenu } from "@/components/dashboard/clerk-user-menu";
 import { isProPlanName } from "@/components/dashboard/plan-badge";
@@ -197,11 +198,13 @@ export function LemonadeAppShell({
   showAdminPanel = false,
   plan = "FREE",
   appTheme = "classic",
+  showPlanSyncBanner = false,
 }: {
   children: ReactNode;
   showAdminPanel?: boolean;
   plan?: string;
   appTheme?: AppTheme;
+  showPlanSyncBanner?: boolean;
 }) {
   return (
     <>
@@ -212,7 +215,10 @@ export function LemonadeAppShell({
         className="classic-shell app-stage dash-pro-stage relative min-h-screen bg-retro-bg md:ml-[17.5rem]"
       >
         <ClassicAnimatedBackdrop />
-        <main className="dash-pro-main relative z-10 mx-auto w-full max-w-6xl px-4 md:px-8 pb-12">{children}</main>
+        <main className="dash-pro-main relative z-10 mx-auto w-full max-w-6xl px-4 md:px-8 pb-12">
+          {showPlanSyncBanner ? <PlanSyncBanner /> : null}
+          {children}
+        </main>
       </div>
     </>
   );

@@ -180,6 +180,69 @@ export async function getBasicCampaignBreakdown(userId: string) {
   return { campaignStats };
 }
 
+export type StepFunnelRow = {
+  campaignId: string;
+  title: string;
+  slug: string;
+  stepCount: number;
+  views: number;
+  started: number;
+  stepCompletes: number[];
+  unlocked: number;
+};
+
+export async function getPerStepFunnel(userId: string): Promise<StepFunnelRow[]> {
+  const campaigns = await db.campaign.findMany({
+    where: { userId, status: "PUBLISHED" },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      actions: { select: { id: true }, orderBy: { sortOrder: "asc" } },
+    },
+  });
+
+  if (campaigns.length === 0) return [];
+
+  const campaignIds = campaigns.map((c) => c.id);
+  const events = await db.analyticsEvent.findMany({
+    where: {
+      campaignId: { in: campaignIds },
+      type: { in: ["VIEW", "START", "ACTION_COMPLETE", "UNLOCK"] },
+    },
+    select: { campaignId: true, type: true, metadata: true },
+  });
+
+  return campaigns.map((c) => {
+    const rows = events.filter((e) => e.campaignId === c.id);
+
+    const stepCompletes = c.actions.map((_, index) => {
+      const stepNum = index + 1;
+      return rows.filter((e) => {
+        if (e.type !== "ACTION_COMPLETE") return false;
+        const meta = e.metadata as Record<string, unknown> | null;
+        const idx = meta?.stepIndex;
+        return typeof idx === "number" && idx === stepNum;
+      }).length;
+    });
+
+    const viewRows = rows.filter((e) => e.type === "VIEW").length;
+    const startedRows = rows.filter((e) => e.type === "START").length;
+    const unlockedRows = rows.filter((e) => e.type === "UNLOCK").length;
+
+    return {
+      campaignId: c.id,
+      title: c.title,
+      slug: c.slug,
+      stepCount: c.actions.length,
+      views: viewRows,
+      started: startedRows,
+      stepCompletes,
+      unlocked: unlockedRows,
+    };
+  });
+}
+
 function startOfUtcDay(date = new Date()) {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }

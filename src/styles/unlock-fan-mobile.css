@@ -27,3 +27,45 @@
 html.linklock-reduce-motion .unlock-preview-card.animate-pulse-glow {
   animation: none;
 }
+
+@media (max-width: 639px) {
+  .unlock-v2 .unlock-preview-card {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .unlock-fan-sticky-cta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    padding: 0.65rem 0.85rem calc(0.65rem + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--retro-surface) 96%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: 2px solid var(--classic-ink, #0a0a0a);
+    box-shadow: 0 -4px 0 color-mix(in srgb, var(--classic-ink, #0a0a0a) 12%, transparent);
+  }
+
+  .unlock-fan-sticky-cta .retro-progress {
+    margin-bottom: 0.55rem;
+  }
+
+  .unlock-fan-sticky-cta .unlock-fan-sticky-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--retro-text-dim);
+  }
+}
+
+.unlock-step-hint {
+  margin-top: 0.35rem;
+  padding-left: 0.15rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--retro-text-muted);
+}

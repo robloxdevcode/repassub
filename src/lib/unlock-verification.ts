@@ -13,7 +13,30 @@ export type StepVerifyCookie = {
   actionId: string;
   startedAt: number;
   hasExternalUrl: boolean;
+  strict?: boolean;
 };
+
+export type VerificationTiming = {
+  minAwayMs: number;
+  minVerifyMs: number;
+};
+
+export const STANDARD_VERIFY: VerificationTiming = {
+  minAwayMs: MIN_STEP_AWAY_MS,
+  minVerifyMs: MIN_STEP_VERIFY_MS,
+};
+
+export const STRICT_VERIFY: VerificationTiming = {
+  minAwayMs: 8_000,
+  minVerifyMs: 15_000,
+};
+
+export function timingForStrict(strict: boolean): VerificationTiming {
+  return strict ? STRICT_VERIFY : STANDARD_VERIFY;
+}
+
+export const SOFT_QUICK_RETURN_MESSAGE =
+  "You're almost there — stay on that site a few more seconds, then come back.";
 
 export type ActionCompletionProof = {
   awayMs?: number;
@@ -26,20 +49,21 @@ export function validateActionCompletionProof(
   hasExternalUrl: boolean,
   proof: ActionCompletionProof | undefined,
   now = Date.now(),
-): { ok: true } | { ok: false; message: string } {
+  timing: VerificationTiming = STANDARD_VERIFY,
+): { ok: true } | { ok: false; message: string; soft?: boolean } {
   if (!cookie || cookie.campaignId !== campaignId || cookie.actionId !== actionId) {
     return { ok: false, message: "Step expired — tap the button and try again." };
   }
 
   const elapsed = now - cookie.startedAt;
-  if (elapsed < MIN_STEP_VERIFY_MS) {
+  if (elapsed < timing.minVerifyMs) {
     return { ok: false, message: "Still verifying this step…" };
   }
 
   if (hasExternalUrl) {
     const away = proof?.awayMs ?? 0;
-    if (away < MIN_STEP_AWAY_MS) {
-      return { ok: false, message: QUICK_RETURN_MESSAGE };
+    if (away < timing.minAwayMs) {
+      return { ok: false, message: QUICK_RETURN_MESSAGE, soft: away > 800 };
     }
   }
 

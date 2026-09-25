@@ -11,12 +11,14 @@ import {
   updateCampaignCustomization,
   publishCampaign,
   getCampaign,
+  applyUnlockThemeToAllCampaigns,
 } from "@/lib/actions/campaigns";
 import { isProPlan, PLAN_LIMITS } from "@/lib/stripe";
 import { detectPlatformFromUrl, getPlatform, guessPlatform, UNLOCK_PLATFORMS } from "@/lib/unlock-platforms";
 import { UpgradeNudge } from "@/components/dashboard/upgrade-nudge";
 import { AppCard } from "@/components/dashboard/app-page-header";
-import { applyCaptchaToTheme } from "@/lib/easter-eggs";
+import { applyCaptchaToTheme, themeUsesCaptcha } from "@/lib/easter-eggs";
+import { applyStrictVerification, displayUnlockTheme, themeUsesStrictVerification } from "@/lib/unlock-campaign-theme";
 import { ShareKit } from "@/components/dashboard/share-kit";
 import { CopyLinkButton } from "@/components/dashboard/copy-link-button";
 import { UnlockPreviewPanel } from "@/components/dashboard/unlock-preview-panel";
@@ -79,6 +81,8 @@ function CreateUnlockWizard() {
   const creatingCampaignRef = useRef<Promise<string> | null>(null);
   const slugTouchedRef = useRef(false);
   const editStepAppliedRef = useRef(false);
+  const templateAppliedRef = useRef(false);
+  const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState<"publish" | null>(null);
@@ -109,7 +113,12 @@ function CreateUnlockWizard() {
   const [backgroundMusicUrl, setBackgroundMusicUrl] = useState("");
   const [backgroundVideoUrl, setBackgroundVideoUrl] = useState("");
   const [requireCaptcha, setRequireCaptcha] = useState(false);
+  const [strictVerification, setStrictVerification] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
+  const [savedLabel, setSavedLabel] = useState<string | null>(null);
+  const [autosaveBusy, setAutosaveBusy] = useState(false);
+  const [applyingThemeAll, setApplyingThemeAll] = useState(false);
 
   const isPro = isProPlan(plan);
   const isPublishedEdit = !!editId && campaignStatus === "PUBLISHED";
@@ -127,6 +136,34 @@ function CreateUnlockWizard() {
   }, []);
 
   useEffect(() => {
+    if (!lastSavedAt) return;
+    const tick = () => {
+      const sec = Math.max(0, Math.floor((Date.now() - lastSavedAt) / 1000));
+      setSavedLabel(sec < 5 ? "Saved · just now" : `Saved · ${sec}s ago`);
+    };
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [lastSavedAt]);
+
+  useEffect(() => {
+    if (editId || !planReady || templateAppliedRef.current) return;
+    if (searchParams.get("template") !== "youtube") return;
+    templateAppliedRef.current = true;
+    setTitle("Subscribe to unlock");
+    setDescription("Fans subscribe on YouTube, then get your link.");
+    setActions([
+      {
+        id: crypto.randomUUID(),
+        platformId: "youtube",
+        url: "",
+        label: "Subscribe on YouTube",
+        labelTouched: true,
+      },
+    ]);
+  }, [editId, planReady, searchParams]);
+
+  useEffect(() => {
     if (!editId) {
       setEditLoaded(true);
       return;
@@ -142,7 +179,9 @@ function CreateUnlockWizard() {
       setTitle(campaign.title);
       setDescription(campaign.description || "");
       setButtonText(campaign.buttonText);
-      setTheme(campaign.theme);
+      setTheme(displayUnlockTheme(campaign.theme));
+      setRequireCaptcha(themeUsesCaptcha(campaign.theme));
+      setStrictVerification(themeUsesStrictVerification(campaign.theme));
       setSlug(campaign.slug);
       slugTouchedRef.current = true;
       setLogoUrl(campaign.logoUrl || "");
@@ -257,6 +296,94 @@ function CreateUnlockWizard() {
     setActions((prev) => (prev.length > actionLimit ? prev.slice(0, actionLimit) : prev));
   }, [planReady, actionLimit]);
 
+  function buildThemePayload() {
+    let themeValue = isPro ? theme : "default";
+    themeValue = applyCaptchaToTheme(themeValue, requireCaptcha);
+    return applyStrictVerification(themeValue, isPro && strictVerification);
+  }
+
+  const runAutosave = useCallback(async () => {
+    if (published || stepBusy || saving === "publish") return;
+    setAutosaveBusy(true);
+    try {
+      const id = await ensureCampaign();
+      if (externalUrl.trim() || textBody.trim()) {
+        await saveContentToServer(id);
+      }
+      if (actions.some((a) => a.url.trim() || a.label.trim())) {
+        await saveActionsToServer(id);
+      }
+      if (step === 2 && title.trim()) {
+        await updateCampaignCustomization(id, {
+          title: title.trim(),
+          description,
+          buttonText: buttonText.trim() || "Get download",
+          theme: buildThemePayload(),
+          ...(isPro
+            ? {
+                logoUrl: logoUrl.trim() || null,
+                slug: slug.trim() || undefined,
+                backgroundMusicUrl: backgroundMusicUrl.trim() || null,
+                backgroundVideoUrl: backgroundVideoUrl.trim() || null,
+              }
+            : {}),
+        });
+      }
+      setLastSavedAt(Date.now());
+    } catch {
+      /* draft autosave is best-effort */
+    } finally {
+      setAutosaveBusy(false);
+    }
+  }, [
+    published,
+    stepBusy,
+    saving,
+    ensureCampaign,
+    externalUrl,
+    textBody,
+    actions,
+    step,
+    title,
+    description,
+    buttonText,
+    isPro,
+    logoUrl,
+    slug,
+    backgroundMusicUrl,
+    backgroundVideoUrl,
+    saveContentToServer,
+    saveActionsToServer,
+    theme,
+    requireCaptcha,
+    strictVerification,
+  ]);
+
+  const scheduleAutosave = useCallback(() => {
+    if (published) return;
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    autosaveTimerRef.current = setTimeout(() => {
+      void runAutosave();
+    }, 700);
+  }, [published, runAutosave]);
+
+  function onFieldBlur() {
+    scheduleAutosave();
+  }
+
+  async function handleApplyThemeToAll() {
+    if (!isPro) return;
+    setApplyingThemeAll(true);
+    try {
+      const result = await applyUnlockThemeToAllCampaigns(theme);
+      toast(`Applied color theme to ${result.updated} link${result.updated === 1 ? "" : "s"}`, "success");
+    } catch (e) {
+      toast(actionErrorMessage(e, "Could not apply theme"), "error");
+    } finally {
+      setApplyingThemeAll(false);
+    }
+  }
+
   function validateContent(): string | null {
     if (contentType === "URL" && !externalUrl.trim()) return "Paste your download link";
     if (contentType === "URL" && !/^https?:\/\/.+/i.test(externalUrl.trim())) return "Link must start with http:// or https://";
@@ -340,7 +467,7 @@ function CreateUnlockWizard() {
         title: title.trim(),
         description,
         buttonText: buttonText.trim() || "Get download",
-        theme: applyCaptchaToTheme(isPro ? theme : "default", requireCaptcha),
+        theme: buildThemePayload(),
         ...(isPro
           ? {
               logoUrl: logoUrl.trim() || null,
@@ -485,6 +612,9 @@ function CreateUnlockWizard() {
           </p>
         )}
         <RetroProgressBar value={step + 1} max={STEPS.length} showPercent={false} className="mt-4" />
+        <p className="create-autosave-status mt-2" aria-live="polite">
+          {autosaveBusy ? "Saving…" : savedLabel ?? (campaignId ? "Edits save when you leave a field" : "")}
+        </p>
       </div>
 
       {step === 0 && (
@@ -515,6 +645,7 @@ function CreateUnlockWizard() {
               placeholder="https://your-file-link.com/..."
               value={externalUrl}
               onChange={(e) => setExternalUrl(e.target.value)}
+              onBlur={onFieldBlur}
             />
           )}
           {contentType === "TEXT" && (
@@ -524,6 +655,7 @@ function CreateUnlockWizard() {
               placeholder="Your code, key, or message..."
               value={textBody}
               onChange={(e) => setTextBody(e.target.value)}
+              onBlur={onFieldBlur}
             />
           )}
 
@@ -581,6 +713,7 @@ function CreateUnlockWizard() {
                     placeholder="https://platform.com/your-page"
                     value={action.url}
                     onChange={(e) => updateActionUrl(action.id, e.target.value)}
+                    onBlur={onFieldBlur}
                   />
                   <div className="mt-3">
                     <RetroInput
@@ -588,6 +721,7 @@ function CreateUnlockWizard() {
                       placeholder="Follow / Subscribe / Join"
                       value={action.label}
                       onChange={(e) => updateActionLabel(action.id, e.target.value)}
+                      onBlur={onFieldBlur}
                     />
                   </div>
                 </div>
@@ -665,6 +799,7 @@ function CreateUnlockWizard() {
                 setSlug(slugFromTitle(next));
               }
             }}
+            onBlur={onFieldBlur}
           />
           <div className="mt-4">
             <RetroTextarea
@@ -673,6 +808,7 @@ function CreateUnlockWizard() {
               placeholder="Short note fans see before unlocking..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              onBlur={onFieldBlur}
             />
           </div>
           <div className="mt-4">
@@ -681,6 +817,7 @@ function CreateUnlockWizard() {
               placeholder="Get download"
               value={buttonText}
               onChange={(e) => setButtonText(e.target.value)}
+              onBlur={onFieldBlur}
             />
           </div>
 
@@ -695,6 +832,20 @@ function CreateUnlockWizard() {
               <strong className="text-retro-text">Spam protection</strong> — add a hidden bot check on the unlock page (recommended for public links).
             </span>
           </label>
+
+          {isPro ? (
+            <label className="mt-3 flex items-start gap-3 text-sm text-retro-text-dim cursor-pointer">
+              <input
+                type="checkbox"
+                checked={strictVerification}
+                onChange={(e) => setStrictVerification(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                <strong className="text-retro-text">Strict verification</strong> — fans must stay on YouTube and other sites longer before a step counts (Standard is faster).
+              </span>
+            </label>
+          ) : null}
 
           <div className="mt-6">
             <RetroButton type="button" variant="secondary" size="sm" onClick={() => setShowPreview((v) => !v)}>
@@ -755,6 +906,16 @@ function CreateUnlockWizard() {
                     </button>
                   ))}
                 </div>
+                <RetroButton
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="mt-3"
+                  loading={applyingThemeAll}
+                  onClick={() => void handleApplyThemeToAll()}
+                >
+                  Apply this color to all my links
+                </RetroButton>
               </div>
               <RetroInput
                 label="Background music URL (optional)"

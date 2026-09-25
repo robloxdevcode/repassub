@@ -12,6 +12,8 @@ import { getUserPlan, isProPlan, getActionLimit, PLAN_LIMITS, getUnlockQuotaWind
 import { slugify } from "@/lib/utils";
 import { getUnlockUrlForRequest } from "@/lib/site-url";
 import { campaignViewCountSelect } from "@/lib/analytics";
+import { applyCaptchaToTheme, themeUsesCaptcha, stripCaptchaFromTheme } from "@/lib/easter-eggs";
+import { applyStrictVerification, stripStrictFromTheme, themeUsesStrictVerification } from "@/lib/unlock-campaign-theme";
 import type { ActionType, ContentType, VerificationMode, Prisma } from "@prisma/client";
 
 async function allocateUniqueSlug(userId: string, preferred: string) {
@@ -223,6 +225,39 @@ export async function updateCampaignCustomization(
     backgroundMusicUrl: updated.backgroundMusicUrl,
     backgroundVideoUrl: updated.backgroundVideoUrl,
   };
+}
+
+export async function applyUnlockThemeToAllCampaigns(baseThemeId: string) {
+  const user = await requireUser();
+  const plan = getEffectiveUserPlan(user.subscriptions?.[0]);
+  if (!isProPlan(plan)) {
+    throw new Error("Pro plan required to apply branding to all links.");
+  }
+
+  const themeBase = stripStrictFromTheme(stripCaptchaFromTheme(baseThemeId)) || "default";
+  const campaigns = await db.campaign.findMany({
+    where: { userId: user.id },
+    select: { id: true, theme: true, slug: true },
+  });
+
+  await Promise.all(
+    campaigns.map((campaign) => {
+      const withCaptcha = applyCaptchaToTheme(themeBase, themeUsesCaptcha(campaign.theme));
+      const nextTheme = applyStrictVerification(withCaptcha, themeUsesStrictVerification(campaign.theme));
+      return db.campaign.update({
+        where: { id: campaign.id },
+        data: { theme: nextTheme },
+      });
+    }),
+  );
+
+  revalidatePath("/unlocks");
+  revalidatePath("/create");
+  for (const c of campaigns) {
+    revalidatePath(`/u/${user.username}/${c.slug}`);
+  }
+
+  return { updated: campaigns.length };
 }
 
 export async function publishCampaign(campaignId: string) {

@@ -5,11 +5,13 @@ import { HudStatCard, RetroCard } from "@/components/retro";
 import { formatNumber } from "@/lib/utils";
 import { AnalyticsCharts } from "@/components/dashboard/analytics-charts";
 import { AnalyticsFunnel } from "@/components/dashboard/analytics-funnel";
+import { LinkFixInsights } from "@/components/dashboard/link-fix-insights";
+import { StepFunnelPanel } from "@/components/dashboard/step-funnel-panel";
 import { PerLinkAnalyticsTable } from "@/components/dashboard/per-link-analytics-table";
 import { PLAN_LIMITS } from "@/lib/stripe";
 
 export default async function AnalyticsPage() {
-  const { analytics, breakdown, campaignStats, hasAdvancedAnalytics: isProAnalytics } =
+  const { analytics, breakdown, campaignStats, stepFunnel, hasAdvancedAnalytics: isProAnalytics } =
     await getAnalyticsData();
 
   const topSource = breakdown?.bySource[0];
@@ -39,6 +41,18 @@ export default async function AnalyticsPage() {
           </>
         )}
       </div>
+
+      <LinkFixInsights rows={campaignStats} />
+
+      {isProAnalytics ? (
+        <RetroCard className="mb-8 p-6">
+          <h2 className="text-sm font-semibold mb-1">Per-step funnel</h2>
+          <p className="text-xs text-retro-text-muted mb-4">
+            Which step loses people — step 1 vs 2 vs 3, not just views → unlocks.
+          </p>
+          <StepFunnelPanel rows={stepFunnel} />
+        </RetroCard>
+      ) : null}
 
       {isProAnalytics ? (
         <RetroCard className="mb-8 p-6">

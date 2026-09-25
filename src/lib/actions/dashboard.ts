@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { clerkClient } from "@clerk/nextjs/server";
 import { requireUser, requireAdmin, requireAdminPanel, requireModerator } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getUserAnalytics, getAnalyticsBreakdown, getBasicCampaignBreakdown, campaignViewCountSelect } from "@/lib/analytics";
+import { getUserAnalytics, getAnalyticsBreakdown, getBasicCampaignBreakdown, getPerStepFunnel, campaignViewCountSelect } from "@/lib/analytics";
 import { getActionLimit, getUserPlan, hasAdvancedAnalytics } from "@/lib/stripe";
 import { getEffectiveUserPlan } from "@/lib/subscription-access";
 import { CampaignStatus, StaffRole, UserRole } from "@prisma/client";
@@ -86,18 +86,20 @@ export async function getDashboardStats() {
 
 export async function getAnalyticsData() {
   const user = await requireUser();
-  const plan = getUserPlan(user.subscriptions?.[0]?.plan);
-  const proAnalytics = hasAdvancedAnalytics(plan);
-  const [analytics, breakdown, basicBreakdown] = await Promise.all([
+  const effectivePlan = getEffectiveUserPlan(user.subscriptions?.[0]);
+  const proAnalytics = hasAdvancedAnalytics(effectivePlan);
+  const [analytics, breakdown, basicBreakdown, stepFunnel] = await Promise.all([
     getUserAnalytics(user.id),
     proAnalytics ? getAnalyticsBreakdown(user.id) : Promise.resolve(null),
     getBasicCampaignBreakdown(user.id),
+    proAnalytics ? getPerStepFunnel(user.id) : Promise.resolve([]),
   ]);
   return {
     analytics,
     breakdown,
     campaignStats: basicBreakdown.campaignStats,
-    plan,
+    stepFunnel,
+    plan: effectivePlan,
     hasAdvancedAnalytics: proAnalytics,
   };
 }

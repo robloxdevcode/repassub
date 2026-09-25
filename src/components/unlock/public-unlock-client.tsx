@@ -10,19 +10,23 @@ import {
   registerActionStart,
 } from "@/lib/actions/unlock";
 import {
-  MIN_STEP_AWAY_MS,
-  MIN_STEP_VERIFY_MS,
   QUICK_RETURN_MESSAGE,
+  SOFT_QUICK_RETURN_MESSAGE,
+  timingForStrict,
   type ActionCompletionProof,
 } from "@/lib/unlock-verification";
 import {
   actionProgressKey,
+  clearUnlockProgress,
   completedIdsFromKeys,
   getStoredVisitorId,
   mergeCompletedIds,
   readUnlockProgress,
   writeUnlockProgress,
 } from "@/lib/unlock-client-storage";
+import { getStepHint, hasExternalAck, setExternalAck } from "@/lib/unlock-step-hints";
+import { displayUnlockTheme, themeUsesStrictVerification } from "@/lib/unlock-campaign-theme";
+import { ShareProfileButton } from "@/components/unlock/share-profile-button";
 import { RetroButton, UnlockAnimation } from "@/components/retro";
 import { UnlockPageBackdrop } from "./unlock-page-backdrop";
 import { UnlockPageAd } from "./unlock-page-ad";
@@ -124,31 +128,33 @@ export function PublicUnlockClient({
   adSlots?: { left: string; right: string; bottom: string };
 }) {
   const visitorId = getStoredVisitorId();
+  const strictVerification = themeUsesStrictVerification(campaign.theme);
+  const verifyTiming = timingForStrict(strictVerification);
+  const unlockTheme = displayUnlockTheme(campaign.theme);
 
   const initialCache = readUnlockProgress(campaign.id);
-  const initialLocalIds = initialCache
-    ? completedIdsFromKeys(campaign.actions, initialCache.completedKeys)
-    : [];
-  const initialUnlocked = initialCache?.status === "UNLOCKED";
-  const hasInitialSession =
-    initialLocalIds.length > 0 || initialCache?.status === "UNLOCKED";
+  const cacheWasUnlocked = initialCache?.status === "UNLOCKED";
+  const initialLocalIds =
+    initialCache && !cacheWasUnlocked
+      ? completedIdsFromKeys(campaign.actions, initialCache.completedKeys)
+      : [];
+  const hasInitialSession = initialLocalIds.length > 0;
 
   const [session, setSession] = useState<{ completedActions: string[]; status: string } | null>(() =>
     hasInitialSession && initialCache
       ? { completedActions: initialLocalIds, status: initialCache.status }
-      : null
+      : null,
   );
-  const [unlocked, setUnlocked] = useState(initialUnlocked);
+  const [unlocked, setUnlocked] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
-  const [content, setContent] = useState<ContentItem | null>(() =>
-    initialUnlocked ? campaign.content : null
-  );
+  const [content, setContent] = useState<ContentItem | null>(null);
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [musicStarted, setMusicStarted] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [externalPrompt, setExternalPrompt] = useState<ActionItem | null>(null);
+  const [adsReady, setAdsReady] = useState(false);
   const verifyTrackRef = useRef<VerifyTrack | null>(null);
 
   function persistProgress(completedIds: string[], status: string) {
@@ -161,9 +167,21 @@ export function PublicUnlockClient({
   function applySession(session: { completedActions: unknown; status: string }) {
     const serverIds = (session.completedActions as string[]) || [];
     const cache = readUnlockProgress(campaign.id);
-    const localIds = cache ? completedIdsFromKeys(campaign.actions, cache.completedKeys) : [];
+
+    if (session.status !== "UNLOCKED" && cache?.status === "UNLOCKED") {
+      clearUnlockProgress(campaign.id);
+    }
+
+    const localIds =
+      cache && cache.status !== "UNLOCKED"
+        ? completedIdsFromKeys(campaign.actions, cache.completedKeys)
+        : [];
     const merged = mergeCompletedIds(serverIds, localIds);
-    const status = session.status === "UNLOCKED" || cache?.status === "UNLOCKED" ? "UNLOCKED" : session.status;
+    const status = session.status;
+
+    if (status === "STARTED" && merged.length === 0) {
+      clearUnlockProgress(campaign.id);
+    }
 
     setSession({ completedActions: merged, status });
     persistProgress(merged, status);
@@ -171,8 +189,16 @@ export function PublicUnlockClient({
     if (status === "UNLOCKED") {
       setUnlocked(true);
       setContent(campaign.content);
+    } else {
+      setUnlocked(false);
+      setContent(null);
     }
   }
+
+  useEffect(() => {
+    const delay = window.setTimeout(() => setAdsReady(true), 900);
+    return () => window.clearTimeout(delay);
+  }, []);
 
   useEffect(() => {
     trackCampaignView(campaign.id);
@@ -220,8 +246,10 @@ export function PublicUnlockClient({
       track.awayMs = Date.now() - track.leftAt;
       track.leftAt = null;
 
-      if (track.hasExternalUrl && track.awayMs < MIN_STEP_AWAY_MS) {
-        cancelVerification(QUICK_RETURN_MESSAGE);
+      if (track.hasExternalUrl && track.awayMs < verifyTiming.minAwayMs) {
+        cancelVerification(
+          track.awayMs > 800 ? SOFT_QUICK_RETURN_MESSAGE : QUICK_RETURN_MESSAGE,
+        );
         return;
       }
 
@@ -279,14 +307,14 @@ export function PublicUnlockClient({
         return;
       }
 
-      if (awayReady && elapsed >= MIN_STEP_VERIFY_MS) {
+      if (awayReady && elapsed >= verifyTiming.minVerifyMs) {
         window.clearInterval(interval);
         void finishVerification(verifyingId, { awayMs: track.awayMs });
       }
     }, 400);
 
     return () => window.clearInterval(interval);
-  }, [verifyingId, finishVerification]);
+  }, [verifyingId, finishVerification, verifyTiming.minVerifyMs]);
 
   function tryStartMusic() {
     if (!campaign.backgroundMusicUrl || musicStarted) return;
@@ -343,7 +371,7 @@ export function PublicUnlockClient({
   function startAction(action: ActionItem) {
     if (verifyingId || completed.includes(action.id)) return;
     const config = action.config as Record<string, string>;
-    if (config?.url) {
+    if (config?.url && !hasExternalAck(campaign.id)) {
       setExternalPrompt(action);
       return;
     }
@@ -354,6 +382,7 @@ export function PublicUnlockClient({
     if (!externalPrompt) return;
     const action = externalPrompt;
     setExternalPrompt(null);
+    setExternalAck(campaign.id);
     runAction(action);
   }
 
@@ -378,6 +407,18 @@ export function PublicUnlockClient({
       setShowAnimation(false);
     }
   }
+
+  function openUnlockFlow() {
+    if (!allComplete) return;
+    tryStartMusic();
+    if (shouldDisableHeavyMotion()) {
+      void onAnimationComplete();
+      return;
+    }
+    setShowAnimation(true);
+  }
+
+  const profileShareUrl = `/u/${campaign.user.username}`;
 
   return (
     <div className="classic-shell unlock-v2 relative min-h-screen flex flex-col">
@@ -410,14 +451,14 @@ export function PublicUnlockClient({
       ) : null}
       {showAnimation && <UnlockAnimation onComplete={onAnimationComplete} />}
 
-      {showAds && (
+      {showAds && adsReady && (
         <aside className="relative z-10 hidden md:flex w-[300px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
           <UnlockPageAd side="left" adClient={adClient} adSlots={adSlots} />
         </aside>
       )}
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center min-w-0 max-w-md mx-auto">
-      <div className={cn("w-full unlock-preview-card animate-pulse-glow", unlockThemeClass(campaign.theme))}>
+      <div className={cn("w-full unlock-preview-card animate-pulse-glow", unlockThemeClass(unlockTheme))}>
         {!unlocked ? (
           <>
             {campaign.logoUrl ? (
@@ -496,43 +537,38 @@ export function PublicUnlockClient({
                 }
 
                 return (
-                  <button
-                    key={action.id}
-                    type="button"
-                    disabled={!!verifyingId}
-                    onClick={() => startAction(action)}
-                    className={cn(
-                      "platform-btn relative overflow-hidden",
-                      platformStyles[platform],
-                      "cursor-pointer disabled:opacity-50"
-                    )}
-                  >
-                    <Icon size={16} />
-                    {config?.url ? (
-                      <span className="flex items-center gap-1 text-left">
-                        {action.label} <ExternalLink size={12} className="shrink-0" />
-                      </span>
-                    ) : (
-                      action.label
-                    )}
-                  </button>
+                  <div key={action.id}>
+                    <button
+                      type="button"
+                      disabled={!!verifyingId}
+                      onClick={() => startAction(action)}
+                      className={cn(
+                        "platform-btn relative overflow-hidden w-full",
+                        platformStyles[platform],
+                        "cursor-pointer disabled:opacity-50",
+                      )}
+                    >
+                      <Icon size={16} />
+                      {config?.url ? (
+                        <span className="flex items-center gap-1 text-left">
+                          {action.label} <ExternalLink size={12} className="shrink-0" />
+                        </span>
+                      ) : (
+                        action.label
+                      )}
+                    </button>
+                    <p className="unlock-step-hint">{getStepHint(platform, action.label)}</p>
+                  </div>
                 );
               })}
             </div>
 
             <RetroButton
-              className="w-full"
+              className="w-full hidden md:inline-flex"
               size="lg"
               disabled={!allComplete}
-              onClick={() => {
-                if (!allComplete) return;
-                if (shouldDisableHeavyMotion()) {
-                  void onAnimationComplete();
-                  return;
-                }
-                setShowAnimation(true);
-              }}
-              variant={allComplete ? unlockThemeCtaVariant(campaign.theme) : "secondary"}
+              onClick={openUnlockFlow}
+              variant={allComplete ? unlockThemeCtaVariant(unlockTheme) : "secondary"}
             >
               {allComplete ? (
                 <>
@@ -582,6 +618,19 @@ export function PublicUnlockClient({
                 </RetroButton>
               </div>
             )}
+
+            <div className="mt-8 pt-6 border-t-2 border-retro-ink/10">
+              <p className="text-sm font-bold mb-3">Share this creator</p>
+              <ShareProfileButton
+                url={
+                  typeof window !== "undefined"
+                    ? `${window.location.origin}${profileShareUrl}`
+                    : profileShareUrl
+                }
+                title={`${campaign.user.displayName || campaign.user.username} on Linklock`}
+                className="justify-center"
+              />
+            </div>
           </div>
         )}
 
@@ -593,19 +642,55 @@ export function PublicUnlockClient({
         </p>
       </div>
 
-      {showAds && (
+      {showAds && adsReady && (
         <div className="mt-4 w-full md:hidden">
           <UnlockPageAd side="bottom" adClient={adClient} adSlots={adSlots} />
         </div>
       )}
       </div>
 
-      {showAds && (
+      {showAds && adsReady && (
         <aside className="relative z-10 hidden md:flex w-[300px] shrink-0 items-start justify-center pt-4 sticky top-24 self-start">
           <UnlockPageAd side="right" adClient={adClient} adSlots={adSlots} />
         </aside>
       )}
       </div>
+
+      {!unlocked ? (
+        <div className="unlock-fan-sticky-cta md:hidden">
+          <div className="unlock-fan-sticky-meta">
+            <span>Progress</span>
+            <span>
+              {progress}/{total} done
+            </span>
+          </div>
+          <div className="retro-progress mb-2">
+            <div
+              className={cn("retro-progress-fill transition-all duration-500", allComplete && "bg-retro-success")}
+              style={{ width: total ? `${(progress / total) * 100}%` : "0%" }}
+            />
+          </div>
+          <RetroButton
+            className="w-full"
+            size="lg"
+            disabled={!allComplete || !!verifyingId}
+            onClick={openUnlockFlow}
+            variant={allComplete ? unlockThemeCtaVariant(unlockTheme) : "secondary"}
+          >
+            {allComplete ? (
+              <>
+                {campaign.buttonText || "Open"}
+                <ArrowUpRight size={18} />
+              </>
+            ) : (
+              <>
+                <Lock size={16} />
+                {`${progress}/${total} steps`}
+              </>
+            )}
+          </RetroButton>
+        </div>
+      ) : null}
     </div>
   );
 }

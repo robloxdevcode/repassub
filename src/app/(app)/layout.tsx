@@ -3,7 +3,8 @@ import { DatabaseSetupRequired } from "@/components/dashboard/database-setup-req
 import { DatabaseSchemaOutdated } from "@/components/dashboard/database-schema-outdated";
 import { isDatabaseConfigError, isSchemaMigrationError, hasDatabaseUrl } from "@/lib/env";
 import { getCurrentUser, getSessionAccess } from "@/lib/auth";
-import { getEffectiveUserPlan } from "@/lib/subscription-access";
+import { getEffectiveUserPlan, isPaidStripePro } from "@/lib/subscription-access";
+import { getUserPlan } from "@/lib/stripe";
 import { parseProfileSettings, type AppTheme } from "@/lib/profile-settings";
 import { hasAdminPanelAccess } from "@/lib/admin-access";
 import type { Metadata } from "next";
@@ -22,6 +23,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   let showAdminPanel = false;
   let plan = "FREE";
+  let showPlanSyncBanner = false;
   let appTheme: AppTheme = "classic";
 
   try {
@@ -35,6 +37,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       void maybeSendPrizeProReminderForUser(user.id).catch(() => {});
     }
     plan = getEffectiveUserPlan(user?.subscriptions?.[0]);
+    const sub = user?.subscriptions?.[0];
+    const rawPlan = sub && sub.status === "ACTIVE" ? getUserPlan(sub.plan) : "FREE";
+    showPlanSyncBanner =
+      !isPaidStripePro(sub) &&
+      (rawPlan === "PRO" || rawPlan === "BUSINESS") &&
+      plan === "FREE";
     const parsedSettings = parseProfileSettings(user?.profileSettings);
     appTheme = plan === "FREE" ? "classic" : parsedSettings.appTheme;
   } catch (error) {
@@ -48,7 +56,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <LemonadeAppShell showAdminPanel={showAdminPanel} plan={plan} appTheme={appTheme}>
+    <LemonadeAppShell
+      showAdminPanel={showAdminPanel}
+      plan={plan}
+      appTheme={appTheme}
+      showPlanSyncBanner={showPlanSyncBanner}
+    >
       {children}
     </LemonadeAppShell>
   );
