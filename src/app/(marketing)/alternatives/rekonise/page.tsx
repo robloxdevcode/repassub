@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, buildPageMetadata, faqJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, buildPageMetadata, comparisonPageJsonLd, faqJsonLd, REKONISE_ALTERNATIVE_FAQS } from "@/lib/seo";
 import {
   AnalyticsGrowthSection,
   FeaturesGridSection,
@@ -19,7 +19,10 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/alternatives/rekonise",
   keywords: [
     "Rekonise alternative",
+    "Rekonise alternatives",
     "Rekonise vs Linklock",
+    "better than Rekonise",
+    "St Rekonise alternative",
     "content locker alternative",
     "subscribe to download",
     "unlock link tool",
@@ -38,30 +41,27 @@ const COMPARE_ROWS = [
   { feature: "Share kit (bio + QR)", linklock: "Built in", other: "Manual" },
 ];
 
-const FAQ = [
-  {
-    q: "Is Linklock a good Rekonise alternative?",
-    a: "Yes — if you want unlimited free links, a cleaner mobile unlock page, and per-link stats. Linklock is built for creators who gate preset packs, mods, beats, and tutorial files.",
-  },
-  {
-    q: "Is Linklock free?",
-    a: "Free includes unlimited links and 4 steps per link. Pro adds 10 steps, branding, advanced analytics, and no ads on your pages.",
-  },
-  {
-    q: "Can I migrate from Rekonise?",
-    a: "Create a new link in under 2 minutes — paste the same reward URL and recreate your steps. Use Share kit to update your bio everywhere.",
-  },
-];
+const FAQ = REKONISE_ALTERNATIVE_FAQS;
 
 export default function RekoniseAlternativePage() {
+  const pageDescription =
+    "Linklock vs Rekonise: unlimited free unlock links, cleaner mobile UX, per-link analytics, TikTok & Instagram steps. Switch in 2 minutes — no fan account required.";
+
   return (
     <>
       <JsonLd
         data={[
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
+            { name: "Alternatives", path: "/alternatives" },
             { name: "Rekonise alternative", path: "/alternatives/rekonise" },
           ]),
+          comparisonPageJsonLd({
+            name: "Best Rekonise Alternative (2026) — Linklock",
+            description: pageDescription,
+            path: "/alternatives/rekonise",
+            aboutName: "Rekonise",
+          }),
           faqJsonLd(FAQ),
         ]}
       />
@@ -69,11 +69,15 @@ export default function RekoniseAlternativePage() {
       <section className="ll-hero-compact mx-auto max-w-4xl px-4 pt-16 pb-10 text-center">
         <p className="ll-brand-tag ll-brand-tag--dark mx-auto w-fit">Comparison</p>
         <h1 className="font-display text-3xl md:text-5xl tracking-tight mt-4 mb-4">
-          The Rekonise alternative creators actually enjoy using
+          Best Rekonise alternative for creators (2026)
         </h1>
         <p className="text-lg text-retro-text-dim max-w-2xl mx-auto leading-relaxed">
           Same idea — gate downloads behind social steps — but unlimited free links, cleaner pages,
           and stats that tell you which link converts.
+        </p>
+        <p className="sr-only">
+          Linklock is a Rekonise alternative with unlimited free subscribe-to-download links, no fan
+          account, TikTok and Instagram unlock steps, and per-link analytics at linklock.org.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
           <MarketingAuthLink href="/sign-up">

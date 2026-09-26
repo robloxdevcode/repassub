@@ -58,6 +58,10 @@ export const HOME_KEYWORDS = [
   "creator unlock page",
   "linklock",
   "linklock.org",
+  "Rekonise alternatives",
+  "better than Rekonise",
+  "Rekonise vs Linklock",
+  "content locker alternative",
 ];
 
 export const HOME_FAQS = [
@@ -80,6 +84,14 @@ export const HOME_FAQS = [
   {
     q: "What does Pro include?",
     a: "10 steps per link, full page branding, deep analytics, and no Linklock ads.",
+  },
+  {
+    q: "What is the best Rekonise alternative?",
+    a: "Linklock offers unlimited free subscribe-to-download links, no fan account, TikTok and Instagram steps, and per-link analytics. Compare at linklock.org/alternatives/rekonise.",
+  },
+  {
+    q: "Is Linklock better than Rekonise?",
+    a: "For creators who want unlimited free links, cleaner mobile unlock pages, and built-in Share kit, Linklock is a strong choice. See the feature table at linklock.org/alternatives/rekonise.",
   },
 ];
 
@@ -197,7 +209,7 @@ export function buildRootMetadata(): Metadata {
       follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large" },
     },
-    alternates: { canonical: siteUrl },
+    alternates: { canonical: siteUrl, types: { "text/plain": absoluteUrl("/llms.txt") } },
     openGraph: {
       type: "website",
       locale: "en_US",
@@ -303,6 +315,63 @@ export function itemListJsonLd(items: { name: string; path: string }[]) {
   };
 }
 
+export const REKONISE_ALTERNATIVE_FAQS = [
+  {
+    q: "What are the best Rekonise alternatives in 2026?",
+    a: "Linklock is a top Rekonise alternative for creators: unlimited free unlock links, no fan account, TikTok and Instagram steps, per-link analytics, and a public creator profile. Full comparison at linklock.org/alternatives/rekonise.",
+  },
+  {
+    q: "Is Linklock better than Rekonise?",
+    a: "Linklock is better for creators who want unlimited free links, cleaner mobile pages, built-in Share kit (bio line + QR), and per-link stats without upgrading first. Both gate downloads behind social steps; pick Linklock if growth UX and free limits matter most.",
+  },
+  {
+    q: "Is Linklock a good Rekonise alternative?",
+    a: "Yes — if you want unlimited free links, a cleaner mobile unlock page, and per-link stats. Linklock is built for creators who gate preset packs, mods, beats, and tutorial files.",
+  },
+  {
+    q: "Is Linklock free?",
+    a: "Free includes unlimited links and 4 steps per link. Pro adds 10 steps, branding, advanced analytics, and no ads on your pages.",
+  },
+  {
+    q: "Can I migrate from Rekonise?",
+    a: "Create a new link in under 2 minutes — paste the same reward URL and recreate your steps. Use Share kit to update your bio everywhere.",
+  },
+];
+
+export function comparisonPageJsonLd(input: {
+  name: string;
+  description: string;
+  path: string;
+  aboutName: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: getSiteUrl() },
+    inLanguage: "en-US",
+    about: {
+      "@type": "SoftwareApplication",
+      name: input.aboutName,
+      applicationCategory: "BusinessApplication",
+      alternateName: ["Rekonise alternative", "subscribe to download tool"],
+    },
+    mainEntity: {
+      "@type": "SoftwareApplication",
+      name: SITE_NAME,
+      url: getSiteUrl(),
+      description: HOME_META_DESCRIPTION,
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+    },
+  };
+}
+
 export function faqJsonLd(faqs: { q: string; a: string }[]) {
   return {
     "@context": "https://schema.org",
@@ -399,6 +468,7 @@ export const SITEMAP_ROUTES: {
   { path: "/help", priority: 0.85, changeFrequency: "weekly" },
   { path: "/leaderboard", priority: 0.7, changeFrequency: "daily" },
   { path: "/grow", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/alternatives", priority: 0.85, changeFrequency: "weekly" },
   { path: "/alternatives/rekonise", priority: 0.9, changeFrequency: "weekly" },
   { path: "/about", priority: 0.5, changeFrequency: "yearly" },
   { path: "/support", priority: 0.7, changeFrequency: "monthly" },

@@ -12,6 +12,7 @@ const links = {
   Grow: [
     { href: "/creators", label: "For creators" },
     { href: "/grow", label: "Growth kit" },
+    { href: "/alternatives", label: "Alternatives" },
     { href: "/alternatives/rekonise", label: "Rekonise alternative" },
     { href: "/blog", label: "Blog" },
   ],

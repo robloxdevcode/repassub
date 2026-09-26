@@ -1,0 +1,16 @@
+
+> linklock-discord-bot@1.0.0 deploy-commands
+> tsx src/deploy-commands.ts
+
+^C^C
+> linklock-discord-bot@1.0.0 deploy-commands
+> tsx src/deploy-commands.ts
+
+Registering 29 guild commands for server 1539335523473031371…
+Slash commands registered.
+
+> linklock-discord-bot@1.0.0 deploy-commands
+> tsx src/deploy-commands.ts
+
+Registering 29 guild commands for server 1539335523473031371…
+Slash commands registered.

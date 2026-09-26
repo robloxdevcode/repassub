@@ -50,6 +50,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${pressStart.variable} ${pixelify.variable} h-full`}
     >
       <head>
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site summary" />
+        <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM extended documentation" />
         <script async src={adsenseSrc} crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">

@@ -1,0 +1,65 @@
+LINKLOCK DISCORD BOT - HOW TO RUN (Windows)
+============================================
+
+IMPORTANT: Do NOT double-click .cmd files INSIDE Cursor/VS Code.
+That only OPENS the file. It does NOT run it.
+
+DO THIS INSTEAD:
+----------------
+
+1. Open File Explorer (folder icon on taskbar).
+
+2. Go to this folder (copy-paste into the address bar at the top):
+
+   C:\Users\lekst\Documents\GitHub\repassub\discord-bot
+
+3. Make sure .env exists and has your token + IDs filled in.
+
+4. Double-click these IN ORDER (in File Explorer):
+
+   install.cmd          (wait until it says SUCCESS)
+   deploy-commands.cmd  (wait until it says SUCCESS)
+   dev.cmd              (leave window OPEN - bot is running)
+
+5. In Discord on your server, type:  /ping
+
+ALTERNATIVE - Run from Command Prompt:
+--------------------------------------
+
+Press Win+R, type:  cmd
+Press Enter.
+
+Paste:
+
+cd /d C:\Users\lekst\Documents\GitHub\repassub\discord-bot
+install.cmd
+
+Then deploy-commands.cmd then dev.cmd
+
+If deploy-commands FAILS with "Missing Access":
+---------------------------------------------
+
+The bot is not in your Discord server (or SERVER_ID is wrong).
+
+1. Go to: https://discord.com/developers/applications
+2. Click your bot application
+3. OAuth2 -> URL Generator
+4. Scopes: check "bot" AND "applications.commands"
+5. Bot Permissions: check Administrator (easiest) OR at least
+   View Channels, Send Messages, Use Slash Commands
+6. Copy the URL at the bottom, open in browser
+7. Select YOUR LinkLock server -> Authorize
+8. Run deploy-commands.cmd again
+
+If dev.cmd says "Used disallowed intents":
+-------------------------------------------
+
+1. https://discord.com/developers/applications
+2. Click your application
+3. Bot (left menu)
+4. Privileged Gateway Intents
+5. Turn ON: "SERVER MEMBERS INTENT"
+6. Click Save Changes
+7. Run dev.cmd again
+
+(No need for Message Content Intent for this bot.)

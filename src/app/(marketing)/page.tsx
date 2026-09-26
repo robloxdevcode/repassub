@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClassicHomeLanding } from "@/components/marketing/classic-home-landing";
+import { HomeStructuredData } from "@/components/marketing/home-structured-data";
 import { buildPageMetadata, HOME_KEYWORDS, HOME_META_DESCRIPTION } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -12,5 +13,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function HomePage() {
-  return <ClassicHomeLanding />;
+  return (
+    <>
+      <HomeStructuredData />
+      <ClassicHomeLanding />
+    </>
+  );
 }

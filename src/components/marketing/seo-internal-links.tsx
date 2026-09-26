@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 const SEO_HUB_LINKS = [
+  { href: "/alternatives", label: "Rekonise alternatives hub" },
   { href: "/alternatives/rekonise", label: "Rekonise alternative" },
   { href: "/use-cases/preset-packs", label: "Preset pack unlock links" },
   { href: "/use-cases/beat-packs", label: "Beat pack downloads" },
