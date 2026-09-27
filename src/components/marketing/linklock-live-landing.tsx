@@ -1,5 +1,6 @@
 import { LinklockLogo } from "@/components/brand/linklock-logo";
 import { MarketingAuthLink } from "@/components/marketing/marketing-auth-link";
+import { SUPPORT_DISCORD_URL } from "@/lib/support-links";
 
 /** Single-screen public home when site is live — matches down-page drama, no scroll wall */
 export function LinklockLiveLanding() {
@@ -33,7 +34,7 @@ export function LinklockLiveLanding() {
         <p className="ll-down-sub">
           Questions?{" "}
           <a
-            href="https://discord.gg/DQQTf6XXg3"
+            href={SUPPORT_DISCORD_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4 hover:text-white"

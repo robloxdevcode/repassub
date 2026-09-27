@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { SUPPORT_DISCORD_LABEL, SUPPORT_DISCORD_URL } from "@/lib/support-links";
+import { SUPPORT_DISCORD_INVITE_DISPLAY, SUPPORT_DISCORD_LABEL, SUPPORT_DISCORD_URL } from "@/lib/support-links";
 
 export function DiscordSupportStrip({ className = "" }: { className?: string }) {
   return (
@@ -51,7 +51,7 @@ export function DiscordSupportCard() {
       <p className="mt-4 text-xs text-retro-text-muted">
         Invite link:{" "}
         <Link href={SUPPORT_DISCORD_URL} className="text-retro-accent hover:underline">
-          discord.gg/DQQTf6XXg3
+          {SUPPORT_DISCORD_INVITE_DISPLAY}
         </Link>
       </p>
     </div>

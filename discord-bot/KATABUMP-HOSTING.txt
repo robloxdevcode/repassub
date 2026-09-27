@@ -1,0 +1,72 @@
+KATABUMP / PTERODACTYL (control.katabump.com) — LinkLock DISCORD BOT
+======================================================================
+
+You uploaded "LinkLock.org" — that is the WEBSITE repo. The Discord bot is the
+discord-bot folder only. Use pack-share.cmd on your PC to make linklock-discord-bot.zip.
+
+FILE LAYOUT (important)
+-----------------------
+In File Manager, files must live HERE:
+
+  /home/container/package.json
+  /home/container/index.js
+  /home/container/src/...
+
+NOT inside /home/container/LinkLock.org/...
+
+If everything is in a subfolder: select all files inside that folder → move up to
+/home/container/ (or re-upload zip and "Unarchive" at root).
+
+STARTUP SETTINGS (your screenshot)
+----------------------------------
+  Docker image:     Node.js 24 (or 22+) — OK
+  JS FILE:          dist/index.js   (important — not index.js only)
+  Startup runs:     node /home/container/dist/index.js
+
+  ADDITIONAL NODE PACKAGES: leave empty (use package.json)
+
+ENVIRONMENT VARIABLES (Startup or Settings → Variables)
+-------------------------------------------------------
+Add these (same values as your .env on PC — do NOT upload .env to public chats):
+
+  DISCORD_TOKEN=your_bot_token
+  CLIENT_ID=your_app_id
+  SERVER_ID=your_discord_server_id
+  OWNER_ID=your_discord_user_id
+
+Optional:
+  DATABASE_PATH=/home/container/data/linklock-bot.db
+
+ONE-TIME SETUP IN CONSOLE (only for slash commands)
+---------------------------------------------------
+You do NOT need npm run build on the host if you used pack-share.cmd on your PC (dist/ is in the zip).
+
+Register slash commands ONCE — server must be STOPPED or running, in Console:
+
+  cd /home/container
+  npx tsx src/deploy-commands.ts
+
+If tsx fails, run deploy-commands from your PC with the same .env instead.
+
+OLD build steps (skip if zip includes dist/):
+  npm install --include=dev
+  npm run build
+
+START BOT
+---------
+Click Restart in the panel. Console should show the bot logged in.
+
+If you see "Missing required environment variables" → add the four vars in the panel.
+
+If you see "dist/index.js missing" → run the ONE-TIME SETUP commands again.
+
+RULES
+-----
+- Stop dev.cmd on your PC while the host runs (one token = one bot online).
+- Discord Developer Portal → Bot → enable SERVER MEMBERS INTENT.
+- Keep /home/container/data/ — SQLite stores warns, giveaways, setup.
+
+WRONG ZIP
+---------
+  linklock.org Next.js site = Vercel, not this Node egg.
+  This server = discord-bot zip only.

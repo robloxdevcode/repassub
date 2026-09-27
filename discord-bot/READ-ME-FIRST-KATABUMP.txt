@@ -1,0 +1,26 @@
+LINKLOCK BOT ON KATABUMP — 6 STEPS (lazy version)
+
+ON YOUR PC
+----------
+1. Close dev-KEEP-OPEN if open.
+2. Open folder (NOT the zip):
+   Documents \ GitHub \ repassub \ discord-bot
+3. Double-click MAKE-KATABUMP-ZIP.cmd IN THAT FOLDER
+   (do not open UPLOAD-TO-KATABUMP.zip and run anything inside it)
+4. When DONE, upload the new UPLOAD-TO-KATABUMP.zip to Katabump
+
+ON KATABUMP WEBSITE
+-------------------
+4. Stop server. Files. Delete EVERYTHING in /home/container.
+5. Upload UPLOAD-TO-KATABUMP.zip. Click it. Unarchive.
+   You must see: dist (folder), package.json, src (folder)
+   NOT files named dist\index.js
+6. New file named .env — paste 4 lines from your PC .env file. Save.
+   Startup tab — JS FILE: dist/index.js
+   Start server.
+
+SLASH COMMANDS (once on PC)
+---------------------------
+Double-click deploy-commands.cmd
+
+THATS IT.

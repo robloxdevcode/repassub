@@ -1,8 +1,25 @@
-import "dotenv/config";
+import { config as loadEnvFile } from "dotenv";
 import { existsSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
 const REQUIRED_KEYS = ["DISCORD_TOKEN", "CLIENT_ID", "SERVER_ID", "OWNER_ID"] as const;
+
+/** Katabump sometimes blocks dotfiles — bot.env works the same as .env */
+const ENV_CANDIDATES = [".env", "bot.env", "env.txt"];
+
+function loadEnvFromDisk(): string | null {
+  const cwd = process.cwd();
+  for (const name of ENV_CANDIDATES) {
+    const path = resolve(cwd, name);
+    if (existsSync(path)) {
+      loadEnvFile({ path });
+      return path;
+    }
+  }
+  return null;
+}
+
+const loadedEnvPath = loadEnvFromDisk();
 
 export type BotConfig = {
   DISCORD_TOKEN: string;
@@ -23,7 +40,18 @@ export function loadConfig(): BotConfig {
     for (const key of missing) {
       console.error(`  - ${key}`);
     }
-    console.error("\nCopy .env.example to .env and fill in all values.\n");
+    console.error("\nCreate a secrets file in /home/container with your 4 values.");
+    console.error("Name it .env OR bot.env (same folder as package.json).");
+    console.error("Example lines:");
+    console.error("  DISCORD_TOKEN=...");
+    console.error("  CLIENT_ID=...");
+    console.error("  SERVER_ID=...");
+    console.error("  OWNER_ID=...");
+    if (loadedEnvPath) {
+      console.error(`\nFound ${loadedEnvPath} but values are empty or wrong names.\n`);
+    } else {
+      console.error("\nNo .env or bot.env found in " + process.cwd() + "\n");
+    }
     process.exit(1);
   }
 
