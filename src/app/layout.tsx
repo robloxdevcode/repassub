@@ -52,6 +52,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM site summary" />
         <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM extended documentation" />
+        <link rel="alternate" type="text/plain" href="/ai.txt" title="AI discovery summary" />
+        <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="Linklock blog RSS" />
         <script async src={adsenseSrc} crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col font-body antialiased bg-retro-bg text-retro-text">

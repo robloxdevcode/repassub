@@ -25,9 +25,9 @@ export function ClassicHomeLanding() {
       <section className="home-hero">
         <div className="home-hero-inner">
           <div className="home-hero-copy">
-            <p className="home-hero-tag">Subscribe-to-unlock · free to start</p>
+            <p className="home-hero-tag">Linklock · subscribe-to-unlock · free to start</p>
             <h1 className="home-hero-title">
-              Turn every download into{" "}
+              Linklock: turn every download into{" "}
               <span className="home-hero-title-line">real growth.</span>
             </h1>
             <p className="home-hero-lead">

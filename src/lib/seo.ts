@@ -3,8 +3,15 @@ import type { MetadataRoute } from "next";
 
 export const SITE_NAME = "Linklock";
 
+/** Primary brand title for homepage / root metadata */
+export const SITE_BRAND_TITLE =
+  "Linklock — Official Site | Free Subscribe-to-Download Links for Creators";
+
 export const DEFAULT_KEYWORDS = [
-  "subscribe to download",
+  "Linklock",
+  "linklock",
+  "linklock.org",
+  "Linklock official site",
   "unlock link",
   "content locker",
   "link gate",
@@ -21,10 +28,8 @@ export const DEFAULT_KEYWORDS = [
   "follow to unlock",
   "subscribe to unlock",
   "gated download link",
-  "Linklock",
-  "linklock.org",
-  "social media unlock page",
   "fan gate download",
+  "subscribe to download",
 ];
 
 const OG_IMAGE = {
@@ -39,10 +44,14 @@ const DEFAULT_DESCRIPTION =
 
 /** Homepage meta — keyword-rich for primary rankings. */
 export const HOME_META_DESCRIPTION =
-  "Linklock — free subscribe-to-download links for creators. Gate preset packs, beats, and mods behind YouTube subscribe, TikTok follow, and Discord join. Unlimited links, no fan sign-up.";
+  "Linklock (linklock.org) — the official subscribe-to-download platform for creators. Free unlock links: gate preset packs, beats, and mods behind YouTube, TikTok, and Discord steps. Unlimited links, no fan sign-up.";
 
 export const HOME_KEYWORDS = [
-  "subscribe to download",
+  "Linklock",
+  "linklock",
+  "linklock.org",
+  "Linklock official website",
+  "what is Linklock",
   "unlock link",
   "free content locker",
   "link in bio tool",
@@ -56,8 +65,7 @@ export const HOME_KEYWORDS = [
   "tiktok follow to unlock",
   "discord join to download",
   "creator unlock page",
-  "linklock",
-  "linklock.org",
+  "subscribe to download",
   "Rekonise alternatives",
   "better than Rekonise",
   "Rekonise vs Linklock",
@@ -65,6 +73,14 @@ export const HOME_KEYWORDS = [
 ];
 
 export const HOME_FAQS = [
+  {
+    q: "What is Linklock?",
+    a: "Linklock is the official subscribe-to-download platform at linklock.org. Creators make free unlock links so fans complete social steps (subscribe, follow, join Discord) before downloading preset packs, beats, mods, or any file link.",
+  },
+  {
+    q: "Where is the official Linklock website?",
+    a: "The official Linklock website is https://www.linklock.org — create a free account to build unlimited unlock links.",
+  },
   {
     q: "Is Linklock free?",
     a: "Yes. Unlimited links, 4 steps per link, and starter stats — no credit card to sign up.",
@@ -190,11 +206,12 @@ export function buildPageMetadata({
 
 export function buildRootMetadata(): Metadata {
   const siteUrl = getSiteUrl();
+  const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: "Linklock — Free Subscribe-to-Download Links for Creators",
+      default: SITE_BRAND_TITLE,
       template: `%s | ${SITE_NAME}`,
     },
     description: HOME_META_DESCRIPTION,
@@ -209,20 +226,29 @@ export function buildRootMetadata(): Metadata {
       follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large" },
     },
-    alternates: { canonical: siteUrl, types: { "text/plain": absoluteUrl("/llms.txt") } },
+    alternates: {
+      canonical: siteUrl,
+      types: {
+        "text/plain": absoluteUrl("/llms.txt"),
+        "application/rss+xml": absoluteUrl("/feed.xml"),
+      },
+    },
+    ...(googleVerification
+      ? { verification: { google: googleVerification } }
+      : {}),
     openGraph: {
       type: "website",
       locale: "en_US",
       url: siteUrl,
       siteName: SITE_NAME,
-      title: "Linklock — Free Subscribe-to-Download Links for Creators",
+      title: SITE_BRAND_TITLE,
       description: HOME_META_DESCRIPTION,
       images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       site: "@linklock",
-      title: "Linklock — Free Subscribe-to-Download Links for Creators",
+      title: SITE_BRAND_TITLE,
       description: HOME_META_DESCRIPTION,
       images: [OG_IMAGE.url],
     },
@@ -240,9 +266,23 @@ export function organizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
+    legalName: SITE_NAME,
     url: siteUrl,
     logo: absoluteUrl("/logo.png"),
-    description: DEFAULT_DESCRIPTION,
+    description: HOME_META_DESCRIPTION,
+    sameAs: ["https://discord.gg/4T3rYd4Esr"],
+  };
+}
+
+export function brandJsonLd() {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Brand",
+    name: SITE_NAME,
+    alternateName: ["Linklock.org", "linklock", "linklock.org", "Link Lock"],
+    url: siteUrl,
+    description: HOME_META_DESCRIPTION,
   };
 }
 
@@ -252,10 +292,16 @@ export function websiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
-    alternateName: "Linklock.org",
+    alternateName: ["Linklock.org", "linklock.org", "linklock", "Link Lock"],
     url: siteUrl,
     description: HOME_META_DESCRIPTION,
     inLanguage: "en-US",
+    publisher: { "@type": "Organization", name: SITE_NAME, url: siteUrl },
+    potentialAction: {
+      "@type": "RegisterAction",
+      target: absoluteUrl("/sign-up"),
+      name: "Create free Linklock account",
+    },
   };
 }
 
@@ -265,6 +311,7 @@ export function softwareApplicationJsonLd() {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: SITE_NAME,
+    alternateName: ["Linklock.org", "linklock.org", "linklock"],
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "Content Gating",
     operatingSystem: "Web",

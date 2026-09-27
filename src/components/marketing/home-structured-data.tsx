@@ -1,4 +1,5 @@
 import {
+  brandJsonLd,
   faqJsonLd,
   HOME_FAQS,
   HOME_META_DESCRIPTION,
@@ -14,6 +15,7 @@ export function HomeStructuredData() {
     <JsonLd
       data={[
         organizationJsonLd(),
+        brandJsonLd(),
         websiteJsonLd(),
         softwareApplicationJsonLd(),
         webPageJsonLd({

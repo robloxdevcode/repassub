@@ -1,8 +1,17 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { enforceHttpsRedirect } from "@/lib/enforce-https";
 import { ADS_TXT_HEADERS, getAdsTxtBody } from "@/lib/ads-txt-content";
+
+function redirectToWww(req: NextRequest): NextResponse | null {
+  const host = req.headers.get("host")?.split(":")[0]?.toLowerCase();
+  if (host !== "linklock.org") return null;
+  const url = req.nextUrl.clone();
+  url.protocol = "https:";
+  url.host = "www.linklock.org";
+  return NextResponse.redirect(url, 301);
+}
 
 const isPublicRoute = createRouteMatcher([
 
@@ -112,6 +121,9 @@ const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 export default clerkMiddleware(async (auth, req) => {
   const httpsRedirect = enforceHttpsRedirect(req);
   if (httpsRedirect) return httpsRedirect;
+
+  const wwwRedirect = redirectToWww(req);
+  if (wwwRedirect) return wwwRedirect;
 
   const host = req.headers.get("host") || "";
   const pathname = req.nextUrl.pathname;

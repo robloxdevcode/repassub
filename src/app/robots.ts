@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { absoluteUrl } from "@/lib/seo";
 
 /** Allow search engines and AI crawlers on public marketing content. */
-const PUBLIC_ALLOW = ["/", "/llms.txt", "/llms-full.txt", "/ads.txt", "/sitemap.xml", "/feed.xml"];
+const PUBLIC_ALLOW = ["/", "/llms.txt", "/llms-full.txt", "/ai.txt", "/ads.txt", "/sitemap.xml", "/feed.xml"];
 
 const APP_DISALLOW = [
   "/dashboard",
